@@ -5,6 +5,7 @@ namespace Anomaly\Streams\Api;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
 use Anomaly\Streams\Platform\Http\Controller\StreamsController;
+use Anomaly\Streams\Platform\Http\Controller\EntriesController;
 
 /**
  * Class ApiServiceProvider
@@ -25,6 +26,7 @@ class ApiServiceProvider extends ServiceProvider
     {
         Route::prefix('api', function() {
             Route::apiResource('streams', StreamsController::class);
+            Route::apiResource('entries/{stream}', EntriesController::class);
         })->middleware('api');
     }
 
