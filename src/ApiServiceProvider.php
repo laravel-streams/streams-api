@@ -12,7 +12,7 @@ use Illuminate\Support\ServiceProvider;
  * @author PyroCMS, Inc. <support@pyrocms.com>
  * @author Ryan Thompson <ryan@pyrocms.com>
  */
-class UiServiceProvider extends ServiceProvider
+class ApiServiceProvider extends ServiceProvider
 {
 
     /**

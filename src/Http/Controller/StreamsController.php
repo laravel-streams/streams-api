@@ -7,13 +7,13 @@ use Illuminate\Support\Facades\Response;
 use Anomaly\Streams\Platform\Support\Facades\Streams;
 
 /**
- * Class ApiController
+ * Class StreamsController
  *
  * @link   http://pyrocms.com/
  * @author PyroCMS, Inc. <support@pyrocms.com>
  * @author Ryan Thompson <ryan@pyrocms.com>
  */
-class ApiController extends Controller
+class StreamsController extends Controller
 {
 
     /**
