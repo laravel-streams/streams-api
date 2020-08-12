@@ -2,9 +2,9 @@
 
 namespace Anomaly\Streams\Api;
 
-use Anomaly\Streams\Platform\Http\Controller\StreamsController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
+use Anomaly\Streams\Platform\Http\Controller\StreamsController;
 
 /**
  * Class ApiServiceProvider
