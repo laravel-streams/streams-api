@@ -3,9 +3,10 @@
 namespace Anomaly\Streams\Api;
 
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Config;
 use Illuminate\Support\ServiceProvider;
-use Anomaly\Streams\Platform\Http\Controller\StreamsController;
-use Anomaly\Streams\Platform\Http\Controller\EntriesController;
+use Anomaly\Streams\Api\Http\Controller\EntriesController;
+use Anomaly\Streams\Api\Http\Controller\StreamsController;
 
 /**
  * Class ApiServiceProvider
@@ -24,10 +25,14 @@ class ApiServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        Route::prefix('api', function() {
-            Route::apiResource('streams', StreamsController::class);
-            Route::apiResource('entries/{stream}', EntriesController::class);
-        })->middleware('api');
+        Route::prefix('api')->middleware('api')->group(function () {
+            
+            Route::get('streams', StreamsController::class . '@index');
+            Route::get('streams/{stream}', StreamsController::class . '@show');
+            
+            Route::get('entries/{streams}', EntriesController::class . '@index');
+            Route::get('entries/{streams}/{entry}', EntriesController::class . '@show');
+        });
     }
 
     /**

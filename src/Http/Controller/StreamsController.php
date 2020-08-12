@@ -1,9 +1,8 @@
 <?php
 
-namespace Anomaly\Streams\Platform\Http\Controller;
+namespace Anomaly\Streams\Api\Http\Controller;
 
 use Illuminate\Routing\Controller;
-use Illuminate\Support\Facades\Response;
 use Anomaly\Streams\Platform\Support\Facades\Streams;
 
 /**
@@ -17,13 +16,23 @@ class StreamsController extends Controller
 {
 
     /**
-     * Return a Stream.
+     * Return an index of Streams.
      *
+     * @return \Illuminate\Http\JsonResponse
      */
-    public function stream($stream)
+    public function index()
     {
-        $stream = Streams::make($stream);
+        return Streams::collection();
+    }
 
-        return Response::json($stream);
+    /**
+     * Return a Stream.
+     * 
+     * @param $stream
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function show($stream)
+    {
+        return Streams::make($stream);
     }
 }
