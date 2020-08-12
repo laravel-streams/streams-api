@@ -1,2 +1,2 @@
-# streams-ui
-The UI package for the Streams platform.
+# streams-api
+The API package for the Streams platform.
