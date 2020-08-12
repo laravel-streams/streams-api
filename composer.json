@@ -1,0 +1,26 @@
+{
+    "name": "anomaly/streams-api",
+    "description": "The official REST API package for Streams.",
+    "authors": [
+        {
+            "name": "Ryan Thompson",
+            "email": "ryan@pyrocms.com"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "Anomaly\\Streams\\Ui\\": "src/"
+        }
+    },
+    "config": {
+        "bin-dir": "bin"
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Anomaly\\Streams\\Api\\ApiServiceProvider"
+            ]
+        }
+    },
+    "license": "MIT"
+}
