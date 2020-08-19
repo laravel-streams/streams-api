@@ -1,6 +1,8 @@
 ---
-title: Introduction
+title: Configuration
+category: getting_started
 intro:
+sort: 10
 ---
 
 - **Intro:** Introduce the idea in one sentance.
