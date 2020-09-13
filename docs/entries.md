@@ -1,5 +1,5 @@
 ---
-title: Endpoints
+title: Entries
 category: basics
 intro:
 sort: 
