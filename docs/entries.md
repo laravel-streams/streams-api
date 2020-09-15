@@ -16,3 +16,13 @@ sort:
 - **Code Examples:** Code examples and snippets.
 - **Insights:** Tips, post scriptum, creative links.
 - **Additional Reading:** Link to related ideas/topics/guides/recipes.
+
+<hr>
+
+## Listing Entries
+
+`/api/entries/{stream}`
+
+## Single Entry
+
+`/api/entries/{stream}/{id}`
