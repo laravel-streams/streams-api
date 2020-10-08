@@ -1,5 +1,5 @@
 {
-    "name": "anomaly/streams-api",
+    "name": "streams/api",
     "description": "The official REST API package for Streams.",
     "authors": [
         {
