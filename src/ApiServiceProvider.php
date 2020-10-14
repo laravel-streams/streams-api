@@ -5,8 +5,8 @@ namespace Anomaly\Streams\Api;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\ServiceProvider;
-use Anomaly\Streams\Api\Http\Controller\EntriesController;
-use Anomaly\Streams\Api\Http\Controller\StreamsController;
+use Streams\Api\Http\Controller\EntriesController;
+use Streams\Api\Http\Controller\StreamsController;
 
 /**
  * Class ApiServiceProvider

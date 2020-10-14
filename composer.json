@@ -9,7 +9,7 @@
     ],
     "autoload": {
         "psr-4": {
-            "Anomaly\\Streams\\Api\\": "src/"
+            "Streams\\Api\\": "src/"
         }
     },
     "config": {
@@ -18,7 +18,7 @@
     "extra": {
         "laravel": {
             "providers": [
-                "Anomaly\\Streams\\Api\\ApiServiceProvider"
+                "Streams\\Api\\ApiServiceProvider"
             ]
         }
     },

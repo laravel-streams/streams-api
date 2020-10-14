@@ -1,9 +1,9 @@
 <?php
 
-namespace Anomaly\Streams\Api\Http\Controller;
+namespace Streams\Api\Http\Controller;
 
 use Illuminate\Routing\Controller;
-use Anomaly\Streams\Platform\Support\Facades\Streams;
+use Streams\Core\Support\Facades\Streams;
 
 /**
  * Class StreamsController
