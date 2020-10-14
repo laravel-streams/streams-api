@@ -1,6 +1,6 @@
 <?php
 
-namespace Anomaly\Streams\Api;
+namespace Streams\Api;
 
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Config;
