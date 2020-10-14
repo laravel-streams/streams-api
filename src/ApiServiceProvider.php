@@ -3,7 +3,6 @@
 namespace Streams\Api;
 
 use Illuminate\Support\Facades\Route;
-use Illuminate\Support\Facades\Config;
 use Illuminate\Support\ServiceProvider;
 use Streams\Api\Http\Controller\EntriesController;
 use Streams\Api\Http\Controller\StreamsController;
