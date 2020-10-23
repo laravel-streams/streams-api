@@ -41,6 +41,31 @@ class EntriesController extends Controller
     }
     
     /**
+     * Put an Entry.
+     *
+     * @param $stream
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function post($stream)
+    {
+        if (!$input = Request::all()) {
+            abort(400);
+        }
+
+        $entry = Streams::repository($stream)->newInstance($input);
+        
+        $validator = $entry->validator();
+
+        if ($validator->passes()) {
+            $entry->save();
+        } else {
+            dd($validator->messages());
+        }
+
+        return Response::json([]);
+    }
+    
+    /**
      * Delete an Entry.
      *
      * @param $stream

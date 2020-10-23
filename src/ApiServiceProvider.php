@@ -27,10 +27,16 @@ class ApiServiceProvider extends ServiceProvider
         Route::prefix('api')->middleware('api')->group(function () {
             
             Route::get('streams', StreamsController::class . '@index');
+            Route::post('streams', StreamsController::class . '@post');
+
             Route::get('streams/{stream}', StreamsController::class . '@show');
-            Route::post('entries/{streams}', StreamsController::class . '@post');
-            
+            Route::put('streams/{streams}', StreamsController::class . '@put');
+            Route::patch('streams/{streams}', StreamsController::class . '@patch');
+            Route::delete('streams/{streams}', StreamsController::class . '@delete');
+
             Route::get('entries/{streams}', EntriesController::class . '@index');
+            Route::post('entries/{streams}', EntriesController::class . '@post');
+
             Route::get('entries/{streams}/{entry}', EntriesController::class . '@show');
             Route::put('entries/{streams}/{entry}', EntriesController::class . '@put');
             Route::patch('entries/{streams}/{entry}', EntriesController::class . '@patch');
