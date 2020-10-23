@@ -30,17 +30,17 @@ class ApiServiceProvider extends ServiceProvider
             Route::post('streams', StreamsController::class . '@post');
 
             Route::get('streams/{stream}', StreamsController::class . '@show');
-            Route::put('streams/{streams}', StreamsController::class . '@put');
-            Route::patch('streams/{streams}', StreamsController::class . '@patch');
-            Route::delete('streams/{streams}', StreamsController::class . '@delete');
+            Route::put('streams/{stream}', StreamsController::class . '@put');
+            Route::patch('streams/{stream}', StreamsController::class . '@patch');
+            Route::delete('streams/{stream}', StreamsController::class . '@delete');
 
-            Route::get('entries/{streams}', EntriesController::class . '@index');
-            Route::post('entries/{streams}', EntriesController::class . '@post');
+            Route::get('entries/{stream}', EntriesController::class . '@index');
+            Route::post('entries/{stream}', EntriesController::class . '@post');
 
-            Route::get('entries/{streams}/{entry}', EntriesController::class . '@show');
-            Route::put('entries/{streams}/{entry}', EntriesController::class . '@put');
-            Route::patch('entries/{streams}/{entry}', EntriesController::class . '@patch');
-            Route::delete('entries/{streams}/{entry}', EntriesController::class . '@delete');
+            Route::get('entries/{stream}/{entry}', EntriesController::class . '@show');
+            Route::put('entries/{stream}/{entry}', EntriesController::class . '@put');
+            Route::patch('entries/{stream}/{entry}', EntriesController::class . '@patch');
+            Route::delete('entries/{stream}/{entry}', EntriesController::class . '@delete');
         });
     }
 
