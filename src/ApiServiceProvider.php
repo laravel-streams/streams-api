@@ -28,9 +28,13 @@ class ApiServiceProvider extends ServiceProvider
             
             Route::get('streams', StreamsController::class . '@index');
             Route::get('streams/{stream}', StreamsController::class . '@show');
+            Route::post('entries/{streams}', StreamsController::class . '@post');
             
             Route::get('entries/{streams}', EntriesController::class . '@index');
             Route::get('entries/{streams}/{entry}', EntriesController::class . '@show');
+            Route::put('entries/{streams}/{entry}', EntriesController::class . '@put');
+            Route::patch('entries/{streams}/{entry}', EntriesController::class . '@patch');
+            Route::delete('entries/{streams}/{entry}', EntriesController::class . '@delete');
         });
     }
 

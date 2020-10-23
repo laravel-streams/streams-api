@@ -3,6 +3,8 @@
 namespace Streams\Api\Http\Controller;
 
 use Illuminate\Routing\Controller;
+use Illuminate\Support\Facades\Request;
+use Illuminate\Support\Facades\Response;
 use Streams\Core\Support\Facades\Streams;
 
 /**
@@ -34,5 +36,30 @@ class StreamsController extends Controller
     public function show($stream)
     {
         return Streams::make($stream);
+    }
+
+    /**
+     * Put an Entry.
+     *
+     * @param $stream
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function post($stream)
+    {
+        if (!$input = Request::all()) {
+            abort(400);
+        }
+
+        $entry = Streams::repository($stream)->newInstance($input);
+        
+        $validator = $entry->validator();
+
+        if ($validator->passes()) {
+            $entry->save();
+        } else {
+            dd($validator->messages());
+        }
+
+        return Response::json([]);
     }
 }
