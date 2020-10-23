@@ -1,12 +1,23 @@
 ---
 title: Introduction
 intro:
+enabled: true
 ---
 
-- **Intro:** Introduce the idea in one sentance.
-- **Explaination:** An elevator pitch that signals the reader to continue or not (keep looking for relavant page).
-- **Sections/Features:** Separate sections/sub-sections (h2s/h3s) consistently. This will build the ToC.
-- **Next Steps:** Next actions to take that are intentional versus simply additional reading.
-- **Code Examples:** Code examples and snippets.
-- **Insights:** Tips, post scriptum, creative links.
-- **Additional Reading:** Link to related ideas/topics/guides/recipes.
+## Introduction
+
+The Streams platform comes with an optional 2-way RESTful API. The API provides access and management control to all domain information and models and a streamlined interface to define custom endpoints.
+
+- [API Introduction](api/introduction)
+
+### Streams API
+
+Access and manage configured [domain information](streams#domain-information).
+
+- [Streams API](api/streams)
+
+### Entries API
+
+Access and manage [domain entity](streams#domain-entities) data.
+
+- [Entries API](api/entries)
