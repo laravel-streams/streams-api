@@ -49,6 +49,9 @@ class ApiServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        //
+        $this->publishes([
+            base_path('vendor/streams/api/resources/public')
+            => public_path('vendor/streams/api')
+        ], ['public']);
     }
 }
