@@ -39,7 +39,7 @@ class EntriesController extends Controller
     {
         return Streams::entries($stream)->find($entry);
     }
-    
+
     /**
      * Put an Entry.
      *
@@ -52,19 +52,17 @@ class EntriesController extends Controller
             abort(400);
         }
 
-        $entry = Streams::repository($stream)->newInstance($input);
-        
-        $validator = $entry->validator();
+        $validator = Streams::make($stream)->validator($input);
 
         if ($validator->passes()) {
-            $entry->save();
+            $entry = Streams::repository($stream)->create($input);
         } else {
             dd($validator->messages());
         }
 
-        return Response::json([]);
+        return Response::json($entry);
     }
-    
+
     /**
      * Delete an Entry.
      *
@@ -101,7 +99,7 @@ class EntriesController extends Controller
         }
 
         $entry->setAttributes($input);
-        
+
         $validator = $entry->validator();
 
         if ($validator->passes()) {
@@ -131,7 +129,7 @@ class EntriesController extends Controller
         }
 
         $entry->fill($input);
-        
+
         $validator = $entry->validator();
 
         if ($validator->passes()) {
