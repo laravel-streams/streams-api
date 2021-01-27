@@ -25,7 +25,9 @@ class EntriesController extends Controller
      */
     public function index($stream)
     {
-        return Streams::entries($stream)->all();
+        $pagination = Streams::entries($stream)->paginate(Request::get('per_page', 100));
+
+        return Response::json($pagination->toArray());
     }
 
     /**
