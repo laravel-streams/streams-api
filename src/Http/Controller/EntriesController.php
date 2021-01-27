@@ -39,7 +39,12 @@ class EntriesController extends Controller
      */
     public function show($stream, $entry)
     {
-        return Streams::entries($stream)->find($entry);
+        $result = Streams::entries($stream)->find($entry);
+        
+        return Response::json([
+            'entry' => $entry,
+            'data' => $result,
+        ]);
     }
 
     /**
@@ -50,6 +55,9 @@ class EntriesController extends Controller
      */
     public function post($stream)
     {
+        $entry = null;
+        $messages = [];
+
         if (!$input = Request::all()) {
             abort(400);
         }
@@ -59,10 +67,13 @@ class EntriesController extends Controller
         if ($validator->passes()) {
             $entry = Streams::repository($stream)->create($input);
         } else {
-            dd($validator->messages());
+            $messages = $validator->messages();
         }
 
-        return Response::json($entry);
+        return Response::json([
+            'data' => $entry,
+            'messages' => $validator->messages(),
+        ]);
     }
 
     /**
@@ -80,7 +91,9 @@ class EntriesController extends Controller
 
         $entry->delete();
 
-        return Response::json([]);
+        return Response::json([
+            //'data' => $entry,
+        ]);
     }
 
     /**
@@ -100,6 +113,8 @@ class EntriesController extends Controller
             abort(400);
         }
 
+        $messages = [];
+
         $entry->setAttributes($input);
 
         $validator = $entry->validator();
@@ -107,10 +122,13 @@ class EntriesController extends Controller
         if ($validator->passes()) {
             $entry->save();
         } else {
-            dd($validator->messages());
+            $messages = $validator->messages();
         }
 
-        return Response::json([]);
+        return Response::json([
+            'data' => $entry,
+            'messages' => $messages,
+        ]);
     }
 
     /**
