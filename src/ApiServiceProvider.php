@@ -2,8 +2,8 @@
 
 namespace Streams\Api;
 
+use Streams\Core\Support\Provider;
 use Illuminate\Support\Facades\Route;
-use Illuminate\Support\ServiceProvider;
 use Streams\Api\Http\Controller\EntriesController;
 use Streams\Api\Http\Controller\StreamsController;
 
@@ -14,7 +14,7 @@ use Streams\Api\Http\Controller\StreamsController;
  * @author PyroCMS, Inc. <support@pyrocms.com>
  * @author Ryan Thompson <ryan@pyrocms.com>
  */
-class ApiServiceProvider extends ServiceProvider
+class ApiServiceProvider extends Provider
 {
 
     /**
@@ -24,6 +24,8 @@ class ApiServiceProvider extends ServiceProvider
      */
     public function register()
     {
+        parent::register();
+
         Route::prefix('api')->middleware('api')->group(function () {
             
             Route::get('streams', StreamsController::class . '@index');
@@ -49,6 +51,8 @@ class ApiServiceProvider extends ServiceProvider
      */
     public function boot()
     {
+        parent::boot();
+
         $this->publishes([
             base_path('vendor/streams/api/resources/public')
             => public_path('vendor/streams/api')

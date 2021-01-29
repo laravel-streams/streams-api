@@ -1,6 +1,7 @@
 {
     "name": "streams/api",
     "description": "The official REST API package for Streams.",
+    "type": "streams-addon",
     "authors": [
         {
             "name": "Ryan Thompson",
