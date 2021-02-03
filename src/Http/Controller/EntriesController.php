@@ -78,7 +78,7 @@ class EntriesController extends Controller
         } catch (\Exception $e) {
             return Response::json([
                 'data' => [],
-                'input' => [],
+                'input' => $input,
                 'messages' => [
                     $e->getMessage()
                 ],
