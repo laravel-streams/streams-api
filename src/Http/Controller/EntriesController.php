@@ -43,7 +43,7 @@ class EntriesController extends Controller
         
         return Response::json([
             'entry' => $entry,
-            'data' => $result,
+            'data' => $result->toArray(),
         ]);
     }
 
@@ -72,7 +72,7 @@ class EntriesController extends Controller
 
         return Response::json([
             'data' => $entry,
-            'messages' => $validator->messages(),
+            'messages' => $messages,
         ]);
     }
 
