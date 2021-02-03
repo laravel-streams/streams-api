@@ -39,7 +39,12 @@ class EntriesController extends Controller
      */
     public function show($stream, $entry)
     {
-        $result = Streams::entries($stream)->find($entry);
+        if (!$result = Streams::repository($stream)->find($entry)) {
+            return Response::json([
+                'entry' => $entry,
+                'errors' => ['Entry not found'],
+            ], 404);
+        }
         
         return Response::json([
             'entry' => $entry,
