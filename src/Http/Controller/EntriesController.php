@@ -69,10 +69,20 @@ class EntriesController extends Controller
 
         $validator = Streams::make($stream)->validator($input);
 
-        if ($validator->passes()) {
-            $entry = Streams::repository($stream)->create($input);
-        } else {
-            $messages = $validator->messages();
+        try {
+            if ($validator->passes()) {
+                $entry = Streams::repository($stream)->create($input);
+            } else {
+                $messages = $validator->messages();
+            }
+        } catch (\Exception $e) {
+            return Response::json([
+                'data' => [],
+                'input' => [],
+                'messages' => [
+                    $e->getMessage()
+                ],
+            ]);    
         }
 
         return Response::json([
