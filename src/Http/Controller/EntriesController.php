@@ -163,6 +163,8 @@ class EntriesController extends Controller
             abort(400);
         }
 
+        $messages = [];
+
         $entry->fill($input);
 
         $validator = $entry->validator();
@@ -170,9 +172,12 @@ class EntriesController extends Controller
         if ($validator->passes()) {
             $entry->save();
         } else {
-            dd($validator->messages());
+            $messages = $validator->messages();
         }
 
-        return Response::json([]);
+        return Response::json([
+            'data' => $entry->toArray(),
+            'messages' => $messages,
+        ]);
     }
 }
