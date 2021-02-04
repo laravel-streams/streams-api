@@ -141,7 +141,7 @@ class EntriesController extends Controller
         }
 
         return Response::json([
-            'data' => $entry,
+            'data' => $entry->toArray(),
             'messages' => $messages,
         ]);
     }
