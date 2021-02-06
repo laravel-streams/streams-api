@@ -26,7 +26,7 @@ class EntriesController extends Controller
     public function index($stream)
     {
         $pagination = Streams::entries($stream)
-            ->setParameters(json_decode(Request::get('q'), true))
+            ->setParameters(json_decode(Request::get('q'), true) ?: [])
             ->paginate(Request::get('per_page', 100));
 
         return Response::json($pagination->toArray());
