@@ -1,6 +1,5 @@
 ---
 title: Introduction
-intro: null
 enabled: true
 ---
 
