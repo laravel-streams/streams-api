@@ -25,7 +25,9 @@ class StreamsController extends Controller
      */
     public function index()
     {
-        return Streams::collection();
+        return Streams::entries('core.streams')
+            ->setParameters(json_decode(Request::get('q'), true) ?: [])
+            ->paginate(Request::get('per_page', 100));
     }
 
     /**
