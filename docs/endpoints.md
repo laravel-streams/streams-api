@@ -227,6 +227,14 @@ Deletes an stream.
 ```
 
 
-## Filtering
+## Querying
 
-You can filter the query using criteria parameters in the URI.
+You can manipulate the query using criteria parameters in the URI.
+
+### Filtering
+
+`/api/streams?q={"where": [["id", "LIKE", "%doc%"]]}`
+
+### Sorting
+
+`/api/streams/docs/entries?q={"where": [["enabled", true]]}`
