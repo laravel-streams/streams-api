@@ -53,7 +53,7 @@ class StreamsController extends Controller
             abort(400);
         }
 
-        $input['stream'] = Streams::make('streams');
+        $input['stream'] = Streams::make('core.streams');
 
         $stream = new Entry($input);
 
@@ -76,7 +76,7 @@ class StreamsController extends Controller
      */
     public function delete($stream)
     {
-        if (!$stream = Streams::entries('streams')->find($stream)) {
+        if (!$stream = Streams::entries('core.streams')->find($stream)) {
             abort(404);
         }
 
@@ -93,7 +93,7 @@ class StreamsController extends Controller
      */
     public function put($stream)
     {
-        if (!$stream = Streams::entries('streams')->find($stream)) {
+        if (!$stream = Streams::entries('core.streams')->find($stream)) {
             abort(404);
         }
 
@@ -122,7 +122,7 @@ class StreamsController extends Controller
      */
     public function patch($stream)
     {
-        if (!$stream = Streams::entries('streams')->find($stream)) {
+        if (!$stream = Streams::entries('core.streams')->find($stream)) {
             abort(404);
         }
 
