@@ -34,13 +34,13 @@ class ApiServiceProvider extends ServiceProvider
             Route::patch('streams/{stream}', StreamsController::class . '@patch');
             Route::delete('streams/{stream}', StreamsController::class . '@delete');
 
-            Route::get('entries/{stream}', EntriesController::class . '@index');
-            Route::post('entries/{stream}', EntriesController::class . '@post');
+            Route::get('streams/{stream}/entries', EntriesController::class . '@index');
+            Route::post('streams/{stream}/entries', EntriesController::class . '@post');
 
-            Route::get('entries/{stream}/{entry}', EntriesController::class . '@show');
-            Route::put('entries/{stream}/{entry}', EntriesController::class . '@put');
-            Route::patch('entries/{stream}/{entry}', EntriesController::class . '@patch');
-            Route::delete('entries/{stream}/{entry}', EntriesController::class . '@delete');
+            Route::get('streams/{stream}/entries/{entry}', EntriesController::class . '@show');
+            Route::put('streams/{stream}/entries/{entry}', EntriesController::class . '@put');
+            Route::patch('streams/{stream}/entries/{entry}', EntriesController::class . '@patch');
+            Route::delete('streams/{stream}/entries/{entry}', EntriesController::class . '@delete');
         });
     }
 

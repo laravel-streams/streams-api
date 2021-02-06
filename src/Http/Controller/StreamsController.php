@@ -2,10 +2,10 @@
 
 namespace Streams\Api\Http\Controller;
 
+use Streams\Core\Entry\Entry;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\Response;
-use Streams\Core\Entry\Entry;
 use Streams\Core\Support\Facades\Streams;
 
 /**
