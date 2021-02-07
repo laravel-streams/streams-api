@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
 use Streams\Api\Http\Controller\EntriesController;
 use Streams\Api\Http\Controller\StreamsController;
+use Streams\Core\Support\Facades\Assets;
 
 /**
  * Class ApiServiceProvider
@@ -25,7 +26,7 @@ class ApiServiceProvider extends ServiceProvider
     public function register()
     {
         Route::prefix('api')->middleware('api')->group(function () {
-            
+
             Route::get('streams', StreamsController::class . '@index');
             Route::post('streams', StreamsController::class . '@post');
 
@@ -53,5 +54,8 @@ class ApiServiceProvider extends ServiceProvider
             base_path('vendor/streams/api/resources/public')
             => public_path('vendor/streams/api')
         ], ['public']);
+
+        Assets::addPath('api','vendor/streams/api');
+        Assets::add('scripts','api::js/api.js');
     }
 }
