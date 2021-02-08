@@ -9,14 +9,6 @@ The Streams platform comes with an optional 2-way RESTful API. The API provides 
 
 - [API Introduction](/docs/api/introduction)
 
-### Streams API
+### Getting Started
 
-Access and manage configured [domain information](streams#domain-information).
-
-- [Streams API](/docs/api/streams)
-
-### Entries API
-
-Access and manage [domain entity](streams#domain-entities) data.
-
-- [Entries API](/docs/api/entries)
+- [Endpoints](/docs/api/endpoints)
