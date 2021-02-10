@@ -56,6 +56,7 @@ class ApiServiceProvider extends ServiceProvider
         ], ['public']);
 
         Assets::addPath('api','vendor/streams/api');
-        Assets::add('scripts','api::js/api.js');
+
+        Assets::register('api::js/index.js');
     }
 }
