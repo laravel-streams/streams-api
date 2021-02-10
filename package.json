@@ -1,9 +1,6 @@
 {
     "name": "@streams/api",
     "version": "1.0.0",
-    "main": "./lib/index.ts",
-    "types": "./lib/index.ts",
-    "typings": "./lib/index.ts",
     "scripts": {
         "dev": "npm run development",
         "development": "mix",
@@ -14,12 +11,11 @@
         "production": "mix --production"
     },
     "dependencies": {
-        "@streams/core": "^1.0.0"
+        "@streams/core": "file:../core"
     },
     "devDependencies": {
         "axios": "^0.21",
-        "laravel-mix": "^6.0.6",
-        "lodash": "^4.17.19",
-        "postcss": "^8.1.14"
+        "laravel-mix": "^6.0",
+        "postcss": "^8.1"
     }
 }
