@@ -77,6 +77,7 @@ class EntriesController extends Controller
         try {
             if ($validator->passes()) {
                 $entry = Streams::repository($stream)->create($input);
+                $entry = $entry->toArray();
             } else {
                 $messages = $validator->messages();
             }
@@ -91,7 +92,7 @@ class EntriesController extends Controller
         }
 
         return Response::json([
-            'data' => $entry->toArray(),
+            'data' => $entry,
             'messages' => $messages,
         ]);
     }
