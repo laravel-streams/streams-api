@@ -32,25 +32,55 @@ class ApiServiceProvider extends ServiceProvider
 
             Route::get('streams', [
                 'uses' => GetStreams::class,
-                'as' => 'streams.api.streams.index',
+                'as' => 'ls.api.streams.index',
             ]);
             Route::post('streams', [
                 'uses' => CreateStream::class,
-                'as' => 'streams.api.streams.create',
+                'as' => 'ls.api.streams.create',
+            ]);
+            Route::get('streams/{stream}', [
+                'uses' => ShowStream::class,
+                'as' => 'ls.api.streams.show',
+            ]);
+            Route::put('streams/{stream}', [
+                'uses' => UpdateStream::class,
+                'as' => 'ls.api.streams.update',
+            ]);
+            Route::patch('streams/{stream}', [
+                'uses' => PatchStream::class,
+                'as' => 'ls.api.streams.patch',
+            ]);
+            Route::delete('streams/{stream}', [
+                'uses' => DeleteStream::class,
+                'as' => 'ls.api.streams.delete',
             ]);
 
-            Route::get('streams/{stream}', ShowStream::class);
-            Route::put('streams/{stream}', UpdateStream::class);
-            Route::patch('streams/{stream}', PatchStream::class);
-            Route::delete('streams/{stream}', DeleteStream::class);
 
-            Route::get('streams/{stream}/entries', GetEntries::class);
-            Route::post('streams/{stream}/entries', CreateEntry::class);
+            Route::get('streams/{stream}/entries', [
+                'uses' => GetEntries::class,
+                'as' => 'ls.api.entries.index',
+            ]);
+            Route::post('streams/{stream}/entries', [
+                'uses' => CreateEntry::class,
+                'as' => 'ls.api.entries.create',
+            ]);
 
-            Route::get('streams/{stream}/entries/{entry}', ShowEntry::class);
-            Route::put('streams/{stream}/entries/{entry}', UpdateEntry::class);
-            Route::patch('streams/{stream}/entries/{entry}', PatchEntry::class);
-            Route::delete('streams/{stream}/entries/{entry}', DeleteEntry::class);
+            Route::get('streams/{stream}/entries/{entry}', [
+                'uses' => ShowEntry::class,
+                'as' => 'ls.api.entries.show',
+            ]);
+            Route::put('streams/{stream}/entries/{entry}', [
+                'uses' => UpdateEntry::class,
+                'as' => 'ls.api.entries.update',
+            ]);
+            Route::patch('streams/{stream}/entries/{entry}', [
+                'uses' => PatchEntry::class,
+                'as' => 'ls.api.entries.patch',
+            ]);
+            Route::delete('streams/{stream}/entries/{entry}', [
+                'uses' => DeleteEntry::class,
+                'as' => 'ls.api.entries.delete',
+            ]);
         });
     }
 

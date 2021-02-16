@@ -9,6 +9,6 @@
         "name": "required|min:3"
     },
     "fields": {
-        "name": "text"
+        "name": "string"
     }
 }

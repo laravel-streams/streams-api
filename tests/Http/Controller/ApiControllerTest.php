@@ -4,27 +4,20 @@ namespace Streams\Api\Tests\Http\Controller;
 
 use Tests\TestCase;
 use Illuminate\Routing\Route;
-use Streams\Core\Stream\Stream;
-use Illuminate\Support\Collection;
 use Illuminate\Foundation\Auth\User;
 use Illuminate\Testing\TestResponse;
-use Streams\Core\Support\Facades\Streams;
 
-class ApiControllerTest extends TestCase
+abstract class ApiControllerTest extends TestCase
 {
 
-    public function setUp(): void
-    { 
-        parent::setUp();
+    /**
+     * @return string
+     */
+    abstract function getRouteName(): string;
 
-        $this->createApplication();
-
-        Streams::load(base_path('vendor/streams/api/tests/examples.json'));
-    }
-
-    public function assertRouteContainsMiddleware($name, ...$names)
+    public function assertRouteContainsMiddleware(...$names)
     {
-        $route = $this->getRouteByName($name);
+        $route = $this->getRouteByName($this->getRouteName());
 
         foreach ($names as $name) {
             $this->assertContains(
@@ -37,12 +30,12 @@ class ApiControllerTest extends TestCase
         return $this;
     }
 
-    public function assertRouteHasExactMiddleware($name, ...$names)
+    public function assertRouteHasExactMiddleware(...$names)
     {
-        $route = $this->getRouteByName($name);
+        $route = $this->getRouteByName($this->getRouteName());
 
         $this->assertRouteContainsMiddleware(...$names);
-        $this->assertTrue(count($names) === count($route->middleware()), 'Route contains not the same amount of middleware.');
+        $this->assertTrue(count($names) === count($route->middleware()), 'Route does NOT contain the same amount of middleware.');
 
         return $this;
     }
@@ -51,15 +44,15 @@ class ApiControllerTest extends TestCase
     /**
      * @return Route
      */
-    private function getRouteByName($name): Route
+    private function getRouteByName(): Route
     {
         $routes = \Illuminate\Support\Facades\Route::getRoutes();
 
         /** @var Route $route */
-        $route = $routes->getByName($name);
+        $route = $routes->getByName($this->getRouteName());
 
         if (!$route) {
-            $this->fail("Route with name [{$name}] not found!");
+            $this->fail("Route with name [{$this->getRouteName()}] not found!");
         }
 
         return $route;
@@ -74,11 +67,11 @@ class ApiControllerTest extends TestCase
      *
      * @return TestResponse
      */
-    protected function callRouteAction($name, array $data = [], array $parameters = [], array $headers = []): TestResponse
+    protected function callRouteAction(array $data = [], array $parameters = [], array $headers = []): TestResponse
     {
-        $route = $this->getRouteByName($name);
+        $route = $this->getRouteByName($this->getRouteName());
         $method = $route->methods()[0];
-        $url = route($name, $parameters);
+        $url = route($this->getRouteName(), $parameters);
 
         return $this->json($method, $url, $data, $headers);
     }
