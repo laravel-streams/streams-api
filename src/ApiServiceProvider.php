@@ -4,17 +4,10 @@ namespace Streams\Api;
 
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
+use Streams\Core\Support\Facades\Assets;
 use Streams\Api\Http\Controller\EntriesController;
 use Streams\Api\Http\Controller\StreamsController;
-use Streams\Core\Support\Facades\Assets;
 
-/**
- * Class ApiServiceProvider
- *
- * @link   http://pyrocms.com/
- * @author PyroCMS, Inc. <support@pyrocms.com>
- * @author Ryan Thompson <ryan@pyrocms.com>
- */
 class ApiServiceProvider extends ServiceProvider
 {
 
@@ -27,7 +20,10 @@ class ApiServiceProvider extends ServiceProvider
     {
         Route::prefix('api')->middleware('api')->group(function () {
 
-            Route::get('streams', StreamsController::class . '@index');
+            Route::get('streams', [
+                'uses' => StreamsController::class . '@index',
+                'as' => 'streams.api.streams.index',
+            ]);
             Route::post('streams', StreamsController::class . '@post');
 
             Route::get('streams/{stream}', StreamsController::class . '@show');
@@ -55,7 +51,7 @@ class ApiServiceProvider extends ServiceProvider
             => public_path('vendor/streams/api')
         ], ['public']);
 
-        Assets::addPath('api','vendor/streams/api');
+        Assets::addPath('api', 'vendor/streams/api');
 
         Assets::register('api::js/index.js');
     }
