@@ -19,13 +19,8 @@ class ShowEntry extends Controller
      */
     public function __invoke($stream, $entry)
     {
-        if (!$instance = Streams::repository($stream)->find($entry)) {
-            return Response::json([
-                'entry' => $entry,
-                'errors' => ['Entry not found'],
-            ], 404);
-        }
-        
+        $instance = Streams::repository($stream)->find($entry);
+
         return Response::json([
             'data' => $instance,
             'meta' => [
@@ -35,8 +30,8 @@ class ShowEntry extends Controller
             ],
             'links' => [
                 'self' => URL::to(Request::path()),
-                //'entries' => URL::route('ls.api.entries.index', ['stream' => $stream]),
+                'index' => URL::route('ls.api.entries.index', ['stream' => $stream]),
             ],
-        ]);
+        ], $instance ? 200 : 404);
     }
 }
