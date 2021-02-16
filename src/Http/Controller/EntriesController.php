@@ -41,7 +41,10 @@ class EntriesController extends Controller
      */
     public function show($stream, $entry)
     {
-        if (!$result = Streams::repository($stream)->find($entry)) {
+        if (!$result = Streams::repository($stream)
+            ->newCriteria()
+            ->setParameters(json_decode(Request::get('q'), true) ?: [])
+            ->find($entry)) {
             return Response::json([
                 'entry' => $entry,
                 'errors' => ['Entry not found'],
@@ -74,6 +77,7 @@ class EntriesController extends Controller
         try {
             if ($validator->passes()) {
                 $entry = Streams::repository($stream)->create($input);
+                $entry = $entry->toArray();
             } else {
                 $messages = $validator->messages();
             }
@@ -88,7 +92,7 @@ class EntriesController extends Controller
         }
 
         return Response::json([
-            'data' => $entry->toArray(),
+            'data' => $entry,
             'messages' => $messages,
         ]);
     }
