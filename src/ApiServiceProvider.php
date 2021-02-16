@@ -4,9 +4,17 @@ namespace Streams\Api;
 
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
+use Streams\Core\Support\Facades\Assets;
+use Streams\Api\Http\Controller\Entries\ShowEntry;
 use Streams\Api\Http\Controller\EntriesController;
 use Streams\Api\Http\Controller\StreamsController;
-use Streams\Core\Support\Facades\Assets;
+use Streams\Api\Http\Controller\Entries\GetEntries;
+use Streams\Api\Http\Controller\Streams\CreateStream;
+use Streams\Api\Http\Controller\Streams\DeleteStream;
+use Streams\Api\Http\Controller\Streams\GetStreams;
+use Streams\Api\Http\Controller\Streams\PatchStream;
+use Streams\Api\Http\Controller\Streams\ShowStream;
+use Streams\Api\Http\Controller\Streams\UpdateStream;
 
 /**
  * Class ApiServiceProvider
@@ -27,18 +35,18 @@ class ApiServiceProvider extends ServiceProvider
     {
         Route::prefix('api')->middleware('api')->group(function () {
 
-            Route::get('streams', StreamsController::class . '@index');
-            Route::post('streams', StreamsController::class . '@post');
+            Route::get('streams', GetStreams::class);
+            Route::post('streams', CreateStream::class);
 
-            Route::get('streams/{stream}', StreamsController::class . '@show');
-            Route::put('streams/{stream}', StreamsController::class . '@put');
-            Route::patch('streams/{stream}', StreamsController::class . '@patch');
-            Route::delete('streams/{stream}', StreamsController::class . '@delete');
+            Route::get('streams/{stream}', ShowStream::class);
+            Route::put('streams/{stream}', UpdateStream::class);
+            Route::patch('streams/{stream}', PatchStream::class);
+            Route::delete('streams/{stream}', DeleteStream::class);
 
-            Route::get('streams/{stream}/entries', EntriesController::class . '@index');
+            Route::get('streams/{stream}/entries', GetEntries::class);
             Route::post('streams/{stream}/entries', EntriesController::class . '@post');
 
-            Route::get('streams/{stream}/entries/{entry}', EntriesController::class . '@show');
+            Route::get('streams/{stream}/entries/{entry}', ShowEntry::class);
             Route::put('streams/{stream}/entries/{entry}', EntriesController::class . '@put');
             Route::patch('streams/{stream}/entries/{entry}', EntriesController::class . '@patch');
             Route::delete('streams/{stream}/entries/{entry}', EntriesController::class . '@delete');
