@@ -21,7 +21,7 @@ class ShowStream extends Controller
         $instance = Streams::make($stream);
 
         return Response::json([
-            'data' => $instance->toArray(),
+            'data' => $instance,
             'meta' => [
                 'query' => Request::query(),
             ],
@@ -29,6 +29,6 @@ class ShowStream extends Controller
                 'self' => URL::to(Request::path()),
                 'entries' => URL::route('ls.api.entries.index', ['stream' => $stream]),
             ],
-        ]);
+        ], $instance ? 200 : 404);
     }
 }
