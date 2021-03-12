@@ -3,6 +3,7 @@
 namespace Streams\Api;
 
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Config;
 use Illuminate\Support\ServiceProvider;
 use Streams\Core\Support\Facades\Assets;
 use Streams\Api\Http\Controller\Entries\ShowEntry;
@@ -28,6 +29,12 @@ class ApiServiceProvider extends ServiceProvider
      */
     public function register()
     {
+        $this->registerConfig();
+
+        if (!Config::get('streams.api.enabled')) {
+            return;
+        }
+
         Route::prefix('api')->middleware('api')->group(function () {
 
             Route::get('streams', [
@@ -94,8 +101,28 @@ class ApiServiceProvider extends ServiceProvider
             => public_path('vendor/streams/api')
         ], ['public']);
 
+        if (!Config::get('streams.api.enabled')) {
+            return;
+        }
+
         Assets::addPath('api', 'vendor/streams/api');
 
         Assets::register('api::js/index.js');
+    }
+
+    /**
+     * Register UI config.
+     */
+    protected function registerConfig()
+    {
+        $this->mergeConfigFrom(__DIR__ . '/../resources/config/api.php', 'streams.api');
+
+        if (file_exists($config = __DIR__ . '/../../../../config/streams/api.php')) {
+            $this->mergeConfigFrom($config, 'streams.api');
+        }
+
+        $this->publishes([
+            __DIR__ . '/../resources/config/api.php' => config_path('streams/api.php')
+        ], 'config');
     }
 }
