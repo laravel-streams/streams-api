@@ -101,13 +101,13 @@ class ApiServiceProvider extends ServiceProvider
             => public_path('vendor/streams/api')
         ], ['public']);
 
-        if (!Config::get('streams.api.enabled')) {
-            return;
-        }
-
         Assets::addPath('api', 'vendor/streams/api');
 
         Assets::register('api::js/index.js');
+
+        if (!Config::get('streams.api.enabled')) {
+            return;
+        }
     }
 
     /**
