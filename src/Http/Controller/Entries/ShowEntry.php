@@ -19,7 +19,14 @@ class ShowEntry extends Controller
      */
     public function __invoke($stream, $entry)
     {
-        $instance = Streams::repository($stream)->find($entry);
+        $parameters = array_merge_recursive(
+            ['where' => [['id', $entry]]],
+            (array) json_decode(Request::get('q'), true)
+        );
+
+        $instance = Streams::entries($stream)
+            ->setParameters($parameters)
+            ->first();
 
         return Response::json([
             'data' => $instance,
