@@ -17,7 +17,7 @@ class PatchStreamTest extends ApiControllerTest
     {
         parent::setUp();
 
-        $file = base_path('streams/api_test_stream.json');
+        $file = base_path('streams/api_test_patch_stream.json');
 
         if (!file_exists($file)) {
             file_put_contents($file, json_encode([
@@ -34,7 +34,7 @@ class PatchStreamTest extends ApiControllerTest
         $response = $this->callRouteAction([
             'name' => 'Patched!',
         ], [
-            'stream' => 'api_test_stream',
+            'stream' => 'api_test_patch_stream',
         ]);
 
         $response->assertStatus(200);
@@ -47,7 +47,7 @@ class PatchStreamTest extends ApiControllerTest
         $this->assertTrue(array_key_exists('meta', $content));
         $this->assertTrue(array_key_exists('links', $content));
 
-        $instance = Streams::entries('core.streams')->find('api_test_stream');
+        $instance = Streams::entries('core.streams')->find('api_test_patch_stream');
 
         $this->assertEquals('Patched!', $instance->name);
     }
@@ -57,7 +57,7 @@ class PatchStreamTest extends ApiControllerTest
         $response = $this->callRouteAction([
             'name' => '404!',
         ], [
-            'stream' => 'api_test_stream_test_404',
+            'stream' => 'api_test_patch_stream_test_404',
         ]);
 
         $response->assertStatus(404);
@@ -76,7 +76,7 @@ class PatchStreamTest extends ApiControllerTest
         Streams::load(base_path('vendor/streams/api/tests/examples.json'));
 
         $response = $this->callRouteAction([], [
-            'stream' => 'api_test_stream',
+            'stream' => 'api_test_patch_stream',
         ]);
 
         $response->assertStatus(400);
@@ -114,7 +114,7 @@ class PatchStreamTest extends ApiControllerTest
     {
         parent::tearDown();
 
-        $file = base_path('streams/api_test_stream.json');
+        $file = base_path('streams/api_test_patch_stream.json');
 
         if (file_exists($file)) {
             unlink($file);

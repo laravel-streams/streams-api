@@ -18,7 +18,7 @@ class CreateStreamTest extends ApiControllerTest
     {
         parent::setUp();
 
-        $file = base_path('streams/api_test_stream.json');
+        $file = base_path('streams/api_test_create_stream.json');
 
         if (file_exists($file)) {
             unlink($file);
@@ -28,7 +28,7 @@ class CreateStreamTest extends ApiControllerTest
     public function testResponseStructure()
     {
         $response = $this->callRouteAction([
-            'id' => 'api_test_stream',
+            'id' => 'api_test_create_stream',
             'name' => 'API Test Stream',
             'fields' => [
                 'date' => 'datetime',
@@ -81,7 +81,7 @@ class CreateStreamTest extends ApiControllerTest
     {
         parent::tearDown();
 
-        $file = base_path('streams/api_test_stream.json');
+        $file = base_path('streams/api_test_create_stream.json');
 
         if (file_exists($file)) {
             unlink($file);
