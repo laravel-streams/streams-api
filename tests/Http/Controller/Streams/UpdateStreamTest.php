@@ -1,40 +1,40 @@
 <?php
 
-namespace Streams\Api\Tests\Http\Controller\Entries;
+namespace Streams\Api\Tests\Http\Controller\Streams;
 
 use Streams\Core\Support\Facades\Streams;
 use Streams\Api\Tests\Http\Controller\ApiControllerTest;
 
-class PatchEntryTest extends ApiControllerTest
+class UpdateStreamTest extends ApiControllerTest
 {
 
     public function getRouteName(): string
     {
-        return 'ls.api.entries.patch';
+        return 'ls.api.streams.update';
     }
 
     public function setUp(): void
     {
         parent::setUp();
 
-        $file = base_path('vendor/streams/api/tests/data/examples/test_patch.json');
+        $file = base_path('streams/api_test_stream.json');
 
         if (!file_exists($file)) {
             file_put_contents($file, json_encode([
-                'name' => 'Patch Me!',
+                'name' => 'API Test Stream',
+                'fields' => [
+                    'date' => 'datetime',
+                ],
             ]));
         }
     }
 
     public function testResponseStructure()
     {
-        Streams::load(base_path('vendor/streams/api/tests/examples.json'));
-
         $response = $this->callRouteAction([
-            'name' => 'Patched!',
+            'name' => 'Updated!',
         ], [
-            'entry' => 'test_patch',
-            'stream' => 'testing.examples',
+            'stream' => 'api_test_stream',
         ]);
 
         $response->assertStatus(200);
@@ -47,20 +47,17 @@ class PatchEntryTest extends ApiControllerTest
         $this->assertTrue(array_key_exists('meta', $content));
         $this->assertTrue(array_key_exists('links', $content));
 
-        $entry = Streams::entries('testing.examples')->find('test_patch');
+        $instance = Streams::entries('core.streams')->find('api_test_stream');
 
-        $this->assertEquals('Patched!', $entry->name);
+        $this->assertEquals('Updated!', $instance->name);
     }
 
     public function test404ResponseStructure()
     {
-        Streams::load(base_path('vendor/streams/api/tests/examples.json'));
-
         $response = $this->callRouteAction([
-            'name' => '404!',
+            'name' => 'Updated!',
         ], [
-            'entry' => 'test_404',
-            'stream' => 'testing.examples',
+            'stream' => 'api_test_stream_test_404',
         ]);
 
         $response->assertStatus(404);
@@ -76,11 +73,8 @@ class PatchEntryTest extends ApiControllerTest
 
     public function test400ResponseStructure()
     {
-        Streams::load(base_path('vendor/streams/api/tests/examples.json'));
-
         $response = $this->callRouteAction([], [
-            'entry' => 'test_patch',
-            'stream' => 'testing.examples',
+            'stream' => 'api_test_stream',
         ]);
 
         $response->assertStatus(400);
@@ -94,33 +88,30 @@ class PatchEntryTest extends ApiControllerTest
         $this->assertTrue(array_key_exists('errors', $content));
     }
 
-    public function test409ResponseStructure()
-    {
-        Streams::load(base_path('vendor/streams/api/tests/examples.json'));
+    // public function test409ResponseStructure()
+    // {
+    //     $response = $this->callRouteAction([
+    //         'name' => 'Sm',
+    //     ], [
+    //         'stream' => 'api_test_stream',
+    //     ]);
 
-        $response = $this->callRouteAction([
-            'name' => 'Sm',
-        ], [
-            'entry' => 'test_patch',
-            'stream' => 'testing.examples',
-        ]);
+    //     $response->assertStatus(409);
 
-        $response->assertStatus(409);
+    //     $json = $response->getContent();
 
-        $json = $response->getContent();
+    //     $content = json_decode($json, true);
 
-        $content = json_decode($json, true);
-
-        $this->assertTrue(array_key_exists('data', $content));
-        $this->assertTrue(array_key_exists('meta', $content));
-        $this->assertTrue(array_key_exists('errors', $content));
-    }
+    //     $this->assertTrue(array_key_exists('data', $content));
+    //     $this->assertTrue(array_key_exists('meta', $content));
+    //     $this->assertTrue(array_key_exists('errors', $content));
+    // }
 
     public function tearDown(): void
     {
         parent::tearDown();
 
-        $file = base_path('vendor/streams/api/tests/data/examples/test_patch.json');
+        $file = base_path('streams/api_test_stream.json');
 
         if (file_exists($file)) {
             unlink($file);

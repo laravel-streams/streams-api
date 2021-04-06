@@ -1,38 +1,40 @@
 <?php
 
-namespace Streams\Api\Tests\Http\Controller\Entries;
+namespace Streams\Api\Tests\Http\Controller\Streams;
 
 use Streams\Core\Support\Facades\Streams;
 use Streams\Api\Tests\Http\Controller\ApiControllerTest;
 
-class DeleteEntryTest extends ApiControllerTest
+class DeleteStreamTest extends ApiControllerTest
 {
 
     public function getRouteName(): string
     {
-        return 'ls.api.entries.delete';
+        return 'ls.api.streams.delete';
     }
 
     public function setUp(): void
     {
         parent::setUp();
 
-        $file = base_path('vendor/streams/api/tests/data/examples/test_delete.json');
+        $file = base_path('streams/api_test_stream.json');
 
         if (!file_exists($file)) {
             file_put_contents($file, json_encode([
-                'name' => 'Delete Me!',
+                'name' => 'API Test Stream',
+                'fields' => [
+                    'date' => 'datetime',
+                ],
             ]));
         }
     }
 
     public function testResponseStructure()
     {
-        Streams::load(base_path('vendor/streams/api/tests/examples.json'));
+        Streams::load(base_path('streams/api_test_stream.json'));
 
         $response = $this->callRouteAction([], [
-            'entry' => 'test_delete',
-            'stream' => 'testing.examples',
+            'stream' => 'api_test_stream',
         ]);
 
         $response->assertStatus(204);
@@ -64,7 +66,7 @@ class DeleteEntryTest extends ApiControllerTest
     {
         parent::tearDown();
 
-        $file = base_path('vendor/streams/api/tests/data/examples/test_delete.json');
+        $file = base_path('streams/api_test_stream.json');
 
         if (file_exists($file)) {
             unlink($file);

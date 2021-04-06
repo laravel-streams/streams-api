@@ -1,23 +1,24 @@
 <?php
 
-namespace Streams\Api\Tests\Http\Controller\Entries;
+namespace Streams\Api\Tests\Http\Controller\Streams;
 
+use Streams\Core\Stream\Stream;
 use Streams\Core\Support\Facades\Streams;
 use Streams\Api\Tests\Http\Controller\ApiControllerTest;
 
-class CreateEntryTest extends ApiControllerTest
+class CreateStreamTest extends ApiControllerTest
 {
 
     public function getRouteName(): string
     {
-        return 'ls.api.entries.create';
+        return 'ls.api.streams.create';
     }
 
     public function setUp(): void
     {
         parent::setUp();
 
-        $file = base_path('vendor/streams/api/tests/data/examples/test_create.json');
+        $file = base_path('streams/api_test_stream.json');
 
         if (file_exists($file)) {
             unlink($file);
@@ -26,13 +27,12 @@ class CreateEntryTest extends ApiControllerTest
 
     public function testResponseStructure()
     {
-        Streams::load(base_path('vendor/streams/api/tests/examples.json'));
-
         $response = $this->callRouteAction([
-            'id' => 'test_create',
-            'name' => 'Test Create',
-        ], [
-            'stream' => 'testing.examples',
+            'id' => 'api_test_stream',
+            'name' => 'API Test Stream',
+            'fields' => [
+                'date' => 'datetime',
+            ],
         ]);
 
         $response->assertStatus(201);
@@ -49,11 +49,7 @@ class CreateEntryTest extends ApiControllerTest
 
     public function test400ResponseStructure()
     {
-        Streams::load(base_path('vendor/streams/api/tests/examples.json'));
-
-        $response = $this->callRouteAction([], [
-            'stream' => 'testing.examples',
-        ]);
+        $response = $this->callRouteAction([]);
 
         $response->assertStatus(400);
 
@@ -67,13 +63,8 @@ class CreateEntryTest extends ApiControllerTest
 
     public function test409ResponseStructure()
     {
-        Streams::load(base_path('vendor/streams/api/tests/examples.json'));
-
         $response = $this->callRouteAction([
-            'id' => 'test_create',
-            'name' => 'Sm',
-        ], [
-            'stream' => 'testing.examples',
+            'name' => 'API Test Stream',
         ]);
 
         $response->assertStatus(409);
@@ -90,7 +81,7 @@ class CreateEntryTest extends ApiControllerTest
     {
         parent::tearDown();
 
-        $file = base_path('vendor/streams/api/tests/data/examples/test_create.json');
+        $file = base_path('streams/api_test_stream.json');
 
         if (file_exists($file)) {
             unlink($file);

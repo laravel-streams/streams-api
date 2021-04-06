@@ -21,16 +21,32 @@ class PatchEntry extends Controller
     public function __invoke($stream, $entry)
     {
         $errors = null;
-        $headers = [];
-
         $status = 200;
 
-        if (!$entry = Streams::entries($stream)->find($entry)) {
-            abort(404);
+        if (!$entry = Streams::entries($stream)->find($original = $entry)) {
+            return Response::json([
+                'data' => $entry,
+                'meta' => [
+                    'stream' => $stream,
+                    'input' => Request::input(),
+                ],
+                'errors' => [
+                    "Entry [{$original}] not found.",
+                ],
+            ], 404);
         }
 
         if (!$input = Request::all()) {
-            abort(422);
+            return Response::json([
+                'data' => $entry,
+                'meta' => [
+                    'stream' => $stream,
+                    'input' => Request::input(),
+                ],
+                'errors' => [
+                    "Invalid (empty) input.",
+                ],
+            ], 400);
         }
 
         $entry->fill($input);
@@ -40,7 +56,10 @@ class PatchEntry extends Controller
         if ($validator->passes()) {
             $entry->save();
         } else {
+            
             $errors = $validator->messages();
+
+            $status = 409;
         }
 
         return Response::json([
@@ -50,10 +69,9 @@ class PatchEntry extends Controller
                 'input' => Request::input(),
             ],
             'links' => [
-                'self' => Arr::get($headers, 'location'),
                 'index' => URL::route('ls.api.entries.index', ['stream' => $stream]),
             ],
             'errors' => $errors,
-        ], $status, $headers);
+        ], $status);
     }
 }

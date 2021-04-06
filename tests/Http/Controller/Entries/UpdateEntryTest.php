@@ -52,6 +52,70 @@ class UpdateEntryTest extends ApiControllerTest
         $this->assertEquals('Updated!', $entry->name);
     }
 
+    public function test404ResponseStructure()
+    {
+        Streams::load(base_path('vendor/streams/api/tests/examples.json'));
+
+        $response = $this->callRouteAction([
+            'name' => 'Updated!',
+        ], [
+            'entry' => 'test_404',
+            'stream' => 'testing.examples',
+        ]);
+
+        $response->assertStatus(404);
+
+        $json = $response->getContent();
+
+        $content = json_decode($json, true);
+
+        $this->assertTrue(array_key_exists('data', $content));
+        $this->assertTrue(array_key_exists('meta', $content));
+        $this->assertTrue(array_key_exists('errors', $content));
+    }
+
+    public function test400ResponseStructure()
+    {
+        Streams::load(base_path('vendor/streams/api/tests/examples.json'));
+
+        $response = $this->callRouteAction([], [
+            'entry' => 'test_update',
+            'stream' => 'testing.examples',
+        ]);
+
+        $response->assertStatus(400);
+
+        $json = $response->getContent();
+
+        $content = json_decode($json, true);
+
+        $this->assertTrue(array_key_exists('data', $content));
+        $this->assertTrue(array_key_exists('meta', $content));
+        $this->assertTrue(array_key_exists('errors', $content));
+    }
+
+    public function test409ResponseStructure()
+    {
+        Streams::load(base_path('vendor/streams/api/tests/examples.json'));
+
+        $response = $this->callRouteAction([
+            'name' => 'Sm',
+        ], [
+            'entry' => 'test_update',
+            'stream' => 'testing.examples',
+        ]);
+
+        $response->assertStatus(409);
+
+        $json = $response->getContent();
+
+        $content = json_decode($json, true);
+
+        $this->assertTrue(array_key_exists('data', $content));
+        $this->assertTrue(array_key_exists('meta', $content));
+        $this->assertTrue(array_key_exists('errors', $content));
+    }
+
     public function tearDown(): void
     {
         parent::tearDown();

@@ -42,7 +42,6 @@ abstract class ApiTestCase extends TestCase
         return $this;
     }
 
-
     /**
      * @return Route
      */

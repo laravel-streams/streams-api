@@ -27,7 +27,16 @@ class CreateEntry extends Controller
         $status = 201;
 
         if (!$input = Request::all()) {
-            $status = 422;
+            return Response::json([
+                'data' => $entry,
+                'meta' => [
+                    'stream' => $stream,
+                    'input' => Request::input(),
+                ],
+                'errors' => [
+                    "Invalid (empty) input.",
+                ],
+            ], 400, $headers);
         }
 
         $validator = Streams::make($stream)->validator($input);

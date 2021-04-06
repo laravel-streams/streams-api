@@ -32,13 +32,4 @@ class ShowEntryTest extends ApiControllerTest
         $this->assertTrue(array_key_exists('meta', $content));
         $this->assertTrue(array_key_exists('links', $content));
     }
-
-    public function tearDown(): void
-    {
-        parent::tearDown();
-
-        if (file_exists($file = base_path('streams/testing.examples.json'))) {
-            unlink($file);
-        }
-    }
 }
