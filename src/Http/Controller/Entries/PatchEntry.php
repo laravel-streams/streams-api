@@ -20,7 +20,6 @@ class PatchEntry extends Controller
      */
     public function __invoke($stream, $entry)
     {
-        $entry = null;
         $errors = null;
         $headers = [];
 

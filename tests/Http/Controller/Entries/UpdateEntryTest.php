@@ -5,23 +5,23 @@ namespace Streams\Api\Tests\Http\Controller\Entries;
 use Streams\Core\Support\Facades\Streams;
 use Streams\Api\Tests\Http\Controller\ApiControllerTest;
 
-class PatchEntryTest extends ApiControllerTest
+class UpdateEntryTest extends ApiControllerTest
 {
 
     public function getRouteName(): string
     {
-        return 'ls.api.entries.patch';
+        return 'ls.api.entries.update';
     }
 
     public function setUp(): void
     {
         parent::setUp();
 
-        $file = base_path('vendor/streams/api/tests/data/examples/test_patch.json');
+        $file = base_path('vendor/streams/api/tests/data/examples/test_update.json');
 
         if (!file_exists($file)) {
             file_put_contents($file, json_encode([
-                'name' => 'Patch Me!',
+                'name' => 'Update Me!',
             ]));
         }
     }
@@ -31,9 +31,9 @@ class PatchEntryTest extends ApiControllerTest
         Streams::load(base_path('vendor/streams/api/tests/examples.json'));
 
         $response = $this->callRouteAction([
-            'name' => 'Patched!',
+            'name' => 'Updated!',
         ], [
-            'entry' => 'test_patch',
+            'entry' => 'test_update',
             'stream' => 'testing.examples',
         ]);
 
@@ -47,16 +47,16 @@ class PatchEntryTest extends ApiControllerTest
         $this->assertTrue(array_key_exists('meta', $content));
         $this->assertTrue(array_key_exists('links', $content));
 
-        $entry = Streams::entries('testing.examples')->find('test_patch');
+        $entry = Streams::entries('testing.examples')->find('test_update');
 
-        $this->assertEquals('Patched!', $entry->name);
+        $this->assertEquals('Updated!', $entry->name);
     }
 
     public function tearDown(): void
     {
         parent::tearDown();
 
-        $file = base_path('vendor/streams/api/tests/data/examples/test_patch.json');
+        $file = base_path('vendor/streams/api/tests/data/examples/test_update.json');
 
         if (file_exists($file)) {
             unlink($file);
