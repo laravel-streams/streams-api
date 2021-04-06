@@ -35,7 +35,7 @@ class DeleteEntryTest extends ApiControllerTest
             'stream' => 'testing.examples',
         ]);
 
-        $response->assertStatus(200);
+        $response->assertStatus(204);
 
         //$json = $response->getContent();
 

@@ -22,6 +22,6 @@ class DeleteStream extends Controller
 
         Streams::repository('streams')->delete($stream->id);
 
-        return Response::json([]);
+        return Response::json([], 204);
     }
 }
