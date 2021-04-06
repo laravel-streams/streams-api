@@ -13,6 +13,11 @@
             "Streams\\Api\\": "src/"
         }
     },
+    "autoload-dev": {
+        "psr-4": {
+            "Streams\\Api\\Tests\\": "tests/"
+        }
+    },
     "config": {
         "bin-dir": "bin"
     },

@@ -42,7 +42,9 @@ class CreateEntry extends Controller
             ]);
         }
 
-        if ($messages = $validator->messages()) {
+        $messages = $validator->messages();
+
+        if ($messages->isNotEmpty()) {
 
             $status = 409;
 

@@ -23,8 +23,6 @@ class DeleteEntry extends Controller
 
         $entry->delete();
 
-        return Response::json([
-            //'data' => $entry,
-        ]);
+        return Response::json([]);
     }
 }

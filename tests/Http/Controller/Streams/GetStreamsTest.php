@@ -2,9 +2,6 @@
 
 namespace Streams\Api\Tests\Http\Controller\Streams;
 
-use Streams\Core\Stream\Stream;
-use Illuminate\Support\Collection;
-use Streams\Core\Support\Facades\Streams;
 use Streams\Api\Tests\Http\Controller\ApiControllerTest;
 
 class GetStreamsTest extends ApiControllerTest
