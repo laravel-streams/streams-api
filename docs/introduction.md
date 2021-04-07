@@ -11,8 +11,6 @@ The Streams API provides a full featured and extensible RESTful API. The API pro
 
 This package can serve as the primary API, supplement an exisinting API, or add an additional API to a project. 
 
-## Quick Start
-
 ### [Installation](installation)
 
 ```bash
