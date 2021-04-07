@@ -49,7 +49,7 @@ class PatchEntry extends Controller
             ], 400);
         }
 
-        $entry->setAttributes($input);
+        $entry->fill($input);
 
         $validator = $entry->validator();
 

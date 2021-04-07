@@ -48,7 +48,7 @@ class UpdateStream extends Controller
         // Not allowed.
         $input['id'] = $instance->id;
 
-        $instance->loadPrototypeAttributes($input);
+        $instance->setAttributes($input);
 
         $validator = Streams::make('core.streams')->validator($instance);
 
