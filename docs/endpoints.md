@@ -7,7 +7,7 @@ enabled: true
 
 ## Entries
 
-### Index
+### List
 
 Return entries within a configured stream.
 
@@ -70,7 +70,7 @@ Return a single entry.
 }
 ```
 
-### Updating
+### Update
 
 To update select values of an entry, use **patch**.
 
@@ -100,7 +100,7 @@ Return result:
 }
 ```
 
-### Deleting
+### Delete
 
 Deletes an entry.
 
@@ -118,7 +118,7 @@ Deletes an entry.
 
 ## Streams
 
-### Index
+### List
 
 Return configured streams.
 
@@ -178,7 +178,7 @@ Return a single stream.
 }
 ```
 
-### Updating
+### Update
 
 To update select values of a stream, use **patch**.
 
@@ -208,7 +208,7 @@ Return result:
 }
 ```
 
-### Deleting
+### Delete
 
 Deletes an stream.
 
