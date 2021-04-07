@@ -54,7 +54,7 @@ class UpdateEntry extends Controller
         // Not allowed.
         $input['id'] = $entry->id;
 
-        $entry->setAttributes($input);
+        $entry->fill($input);
 
         $validator = Streams::make($stream)->validator($entry);
 

@@ -47,7 +47,7 @@ class PatchStream extends Controller
             ], 400);
         }
 
-        $instance->loadPrototypeAttributes($input);
+        $instance->setPrototypeAttributes($input);
 
         $validator = Streams::make('core.streams')->validator($instance);
 
