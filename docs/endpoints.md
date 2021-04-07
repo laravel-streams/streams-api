@@ -72,11 +72,11 @@ Return a single entry.
 
 ### Update
 
-To update select values of an entry, use **patch**.
+To replace the entry attributes entirely, use **patch**.
 
 `PATCH` `/api/streams/{stream}/entries/{entry}`
 
-To replace the entry attributes entirely, use **put**.
+To update select values of an entry, use **put**.
 
 `PUT` `/api/streams/{stream}/entries/{entry}`
 
@@ -180,11 +180,11 @@ Return a single stream.
 
 ### Update
 
-To update select values of a stream, use **patch**.
+To replace the attributes entirely, use **patch**.
 
 `PATCH` `/api/streams/{stream}`
 
-To replace the attributes entirely, use **put**.
+To update select values of a stream, use **put**.
 
 `PUT` `/api/streams/{stream}`
 
