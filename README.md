@@ -1,6 +1,6 @@
 # Streams API
 
-A full-featured API package for the Streams platform.
+A full-featured API package for the Streams platform that gives you total control.
 
 ## [Documentation](https://streams.dev/docs/api/introduction)
 
