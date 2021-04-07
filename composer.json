@@ -1,6 +1,6 @@
 {
     "name": "streams/api",
-    "description": "The official REST API package for Streams.",
+    "description": "A RESTful API for Laravel Streams.",
     "type": "streams-addon",
     "authors": [
         {
@@ -8,6 +8,9 @@
             "email": "ryan@pyrocms.com"
         }
     ],
+    "require": {
+        "streams/core": "^2.0"
+    },
     "autoload": {
         "psr-4": {
             "Streams\\Api\\": "src/"
@@ -17,9 +20,6 @@
         "psr-4": {
             "Streams\\Api\\Tests\\": "tests/"
         }
-    },
-    "config": {
-        "bin-dir": "bin"
     },
     "extra": {
         "branch-alias": {
