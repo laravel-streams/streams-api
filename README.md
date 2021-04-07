@@ -2,6 +2,10 @@
 
 A full-featured API package for the Streams platform.
 
+## [Documentation](https://streams.dev/docs/api/introduction)
+
+This project is documented at [streams.dev](https://streams.dev/docs/api/introduction).
+
 ## [Installation](https://streams.dev/docs/api/installation)
 
 ```bash
@@ -34,7 +38,3 @@ DELETE /api/streams/{stream}/entries/{entry}
 ?q={"where": [["id", "LIKE", "%doc%"]]}
 ?q={"orderBy": [["name", "asc"]]}
 ```
-
-## [Documentation](https://streams.dev/docs/api/introduction)
-
-This project is documented at [https://streams.dev/docs/api/introduction](https://streams.dev/docs/api/introduction)
