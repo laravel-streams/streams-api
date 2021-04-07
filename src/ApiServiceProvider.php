@@ -58,7 +58,7 @@ class ApiServiceProvider extends ServiceProvider
     }
 
     /**
-     * Register UI config.
+     * Register API config.
      */
     protected function registerConfig()
     {
@@ -79,7 +79,7 @@ class ApiServiceProvider extends ServiceProvider
     protected function registerRoutes()
     {
         Route::prefix(Config::get('streams.api.prefix', 'api'))
-            ->middleware('api')
+            ->middleware(Config::get('streams.api.middleware', 'api'))
             ->group(function () {
 
                 /**

@@ -70,6 +70,7 @@ class CreateStream extends Controller
         return Response::json([
             'data' => $instance,
             'meta' => [
+                'parameters' => Request::route()->parameters(),
                 'input' => Request::input(),
             ],
             'links' => [

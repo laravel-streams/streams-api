@@ -26,6 +26,7 @@ class GetEntries extends Controller
         return Response::json([
             'data' => $paginator->getCollection()->toArray(),
             'meta' => [
+                'parameters' => Request::route()->parameters(),
                 'query' => array_merge(Request::query(), ['q' => $parameters]),
                 'total' => $paginator->total(),
                 'per_page' => $paginator->perPage(),

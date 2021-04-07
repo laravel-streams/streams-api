@@ -21,6 +21,7 @@ class DeleteStream extends Controller
             return Response::json([
                 'data' => $stream,
                 'meta' => [
+                    'parameters' => Request::route()->parameters(),
                     'input' => Request::input(),
                 ],
                 'errors' => [

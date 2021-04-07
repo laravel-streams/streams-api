@@ -7,7 +7,7 @@ enabled: true
 
 ## Entries
 
-### Read
+### Index
 
 Return entries within a configured stream.
 
@@ -52,9 +52,7 @@ Return result:
 }
 ```
 
-## Entry 
-
-### Read
+### Show
 
 Return a single entry.
 
@@ -120,7 +118,7 @@ Deletes an entry.
 
 ## Streams
 
-### Read
+### Index
 
 Return configured streams.
 
@@ -162,9 +160,7 @@ Return result:
 }
 ```
 
-## Stream 
-
-### Read
+### Show
 
 Return a single stream.
 

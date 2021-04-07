@@ -23,6 +23,7 @@ class UpdateStream extends Controller
             return Response::json([
                 'data' => $instance,
                 'meta' => [
+                    'parameters' => Request::route()->parameters(),
                     'input' => Request::input(),
                 ],
                 'errors' => [
@@ -35,6 +36,7 @@ class UpdateStream extends Controller
             return Response::json([
                 'data' => $instance,
                 'meta' => [
+                    'parameters' => Request::route()->parameters(),
                     'input' => Request::input(),
                 ],
                 'errors' => [
@@ -62,6 +64,7 @@ class UpdateStream extends Controller
         return Response::json([
             'data' => $instance,
             'meta' => [
+                'parameters' => Request::route()->parameters(),
                 'input' => Request::input(),
             ],
             'links' => [

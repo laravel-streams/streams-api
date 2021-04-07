@@ -2,13 +2,13 @@
 
 namespace Streams\Api\Http\Controller\Entries;
 
-use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\Response;
 use Streams\Core\Support\Facades\Streams;
+use Streams\Api\Http\Controller\ApiController;
 
-class ShowEntry extends Controller
+class ShowEntry extends ApiController
 {
 
     /**
@@ -28,11 +28,14 @@ class ShowEntry extends Controller
             ->setParameters($parameters)
             ->first();
 
+        if ($response = $this->authorizeActionAbility('view', $stream, $instance)) {
+            return $response;
+        }
+
         return Response::json([
             'data' => $instance,
             'meta' => [
-                'entry' => $entry,
-                'stream' => $stream,
+                'parameters' => Request::route()->parameters(),
                 'query' => Request::query(),
             ],
             'links' => [

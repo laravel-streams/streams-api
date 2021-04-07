@@ -25,6 +25,7 @@ class GetStreams extends Controller
         return Response::json([
             'data' => $paginator->getCollection()->toArray(),
             'meta' => [
+                'parameters' => Request::route()->parameters(),
                 'query' => Request::query(),
                 'total' => $paginator->total(),
                 'per_page' => $paginator->perPage(),

@@ -25,6 +25,7 @@ class PatchStream extends Controller
             return Response::json([
                 'data' => $instance,
                 'meta' => [
+                    'parameters' => Request::route()->parameters(),
                     'input' => Request::input(),
                 ],
                 'errors' => [
@@ -37,6 +38,7 @@ class PatchStream extends Controller
             return Response::json([
                 'data' => $instance,
                 'meta' => [
+                    'parameters' => Request::route()->parameters(),
                     'input' => Request::input(),
                 ],
                 'errors' => [
@@ -61,6 +63,7 @@ class PatchStream extends Controller
         return Response::json([
             'data' => $instance,
             'meta' => [
+                'parameters' => Request::route()->parameters(),
                 'input' => Request::input(),
             ],
             'links' => [

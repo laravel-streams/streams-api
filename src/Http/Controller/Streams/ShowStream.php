@@ -23,6 +23,7 @@ class ShowStream extends Controller
         return Response::json([
             'data' => $instance,
             'meta' => [
+                'parameters' => Request::route()->parameters(),
                 'query' => Request::query(),
             ],
             'links' => [

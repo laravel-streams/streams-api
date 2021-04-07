@@ -65,7 +65,7 @@ class PatchEntry extends Controller
         return Response::json([
             'data' => $entry,
             'meta' => [
-                'stream' => $stream,
+                'parameters' => Request::route()->parameters(),
                 'input' => Request::input(),
             ],
             'links' => [
