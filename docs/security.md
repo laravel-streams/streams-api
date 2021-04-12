@@ -6,7 +6,9 @@ stage: outlining
 enabled: true
 ---
 
-[Configuring middleware](configuration#api-middleware) is indeed up to you, but we make it easy to protect your API.
+## Introduction
+
+In addition to the below options we suggest [configuring middleware](configuration#api-middleware) for the API.
 
 ## Authorization
 
