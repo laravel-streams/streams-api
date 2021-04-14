@@ -1,7 +1,7 @@
 ---
 title: Streams API
 link_title: Introduction
-intro: A robust API for interacting with steams and entry data.
+intro: A robust API for interacting with streams and entry data.
 enabled: true
 ---
 
