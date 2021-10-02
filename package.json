@@ -2,6 +2,9 @@
     "name": "@laravel-streams/api",
     "version": "1.0.0",
     "private": false,
+    "publishConfig": {
+        "access": "public"
+    },
     "types": "resources/public/js/types/index.d.ts",
     "main": "resources/public/js/index.js",
     "scripts": {
@@ -15,31 +18,8 @@
         "clean": "rimraf resources/lib/**/*.d.ts public/js",
         "test": "mocha"
     },
-    "nyc": {
-        "check-coverage": true,
-        "lines": 80,
-        "statements": 80,
-        "functions": 80,
-        "branches": 80,
-        "include": [
-            "resources/lib/**/*.ts"
-        ],
-        "exclude": [
-            "test/**/*.ts"
-        ],
-        "reporter": [
-            "lcov",
-            "text-summary"
-        ],
-        "all": true
-    },
     "dependencies": {
-        "@types/debug": "^4.1.7",
-        "axios": "^0.21.4",
-        "debug": "^4.3.2",
-        "eventemitter2": "^6.4.4",
-        "inversify": "^5.1.1",
-        "inversify-inject-decorators": "^3.1.0",
+        "@laravel-streams/core": "file:../core",
         "reflect-metadata": "^0.1.13"
     },
     "devDependencies": {
@@ -60,8 +40,6 @@
         "laravel-mix": "^6.0",
         "lodash": "^4.17",
         "mocha": "^9.1.2",
-        "nyc": "^15.1.0",
-        "postcss": "^8.1",
         "rimraf": "^3.0.2",
         "should": "^13.2.3",
         "should-sinon": "^0.0.6",
@@ -71,8 +49,7 @@
         "ts-loader": "^8.0.13",
         "ts-node": "^10.2.1",
         "tsconfig-paths": "^3.11.0",
-        "typescript": "^4.4.3",
-        "webpack-merge": "^5.8.0"
+        "typescript": "^4.4.3"
     },
     "peerDependencies": {
         "webpack": "^5.54.0"

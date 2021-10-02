@@ -1,12 +1,12 @@
 import Axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse, AxiosStatic, CancelTokenSource } from 'axios';
-import { injectable, postConstruct } from 'inversify';
-import { inject } from '@/Foundation';
-import { IBaseStream, Config, IStreamResponse } from '@/types';
+import { IBaseStream, IStreamResponse } from '@/types';
+import { Config, inject, injectable, postConstruct } from '@laravel-streams/core';
+import { Repository } from '@laravel-streams/core';
 
 @injectable()
 export class Http {
     @inject('axios') Axios: AxiosStatic;
-    @inject('config') config: Config;
+    @inject('config') config:Repository<Config>&Config;
     protected cancelTokenSource: CancelTokenSource;
     protected axios: AxiosInstance;
 
@@ -15,9 +15,9 @@ export class Http {
         return this.get('/streams', config);
     }
 
-    async postStream<T>(data:T, config: AxiosRequestConfig = {}):Promise<IStreamResponse<T>> {
+    async postStream<T>(data: T, config: AxiosRequestConfig = {}): Promise<IStreamResponse<T>> {
         config.data = data;
-        return this.post<T>('/streams', data,config);
+        return this.post<T>('/streams', data, config);
     }
 
     async getStream<ID extends string>(stream: ID, params: any = {}, config: AxiosRequestConfig = {}) {
@@ -46,7 +46,7 @@ export class Http {
 
     async postEntry<ID extends string>(stream: ID, data: any = {}, config: AxiosRequestConfig = {}) {
         config.data = data;
-        return this.post<any>(`/streams/${stream}/entries`,data, config);
+        return this.post<any>(`/streams/${stream}/entries`, data, config);
     }
 
 
@@ -91,20 +91,20 @@ export class Http {
         this.cancelTokenSource           = Axios.CancelToken.source();
         const config: AxiosRequestConfig = {
             baseURL: '/api',
-            params: {},
+            params : {},
             ...this.config.http,
             headers: {
                 'X-Requested-With': 'XMLHttpRequest',
                 ...(this.config.http && this.config.http.headers ? this.config.http.headers : {}),
-            }
+            },
         };
-        let streams                      = this.config.get<any>('streams');
+        let streams                      = this.config.get('streams');
         if ( streams?.cache?.enabled ) {
 
         }
-        if(streams?.xdebug){
-            config.headers['Cookie'] = 'XDEBUG_SESSION=start'
-            config.params['XDEBUG_SESSION']='PHPSTORM';
+        if ( streams?.xdebug ) {
+            config.headers[ 'Cookie' ]        = 'XDEBUG_SESSION=start';
+            config.params[ 'XDEBUG_SESSION' ] = 'PHPSTORM';
         }
         if ( streams?.authentication ) {
             const { type, basic, token } = streams.authentication;

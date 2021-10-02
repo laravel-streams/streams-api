@@ -1,5 +1,5 @@
 import { Entry } from './Entry';
-import { Collection } from '@/Support';
+import { Collection } from '@laravel-streams/core';
 import { IStreamLinks, IStreamMeta } from '@/types';
 
 

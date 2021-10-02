@@ -1,8 +1,5 @@
 import { Stream } from './Stream';
-import { injectable } from 'inversify';
-import { inject } from '@/Foundation';
-import { Config } from '../types/config';
-import { streams } from '../types/streams';
+import { Config, injectable,inject } from '@laravel-streams/core';
 import { Http } from '@/Streams/Http';
 
 @injectable()
@@ -11,13 +8,13 @@ export class Streams {
     @inject('streams.http') http: Http;
 
     public async all(): Promise<Stream[]> {
-        const data = await this.http.getStreams()
-        return data.data.map(data => new Stream(data))
+        const data = await this.http.getStreams();
+        return data.data.map(data => new Stream(data));
     }
 
     public async make<ID extends string>(id: ID): Promise<Stream<ID>> {
-        const data = await this.http.getStream(id)
-        return new Stream(data.data,data.meta,data.links);
+        const data = await this.http.getStream(id);
+        return new Stream(data.data, data.meta, data.links);
     }
 
     public merge() {}

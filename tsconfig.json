@@ -14,6 +14,7 @@
         "noImplicitReturns": false,
         "noImplicitThis": false,
         "noImplicitUseStrict": false,
+        "emitDeclarationOnly": true,
         "declaration": true,
         "declarationDir": "resources/public/types",
         "baseUrl": ".",
@@ -31,8 +32,7 @@
         }
     },
     "include": [
-        "resources/lib",
-        "test"
+        "resources/lib"
     ],
     "exclude": [
         "node_modules"

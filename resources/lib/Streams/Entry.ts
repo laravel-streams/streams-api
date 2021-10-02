@@ -1,5 +1,5 @@
 import { Stream } from '@/Streams/Stream';
-import { inject } from '@/Foundation';
+import { inject } from '@laravel-streams/core';
 import { Http } from '@/Streams/Http';
 
 export interface Entry<ID extends string = string> {

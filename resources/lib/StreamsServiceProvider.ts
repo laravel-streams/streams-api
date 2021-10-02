@@ -1,6 +1,6 @@
-import { ServiceProvider } from '@/Support';
+import { ServiceProvider } from '@laravel-streams/core/resources/lib/Support';
 import { Streams } from '@/Streams/Streams';
-import { HttpServiceProvider } from '@/Http/HttpServiceProvider';
+import { HttpServiceProvider } from '@laravel-streams/core/resources/lib/Http/HttpServiceProvider';
 import Axios, { AxiosRequestConfig } from 'axios';
 import { Http } from '@/Streams/Http';
 import { Stream } from '@/Streams/Stream';

@@ -8,6 +8,5 @@ export * from './FieldCollection';
 export * from './Repository';
 export * from './Stream';
 export * from './Streams';
-export * from './StreamsServiceProvider';
 
 export default Stream;

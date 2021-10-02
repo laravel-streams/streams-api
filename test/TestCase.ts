@@ -1,5 +1,6 @@
 import { bootstrap } from './_support/bootstrap';
-import { app, HttpServiceProvider, Streams, StreamsServiceProvider } from '../resources/lib';
+import {app, HttpServiceProvider } from '@laravel-streams/core'
+import { Streams, StreamsServiceProvider } from '../resources/lib';
 import { Http } from '@/Streams/Http';
 import { FS, getEnv, ProxyEnv } from './_support/utils';
 

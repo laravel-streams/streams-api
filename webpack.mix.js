@@ -1,6 +1,5 @@
 const mix = require('laravel-mix');
 const path = require('path');
-const {merge} = require('webpack-merge');
 
 
 let isProd = mix.inProduction();
@@ -25,7 +24,7 @@ const babelConfig = {
 
 mix
     .ts('resources/lib/index.ts', '')
-    .copyDirectory('resources/public', '../../../public/vendor/streams/core')
+    .copyDirectory('resources/public', '../../../public/vendor/streams/api')
     .babelConfig(babelConfig)
     .options({
         terser: {
@@ -46,8 +45,8 @@ mix
             path                                 : path.resolve('./resources/public'),
             filename                             : 'js/[name].js',
             chunkFilename                        : 'js/chunk.[name].js',
-            library                              : ['streams', 'core'],
-            publicPath                           : '/vendor/streams/core/',
+            library                              : ['streams', 'api'],
+            publicPath                           : '/vendor/streams/api/',
             libraryTarget                        : 'window',
             devtoolFallbackModuleFilenameTemplate: 'webpack:///[resource-path]?[hash]',
             devtoolModuleFilenameTemplate        : info => {
@@ -79,6 +78,8 @@ mix
                     compilerOptions      : {
                         target        : 'es6',
                         module        : 'esnext',
+                        emitDeclarationOnly: false,
+
                         declaration   : true,
                         importHelpers : true,
                         sourceMap     : isDev,
