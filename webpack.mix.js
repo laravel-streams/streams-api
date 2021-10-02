@@ -39,7 +39,10 @@ mix
         resolve: {
             alias: {
                 '@': path.resolve(__dirname, 'resources/lib')
-            }
+            },
+        },
+        externals: {
+            '@laravel-streams/core': ['streams','core']
         },
         output : {
             path                                 : path.resolve('./resources/public'),

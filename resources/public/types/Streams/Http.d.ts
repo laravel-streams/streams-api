@@ -1,0 +1,31 @@
+import { AxiosInstance, AxiosRequestConfig, AxiosStatic, CancelTokenSource } from 'axios';
+import { IBaseStream, IStreamResponse } from '@/types';
+import { Config } from '@laravel-streams/core';
+export declare class Http {
+    Axios: AxiosStatic;
+    config: Config;
+    protected cancelTokenSource: CancelTokenSource;
+    protected axios: AxiosInstance;
+    getStreams(params?: any, config?: AxiosRequestConfig): Promise<IStreamResponse<any, "entries" | "self">>;
+    postStream<T>(data: T, config?: AxiosRequestConfig): Promise<IStreamResponse<T>>;
+    getStream<ID extends string>(stream: ID, params?: any, config?: AxiosRequestConfig): Promise<IStreamResponse<IBaseStream<ID>, "entries" | "self">>;
+    patchStream<ID extends string>(stream: ID, params?: any, config?: AxiosRequestConfig): Promise<IStreamResponse<IBaseStream<ID>, "entries" | "self">>;
+    putStream<ID extends string>(stream: ID, params?: any, config?: AxiosRequestConfig): Promise<IStreamResponse<IBaseStream<ID>, "entries" | "self">>;
+    deleteStream<ID extends string>(stream: ID, config?: AxiosRequestConfig): Promise<IStreamResponse<IBaseStream<ID>, "entries" | "self">>;
+    getEntries<ID extends string>(stream: ID, params?: any, config?: AxiosRequestConfig): Promise<IStreamResponse<any[], "entries" | "self">>;
+    postEntry<ID extends string>(stream: ID, data?: any, config?: AxiosRequestConfig): Promise<IStreamResponse<any, "entries" | "self">>;
+    getEntry<ID extends string, EID extends string>(stream: ID, entry: EID, config?: AxiosRequestConfig): Promise<IStreamResponse<any, "entries" | "self">>;
+    patchEntry<ID extends string, EID extends string>(stream: ID, entry: EID, data?: any, config?: AxiosRequestConfig): Promise<IStreamResponse<any, "entries" | "self">>;
+    putEntry<ID extends string, EID extends string>(stream: ID, entry: EID, data?: any, config?: AxiosRequestConfig): Promise<IStreamResponse<any, "entries" | "self">>;
+    deleteEntry<ID extends string, EID extends string>(stream: ID, entry: EID, config?: AxiosRequestConfig): Promise<IStreamResponse<any, "entries" | "self">>;
+    getUri(config?: AxiosRequestConfig): string;
+    get<T = any, R = IStreamResponse<T>>(url: string, config?: AxiosRequestConfig): Promise<R>;
+    delete<T = any, R = IStreamResponse<T>>(url: string, config?: AxiosRequestConfig): Promise<R>;
+    head<T = any, R = IStreamResponse<T>>(url: string, config?: AxiosRequestConfig): Promise<R>;
+    options<T = any, R = IStreamResponse<T>>(url: string, config?: AxiosRequestConfig): Promise<R>;
+    post<T = any, R = IStreamResponse<T>>(url: string, data?: any, config?: AxiosRequestConfig): Promise<R>;
+    put<T = any, R = IStreamResponse<T>>(url: string, data?: any, config?: AxiosRequestConfig): Promise<R>;
+    patch<T = any, R = IStreamResponse<T>>(url: string, data?: any, config?: AxiosRequestConfig): Promise<R>;
+    protected constructed(): void;
+    request<T = any, R = IStreamResponse<T>>(config: AxiosRequestConfig): Promise<R>;
+}
