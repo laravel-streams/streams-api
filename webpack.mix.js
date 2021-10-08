@@ -4,6 +4,7 @@ const path = require('path');
 
 let isProd = mix.inProduction();
 let isDev = !mix.inProduction();
+
 const babelConfig = {
     babelrc   : false,
     configFile: false,
@@ -42,7 +43,7 @@ mix
             },
         },
         externals: {
-            '@laravel-streams/core': ['streams','core']
+            '@laravel-streams/core': ['streams', 'core'],
         },
         output : {
             path                                 : path.resolve('./resources/public'),
