@@ -18,6 +18,8 @@ class PatchStream extends Controller
      */
     public function __invoke($instance)
     {
+        $input = Request::json();
+
         $errors = null;
         $status = 200;
 
@@ -26,7 +28,7 @@ class PatchStream extends Controller
                 'data' => $instance,
                 'meta' => [
                     'parameters' => Request::route()->parameters(),
-                    'input' => Request::input(),
+                    'input' => $input,
                 ],
                 'errors' => [
                     "Entry [{$original}] not found.",
@@ -34,12 +36,12 @@ class PatchStream extends Controller
             ], 404);
         }
 
-        if (!$input = Request::all()) {
+        if ($input->isEmpty()) {
             return Response::json([
                 'data' => $instance,
                 'meta' => [
                     'parameters' => Request::route()->parameters(),
-                    'input' => Request::input(),
+                    'input' => $input,
                 ],
                 'errors' => [
                     "Invalid (empty) input.",
@@ -64,7 +66,7 @@ class PatchStream extends Controller
             'data' => $instance,
             'meta' => [
                 'parameters' => Request::route()->parameters(),
-                'input' => Request::input(),
+                'input' => $input,
             ],
             'links' => [
                 'index' => URL::route('ls.api.streams.index'),

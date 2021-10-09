@@ -13,6 +13,8 @@ class UpdateStream extends Controller
 
     public function __invoke($instance)
     {
+        $input = Request::json();
+
         $errors = null;
         $status = 200;
 
@@ -24,7 +26,7 @@ class UpdateStream extends Controller
                 'data' => $instance,
                 'meta' => [
                     'parameters' => Request::route()->parameters(),
-                    'input' => Request::input(),
+                    'input' => $input,
                 ],
                 'errors' => [
                     "Entry [{$original}] not found.",
@@ -37,7 +39,7 @@ class UpdateStream extends Controller
                 'data' => $instance,
                 'meta' => [
                     'parameters' => Request::route()->parameters(),
-                    'input' => Request::input(),
+                    'input' => $input,
                 ],
                 'errors' => [
                     "Invalid (empty) input.",

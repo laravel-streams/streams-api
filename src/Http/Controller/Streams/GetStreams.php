@@ -3,6 +3,7 @@
 namespace Streams\Api\Http\Controller\Streams;
 
 use Illuminate\Routing\Controller;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\Response;
@@ -19,14 +20,13 @@ class GetStreams extends Controller
     public function __invoke()
     {
         $paginator = Streams::entries('core.streams')
-            ->setParameters((array) json_decode(Request::get('q'), true) ?: [])
-            ->paginate(Request::get('per_page', 100));
+            ->loadParameters(Request::json('query', []))
+            ->paginate(Request::json('per_page', 100));
 
         return Response::json([
-            'data' => $paginator->getCollection()->toArray(),
             'meta' => [
                 'parameters' => Request::route()->parameters(),
-                'query' => Request::query(),
+                'request' => Request::json()->all(),
                 'total' => $paginator->total(),
                 'per_page' => $paginator->perPage(),
                 'last_page' => $paginator->lastPage(),
@@ -37,6 +37,7 @@ class GetStreams extends Controller
                 'next_page' => $paginator->nextPageUrl(),
                 'previous_page' => $paginator->previousPageUrl(),
             ],
+            'data' => $paginator->getCollection()->toArray(),
         ]);
     }
 }
