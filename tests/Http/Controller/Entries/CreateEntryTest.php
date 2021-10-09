@@ -10,7 +10,7 @@ class CreateEntryTest extends ApiControllerTest
 
     public function getRouteName(): string
     {
-        return 'ls.api.entries.create';
+        return 'streams.api.entries.create';
     }
 
     public function setUp(): void

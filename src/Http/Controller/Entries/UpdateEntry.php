@@ -74,7 +74,7 @@ class UpdateEntry extends Controller
                 'input' => Request::input(),
             ],
             'links' => [
-                'index' => URL::route('ls.api.entries.index', ['stream' => $stream]),
+                'index' => URL::route('streams.api.entries.index', ['stream' => $stream]),
             ],
             'errors' => $errors,
         ], $status);

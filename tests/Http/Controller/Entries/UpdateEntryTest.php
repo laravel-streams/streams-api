@@ -10,7 +10,7 @@ class UpdateEntryTest extends ApiControllerTest
 
     public function getRouteName(): string
     {
-        return 'ls.api.entries.update';
+        return 'streams.api.entries.update';
     }
 
     public function setUp(): void

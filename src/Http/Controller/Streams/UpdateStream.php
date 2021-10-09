@@ -70,7 +70,7 @@ class UpdateStream extends Controller
                 'input' => Request::input(),
             ],
             'links' => [
-                'index' => URL::route('ls.api.streams.index'),
+                'index' => URL::route('streams.api.streams.index'),
             ],
             'errors' => $errors,
         ], $status);

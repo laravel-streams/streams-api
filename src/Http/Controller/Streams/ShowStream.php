@@ -28,7 +28,7 @@ class ShowStream extends Controller
             ],
             'links' => [
                 'self' => URL::to(Request::path()),
-                'entries' => URL::route('ls.api.streams.index', ['stream' => $stream]),
+                'entries' => URL::route('streams.api.streams.index', ['stream' => $stream]),
             ],
         ], $instance ? 200 : 404);
     }

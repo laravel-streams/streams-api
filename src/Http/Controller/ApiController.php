@@ -44,7 +44,7 @@ abstract class ApiController extends Controller
                 ],
                 'links' => [
                     'self' => URL::to(Request::path()),
-                    'index' => URL::route('ls.api.entries.index', ['stream' => $stream]),
+                    'index' => URL::route('streams.api.entries.index', ['stream' => $stream]),
                 ],
                 'errors' => [
                     "Action [view] authorized for [{$stream}]."

@@ -10,7 +10,7 @@ class ShowEntryTest extends ApiControllerTest
 
     public function getRouteName(): string
     {
-        return 'ls.api.entries.show';
+        return 'streams.api.entries.show';
     }
 
     public function testResponseStructure()

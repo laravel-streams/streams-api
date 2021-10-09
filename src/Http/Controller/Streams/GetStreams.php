@@ -21,23 +21,26 @@ class GetStreams extends Controller
     {
         $paginator = Streams::entries('core.streams')
             ->loadParameters(Request::json('query', []))
-            ->paginate(Request::json('per_page', 100));
+            ->paginate([
+                'per_page' => Request::get('per_page', 100),
+                'page' => Request::get('page', 1),
+            ]);
 
         return Response::json([
             'meta' => [
-                'parameters' => Request::route()->parameters(),
-                'request' => Request::json()->all(),
                 'total' => $paginator->total(),
                 'per_page' => $paginator->perPage(),
                 'last_page' => $paginator->lastPage(),
                 'current_page' => $paginator->currentPage(),
+                'parameters' => Request::route()->parameters(),
+                'payload' => Request::json(),
             ],
             'links' => [
-                'self' => URL::to(Request::path()),
+                'self' => URL::full(),
                 'next_page' => $paginator->nextPageUrl(),
                 'previous_page' => $paginator->previousPageUrl(),
             ],
-            'data' => $paginator->getCollection()->toArray(),
+            'data' => $paginator->getCollection(),
         ]);
     }
 }

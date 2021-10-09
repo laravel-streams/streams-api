@@ -10,7 +10,7 @@ class GetEntriesTest extends ApiControllerTest
 
     public function getRouteName(): string
     {
-        return 'ls.api.entries.index';
+        return 'streams.api.entries.index';
     }
 
     public function testResponseStructure()

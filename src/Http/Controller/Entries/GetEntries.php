@@ -20,24 +20,27 @@ class GetEntries extends Controller
     public function __invoke($stream)
     {
         $paginator = Streams::entries($stream)
-            ->setParameters($parameters = json_decode(Request::get('q'), true) ?: [])
-            ->paginate(Request::get('per_page', 100));
+            ->loadParameters(Request::json('query', []))
+            ->paginate([
+                'per_page' => Request::get('per_page', 100),
+                'page' => Request::get('page', 1),
+            ]);
 
         return Response::json([
-            'data' => $paginator->getCollection()->toArray(),
             'meta' => [
-                'parameters' => Request::route()->parameters(),
-                'query' => array_merge(Request::query(), ['q' => $parameters]),
                 'total' => $paginator->total(),
                 'per_page' => $paginator->perPage(),
                 'last_page' => $paginator->lastPage(),
                 'current_page' => $paginator->currentPage(),
+                'parameters' => Request::route()->parameters(),
+                'payload' => Request::json(),
             ],
             'links' => [
-                'self' => URL::to(Request::path()),
+                'self' => URL::full(),
                 'next_page' => $paginator->nextPageUrl(),
                 'previous_page' => $paginator->previousPageUrl(),
             ],
+            'data' => $paginator->getCollection(),
         ]);
     }
 }

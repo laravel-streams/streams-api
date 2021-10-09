@@ -40,7 +40,7 @@ class ShowEntry extends ApiController
             ],
             'links' => [
                 'self' => URL::to(Request::path()),
-                'index' => URL::route('ls.api.entries.index', ['stream' => $stream]),
+                'index' => URL::route('streams.api.entries.index', ['stream' => $stream]),
             ],
         ], $instance ? 200 : 404);
     }

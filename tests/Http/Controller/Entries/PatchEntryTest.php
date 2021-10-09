@@ -10,7 +10,7 @@ class PatchEntryTest extends ApiControllerTest
 
     public function getRouteName(): string
     {
-        return 'ls.api.entries.patch';
+        return 'streams.api.entries.patch';
     }
 
     public function setUp(): void

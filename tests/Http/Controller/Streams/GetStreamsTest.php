@@ -9,7 +9,7 @@ class GetStreamsTest extends ApiControllerTest
 
     public function getRouteName(): string
     {
-        return 'ls.api.streams.index';
+        return 'streams.api.streams.index';
     }
 
     public function testResponseStructure()

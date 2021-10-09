@@ -10,7 +10,7 @@ class DeleteStreamTest extends ApiControllerTest
 
     public function getRouteName(): string
     {
-        return 'ls.api.streams.delete';
+        return 'streams.api.streams.delete';
     }
 
     public function setUp(): void

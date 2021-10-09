@@ -83,31 +83,31 @@ class ApiServiceProvider extends ServiceProvider
             ->group(function () {
 
                 /**
-                 * Route streams API endpoints.
+                 * Route Streams API endpoints.
                  */
                 Route::get('streams', [
                     'uses' => GetStreams::class,
-                    'as' => 'ls.api.streams.index',
+                    'as' => 'streams.api.streams.index',
                 ]);
                 Route::post('streams', [
                     'uses' => CreateStream::class,
-                    'as' => 'ls.api.streams.create',
+                    'as' => 'streams.api.streams.create',
                 ]);
                 Route::get('streams/{stream}', [
                     'uses' => ShowStream::class,
-                    'as' => 'ls.api.streams.show',
+                    'as' => 'streams.api.streams.show',
                 ]);
                 Route::put('streams/{stream}', [
                     'uses' => UpdateStream::class,
-                    'as' => 'ls.api.streams.update',
+                    'as' => 'streams.api.streams.update',
                 ]);
                 Route::patch('streams/{stream}', [
                     'uses' => PatchStream::class,
-                    'as' => 'ls.api.streams.patch',
+                    'as' => 'streams.api.streams.patch',
                 ]);
                 Route::delete('streams/{stream}', [
                     'uses' => DeleteStream::class,
-                    'as' => 'ls.api.streams.delete',
+                    'as' => 'streams.api.streams.delete',
                 ]);
 
                 /**
@@ -115,27 +115,27 @@ class ApiServiceProvider extends ServiceProvider
                  */
                 Route::get('streams/{stream}/entries', [
                     'uses' => GetEntries::class,
-                    'as' => 'ls.api.entries.index',
+                    'as' => 'streams.api.entries.index',
                 ]);
                 Route::post('streams/{stream}/entries', [
                     'uses' => CreateEntry::class,
-                    'as' => 'ls.api.entries.create',
+                    'as' => 'streams.api.entries.create',
                 ]);
                 Route::get('streams/{stream}/entries/{entry}', [
                     'uses' => ShowEntry::class,
-                    'as' => 'ls.api.entries.show',
+                    'as' => 'streams.api.entries.show',
                 ]);
                 Route::put('streams/{stream}/entries/{entry}', [
                     'uses' => UpdateEntry::class,
-                    'as' => 'ls.api.entries.update',
+                    'as' => 'streams.api.entries.update',
                 ]);
                 Route::patch('streams/{stream}/entries/{entry}', [
                     'uses' => PatchEntry::class,
-                    'as' => 'ls.api.entries.patch',
+                    'as' => 'streams.api.entries.patch',
                 ]);
                 Route::delete('streams/{stream}/entries/{entry}', [
                     'uses' => DeleteEntry::class,
-                    'as' => 'ls.api.entries.delete',
+                    'as' => 'streams.api.entries.delete',
                 ]);
             });
     }

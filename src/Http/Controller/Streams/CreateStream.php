@@ -20,7 +20,7 @@ class CreateStream extends Controller
      */
     public function __invoke()
     {
-        $input = Request::json();
+        $payload = Request::json();
 
         $instance = null;
         $errors = null;
@@ -28,11 +28,15 @@ class CreateStream extends Controller
 
         $status = 201;
 
-        if ($input->isEmpty()) {
+        /**
+         * If there is no input then
+         * we can't create anything.
+         */
+        if ($payload->isEmpty()) {
             return Response::json([
                 'data' => $instance,
                 'meta' => [
-                    'input' => $input,
+                    'input' => $payload,
                 ],
                 'errors' => [
                     "Invalid (empty) input.",
@@ -46,7 +50,7 @@ class CreateStream extends Controller
 
             $instance = Streams::repository('core.streams')->create($input->all());
 
-            $headers['location'] = URL::route('ls.api.streams.show', [
+            $headers['location'] = URL::route('streams.api.streams.show', [
                 'stream' => $instance->id,
             ]);
         }
@@ -77,7 +81,7 @@ class CreateStream extends Controller
             ],
             'links' => [
                 'self' => Arr::get($headers, 'location'),
-                'index' => URL::route('ls.api.streams.index'),
+                'index' => URL::route('streams.api.streams.index'),
             ],
             'errors' => $errors,
         ], $status, $headers);

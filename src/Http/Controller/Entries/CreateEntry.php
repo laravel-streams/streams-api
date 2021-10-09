@@ -45,7 +45,7 @@ class CreateEntry extends Controller
 
             $entry = Streams::repository($stream)->create($input);
 
-            $headers['location'] = URL::route('ls.api.entries.show', [
+            $headers['location'] = URL::route('streams.api.entries.show', [
                 'stream' => $stream,
                 'entry' => $entry->id,
             ]);
@@ -77,7 +77,7 @@ class CreateEntry extends Controller
             ],
             'links' => [
                 'self' => Arr::get($headers, 'location'),
-                'index' => URL::route('ls.api.entries.index', ['stream' => $stream]),
+                'index' => URL::route('streams.api.entries.index', ['stream' => $stream]),
             ],
             'errors' => $errors,
         ], $status, $headers);

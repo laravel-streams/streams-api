@@ -11,7 +11,7 @@ class CreateStreamTest extends ApiControllerTest
 
     public function getRouteName(): string
     {
-        return 'ls.api.streams.create';
+        return 'streams.api.streams.create';
     }
 
     public function setUp(): void

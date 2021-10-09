@@ -10,7 +10,7 @@ class UpdateStreamTest extends ApiControllerTest
 
     public function getRouteName(): string
     {
-        return 'ls.api.streams.update';
+        return 'streams.api.streams.update';
     }
 
     public function setUp(): void
