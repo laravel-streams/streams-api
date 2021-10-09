@@ -33,8 +33,8 @@ Create a new entry.
 
 ```bash
 curl --location --request POST '/api/streams/{stream}/entries' \
-    --form 'id="hello_world"' \
-    --form 'title="Hello World"'
+    -H 'Content-Type: application/json' \
+    -d '{"id": "hello_world", "title": "Hello World"}'   
 ```
 
 Return result:
@@ -82,7 +82,8 @@ To replace the entry attributes entirely, use **put**.
 
 ```bash
 curl --location --request PATCH '/api/streams/{stream}/entries/{entry}' \
-    --form 'title="Hello World!"'
+    -H 'Content-Type: application/json' \
+    -d '{"title": "New Title"}'
 ```
 
 Return result:
@@ -132,7 +133,7 @@ Create a new stream.
 
 ```bash
 curl --location --request POST '/api/streams' \
-    -H 'Content-Type: application/json'
+    -H 'Content-Type: application/json' \
     -d '{"id": "contacts", "name": "Contacts", "fields": {...}}'   
 ```
 
@@ -181,7 +182,7 @@ To replace the attributes entirely, use **put**.
 
 ```bash
 curl --location --request PATCH '/api/streams/{stream}' \
-    -H 'Content-Type: application/json'
+    -H 'Content-Type: application/json' \
     -d '{"description": "A simple contacts listing."}'   
 ```
 
@@ -221,8 +222,16 @@ You can manipulate the query using criteria parameters in the URI.
 
 ### Filtering
 
-`/api/streams?q={"where": [["id", "LIKE", "%doc%"]]}`
+```bash
+curl --location --request PATCH '/api/streams' \
+    -H 'Content-Type: application/json' \
+    -d '{"query": {"where": ["id", "LIKE", "%doc%"]}}'
+```
 
 ### Sorting
 
-`/api/streams/docs/entries?q={"where": [["enabled", true]]}`
+```bash
+curl --location --request PATCH '/api/streams/docs/entries' \
+    -H 'Content-Type: application/json' \
+    -d '{"query": {"where": ["enabled", true]}}'
+```
