@@ -106,14 +106,6 @@ Deletes an entry.
 
 `DELETE` `/api/streams/{stream}/entries/{entry}`
 
-```json
-{
-    "data": [],
-    "links": {...},
-    "meta": {...}
-}
-```
-
 
 
 ## Streams
@@ -140,9 +132,8 @@ Create a new stream.
 
 ```bash
 curl --location --request POST '/api/streams' \
-    --form 'id="contacts"' \
-    --form 'name="Contacts"' \
-    --form 'fields="{...}"'
+    -H 'Content-Type: application/json'
+    -d '{"id": "contacts", "name": "Contacts", "fields": {...}}'   
 ```
 
 Return result:
@@ -190,7 +181,8 @@ To replace the attributes entirely, use **put**.
 
 ```bash
 curl --location --request PATCH '/api/streams/{stream}' \
-    --form 'description="A simple contacts listing."'
+    -H 'Content-Type: application/json'
+    -d '{"description": "A simple contacts listing."}'   
 ```
 
 Return result:
