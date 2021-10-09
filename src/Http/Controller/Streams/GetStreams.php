@@ -3,7 +3,6 @@
 namespace Streams\Api\Http\Controller\Streams;
 
 use Illuminate\Routing\Controller;
-use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\Response;
@@ -36,7 +35,8 @@ class GetStreams extends Controller
                 'payload' => Request::json(),
             ],
             'links' => [
-                'self' => URL::full(),
+                'self' => URL::current(),
+                'first_page' => $paginator->url(1),
                 'next_page' => $paginator->nextPageUrl(),
                 'previous_page' => $paginator->previousPageUrl(),
             ],

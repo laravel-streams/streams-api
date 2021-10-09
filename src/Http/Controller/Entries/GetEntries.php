@@ -37,8 +37,11 @@ class GetEntries extends Controller
             ],
             'links' => [
                 'self' => URL::full(),
+                'first_page' => $paginator->url(1),
                 'next_page' => $paginator->nextPageUrl(),
                 'previous_page' => $paginator->previousPageUrl(),
+                'streams' => URL::route('streams.api.streams.index'),
+                'stream' => URL::route('streams.api.streams.show', ['stream' => $stream]),
             ],
             'data' => $paginator->getCollection(),
         ]);

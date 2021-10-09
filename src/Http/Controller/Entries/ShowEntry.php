@@ -19,29 +19,19 @@ class ShowEntry extends ApiController
      */
     public function __invoke($stream, $entry)
     {
-        $parameters = array_merge_recursive(
-            ['where' => [['id', $entry]]],
-            (array) json_decode(Request::get('q'), true)
-        );
-
-        $instance = Streams::entries($stream)
-            ->setParameters($parameters)
-            ->first();
-
-        if ($response = $this->authorizeActionAbility('view', $stream, $instance)) {
-            return $response;
-        }
+        $instance = Streams::entries($stream)->find($entry);
 
         return Response::json([
-            'data' => $instance,
             'meta' => [
                 'parameters' => Request::route()->parameters(),
                 'query' => Request::query(),
             ],
             'links' => [
                 'self' => URL::to(Request::path()),
-                'index' => URL::route('streams.api.entries.index', ['stream' => $stream]),
+                'stream' => URL::route('streams.api.streams.show', ['stream' => $stream]),
+                'entries' => URL::route('streams.api.entries.index', ['stream' => $stream]),
             ],
+            'data' => $instance,
         ], $instance ? 200 : 404);
     }
 }

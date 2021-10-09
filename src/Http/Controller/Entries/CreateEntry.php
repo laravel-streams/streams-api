@@ -20,49 +20,68 @@ class CreateEntry extends Controller
      */
     public function __invoke($stream)
     {
-        $entry = null;
-        $errors = null;
+        $payload = Request::json();
+
+        $instance = null;
         $headers = [];
+        $errors = [];
 
         $status = 201;
 
-        if (!$input = Request::all()) {
+        /**
+         * If there is no input then
+         * we can't create anything.
+         */
+        if (!$payload) {
             return Response::json([
-                'data' => $entry,
+                'data' => $instance,
                 'meta' => [
-                    'stream' => $stream,
-                    'input' => Request::input(),
+                    'parameters' => Request::route()->parameters(),
+                    'payload' => Request::json(),
                 ],
                 'errors' => [
-                    "Invalid (empty) input.",
+                    [
+                        'message' => 'Invalid (empty) input.',
+                    ],
                 ],
             ], 400, $headers);
         }
 
-        $validator = Streams::make($stream)->validator($input);
+        /**
+         * Validate the stream input.
+         */
+        $validator = Streams::make('core.streams')->validator($payload->all());
 
+        /**
+         * If validation passes create
+         * the stream and add Location.
+         */
         if ($validator->passes()) {
 
-            $entry = Streams::repository($stream)->create($input);
+            $instance = Streams::repository($stream)->create($payload->all());
 
             $headers['location'] = URL::route('streams.api.entries.show', [
                 'stream' => $stream,
-                'entry' => $entry->id,
+                'entry' => $instance->id,
             ]);
         }
 
+        /**
+         * If validation failed then add
+         * the errors to the response.
+         */
         $messages = $validator->messages();
 
         if ($messages->isNotEmpty()) {
 
             $status = 409;
 
-            foreach ($messages->messages() as $key => $details) {
-                foreach ($details as $detail) {
+            foreach ($messages->messages() as $field => $messages) {
+                foreach ($messages as $message) {
                     $errors[] = [
-                        'detail' => $detail,
+                        'message' => $message,
                         'meta' => [
-                            'field' => $key,
+                            'field' => $field,
                         ],
                     ];
                 }
@@ -70,16 +89,18 @@ class CreateEntry extends Controller
         }
 
         return Response::json([
-            'data' => $entry,
             'meta' => [
                 'parameters' => Request::route()->parameters(),
-                'input' => Request::input(),
+                'payload' => Request::json(),
             ],
             'links' => [
-                'self' => Arr::get($headers, 'location'),
-                'index' => URL::route('streams.api.entries.index', ['stream' => $stream]),
+                'self' => URL::full(),
+                'location' => Arr::get($headers, 'location'),
+                'stream' => URL::route('streams.api.streams.show', ['stream' => $stream]),
+                'entries' => URL::route('streams.api.entries.index', ['stream' => $stream]),
             ],
             'errors' => $errors,
+            'data' => $instance,
         ], $status, $headers);
     }
 }

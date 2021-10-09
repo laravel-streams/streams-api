@@ -11,68 +11,105 @@ use Streams\Core\Support\Facades\Streams;
 class UpdateStream extends Controller
 {
 
-    public function __invoke($instance)
+    /**
+     * Update a stream.
+     *
+     * @param string $stream
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function __invoke($stream)
     {
-        $input = Request::json();
+        $payload = Request::json();
 
-        $errors = null;
+        $errors = [];
         $status = 200;
 
-        /**
-         * @var \Streams\Core\Stream\Stream $instance
-         */
-        if (!$instance = Streams::entries('core.streams')->find($original = $instance)) {
+        if (!$instance = Streams::entries('core.streams')->find($stream)) {
             return Response::json([
-                'data' => $instance,
                 'meta' => [
                     'parameters' => Request::route()->parameters(),
-                    'input' => $input,
+                    'payload' => Request::json(),
                 ],
                 'errors' => [
-                    "Entry [{$original}] not found.",
+                    [
+                        'message' => 'Stream not found.',
+                    ],
                 ],
             ], 404);
         }
 
-        if (!$input = Request::all()) {
+        /**
+         * If there is no input then
+         * we can't update anything.
+         */
+        if (!$payload) {
             return Response::json([
-                'data' => $instance,
                 'meta' => [
                     'parameters' => Request::route()->parameters(),
-                    'input' => $input,
+                    'payload' => Request::json(),
                 ],
                 'errors' => [
-                    "Invalid (empty) input.",
+                    [
+                        'message' => 'Invalid (empty) input.',
+                    ],
                 ],
             ], 400);
         }
 
-        // Not allowed.
-        $input['id'] = $instance->id;
+        /**
+         * This is an idempotent request.
+         */
+        $payload->set('id', $instance->id);
 
-        $instance->setAttributes($input);
+        $instance->setAttributes($payload->all());
 
+        /**
+         * Validate the resulting stream.
+         */
         $validator = Streams::make('core.streams')->validator($instance);
 
+        /**
+         * If validation passes
+         * update the stream.
+         */
         if ($validator->passes()) {
             Streams::repository('core.streams')->save($instance);
-        } else {
+        }
 
-            $errors = $validator->messages();
+        /**
+         * If validation failed then add
+         * the errors to the response.
+         */
+        $messages = $validator->messages();
+
+        if ($messages->isNotEmpty()) {
 
             $status = 409;
+
+            foreach ($messages->messages() as $field => $messages) {
+                foreach ($messages as $message) {
+                    $errors[] = [
+                        'message' => $message,
+                        'meta' => [
+                            'field' => $field,
+                        ],
+                    ];
+                }
+            }
         }
 
         return Response::json([
-            'data' => $instance,
             'meta' => [
                 'parameters' => Request::route()->parameters(),
-                'input' => Request::input(),
+                'payload' => Request::json(),
             ],
             'links' => [
-                'index' => URL::route('streams.api.streams.index'),
+                'self' => URL::full(),
+                'streams' => URL::route('streams.api.streams.index'),
+                'entries' => URL::route('streams.api.entries.index', ['stream' => $stream]),
             ],
             'errors' => $errors,
+            'data' => $instance,
         ], $status);
     }
 }

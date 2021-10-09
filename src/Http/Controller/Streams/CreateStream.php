@@ -15,7 +15,6 @@ class CreateStream extends Controller
     /**
      * Create a stream.
      *
-     * @param $stream
      * @return \Illuminate\Http\JsonResponse
      */
     public function __invoke()
@@ -23,8 +22,8 @@ class CreateStream extends Controller
         $payload = Request::json();
 
         $instance = null;
-        $errors = null;
         $headers = [];
+        $errors = [];
 
         $status = 201;
 
@@ -32,41 +31,55 @@ class CreateStream extends Controller
          * If there is no input then
          * we can't create anything.
          */
-        if ($payload->isEmpty()) {
+        if (!$payload) {
             return Response::json([
                 'data' => $instance,
                 'meta' => [
-                    'input' => $payload,
+                    'parameters' => Request::route()->parameters(),
+                    'payload' => Request::json(),
                 ],
                 'errors' => [
-                    "Invalid (empty) input.",
+                    [
+                        'message' => 'Invalid (empty) input.',
+                    ],
                 ],
             ], 400, $headers);
         }
 
-        $validator = Streams::make('core.streams')->validator($input);
+        /**
+         * Validate the stream input.
+         */
+        $validator = Streams::make('core.streams')->validator($payload->all());
 
+        /**
+         * If validation passes create
+         * the stream and add Location.
+         */
         if ($validator->passes()) {
 
-            $instance = Streams::repository('core.streams')->create($input->all());
+            $instance = Streams::repository('core.streams')->create($payload->all());
 
             $headers['location'] = URL::route('streams.api.streams.show', [
                 'stream' => $instance->id,
             ]);
         }
 
+        /**
+         * If validation failed then add
+         * the errors to the response.
+         */
         $messages = $validator->messages();
 
         if ($messages->isNotEmpty()) {
 
             $status = 409;
 
-            foreach ($messages->messages() as $key => $details) {
-                foreach ($details as $detail) {
+            foreach ($messages->messages() as $field => $messages) {
+                foreach ($messages as $message) {
                     $errors[] = [
-                        'detail' => $detail,
+                        'message' => $message,
                         'meta' => [
-                            'field' => $key,
+                            'field' => $field,
                         ],
                     ];
                 }
@@ -74,16 +87,17 @@ class CreateStream extends Controller
         }
 
         return Response::json([
-            'data' => $instance,
             'meta' => [
                 'parameters' => Request::route()->parameters(),
-                'input' => Request::input(),
+                'payload' => Request::json(),
             ],
             'links' => [
-                'self' => Arr::get($headers, 'location'),
-                'index' => URL::route('streams.api.streams.index'),
+                'self' => URL::full(),
+                'location' => Arr::get($headers, 'location'),
+                'streams' => URL::route('streams.api.streams.index'),
             ],
             'errors' => $errors,
+            'data' => $instance,
         ], $status, $headers);
     }
 }

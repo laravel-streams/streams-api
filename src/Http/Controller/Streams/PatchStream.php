@@ -14,64 +14,102 @@ class PatchStream extends Controller
     /**
      * Return a single Stream.
      *
+     * @param string $stream
      * @return \Illuminate\Http\JsonResponse
      */
-    public function __invoke($instance)
+    public function __invoke($stream)
     {
-        $input = Request::json();
+        $payload = Request::json();
 
-        $errors = null;
+        $payload->remove('id');
+
+        $errors = [];
         $status = 200;
 
-        if (!$instance = Streams::entries('core.streams')->find($original = $instance)) {
+        if (!$instance = Streams::entries('core.streams')->find($stream)) {
             return Response::json([
-                'data' => $instance,
                 'meta' => [
                     'parameters' => Request::route()->parameters(),
-                    'input' => $input,
+                    'payload' => Request::json(),
                 ],
                 'errors' => [
-                    "Entry [{$original}] not found.",
+                    [
+                        'message' => 'Stream not found.',
+                    ],
                 ],
             ], 404);
         }
 
-        if ($input->isEmpty()) {
+        /**
+         * If there is no input then
+         * we can't patch anything.
+         */
+        if (!$payload || !$payload->all()) {
             return Response::json([
-                'data' => $instance,
                 'meta' => [
                     'parameters' => Request::route()->parameters(),
-                    'input' => $input,
+                    'payload' => Request::json(),
                 ],
                 'errors' => [
-                    "Invalid (empty) input.",
+                    [
+                        'message' => 'Invalid (empty) input.',
+                    ],
                 ],
             ], 400);
         }
 
-        $instance->loadPrototypeAttributes($input);
+        /**
+         * Load the new attributes.
+         */
+        $instance->loadPrototypeAttributes($payload->all());
 
+        /**
+         * Validate the resulting stream.
+         */
         $validator = Streams::make('core.streams')->validator($instance);
 
+        /**
+         * If validation passes
+         * update the stream.
+         */
         if ($validator->passes()) {
             Streams::repository('core.streams')->save($instance);
-        } else {
-            
-            $errors = $validator->messages();
+        }
+
+        /**
+         * If validation failed then add
+         * the errors to the response.
+         */
+        $messages = $validator->messages();
+
+        if ($messages->isNotEmpty()) {
 
             $status = 409;
+
+            foreach ($messages->messages() as $field => $messages) {
+                foreach ($messages as $message) {
+                    $errors[] = [
+                        'message' => $message,
+                        'meta' => [
+                            'field' => $field,
+                        ],
+                    ];
+                }
+            }
         }
 
         return Response::json([
-            'data' => $instance,
             'meta' => [
                 'parameters' => Request::route()->parameters(),
-                'input' => $input,
+                'payload' => Request::json(),
             ],
             'links' => [
-                'index' => URL::route('streams.api.streams.index'),
+                'self' => URL::full(),
+                'streams' => URL::route('streams.api.streams.index'),
+                'entries' => URL::route('streams.api.entries.index', ['stream' => $stream]),
             ],
             'errors' => $errors,
+            'data' => $instance,
         ], $status);
     }
 }

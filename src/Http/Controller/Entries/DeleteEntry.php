@@ -3,6 +3,7 @@
 namespace Streams\Api\Http\Controller\Entries;
 
 use Illuminate\Routing\Controller;
+use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\Response;
 use Streams\Core\Support\Facades\Streams;
@@ -14,24 +15,32 @@ class DeleteEntry extends Controller
      * Return all entries for the stream.
      *
      * @param $stream
+     * @param $entry
      * @return \Illuminate\Http\JsonResponse
      */
     public function __invoke($stream, $entry)
     {
-        if (!$entry = Streams::entries($stream)->find($original = $entry)) {
+        if (!$entry = Streams::entries($stream)->find($entry)) {
             return Response::json([
-                'data' => $entry,
                 'meta' => [
                     'parameters' => Request::route()->parameters(),
-                    'input' => Request::input(),
+                    'payload' => Request::json(),
+                ],
+                'links' => [
+                    'self' => URL::full(),
+                    'streams' => URL::route('streams.api.streams.index'),
+                    'stream' => URL::route('streams.api.streams.show', ['stream' => $stream]),
+                    'entries' => URL::route('streams.api.entries.index', ['stream' => $stream]),
                 ],
                 'errors' => [
-                    "Entry [{$original}] not found.",
+                    [
+                        'message' => 'Entry not found.',
+                    ],
                 ],
             ], 404);
         }
 
-        $entry->delete();
+        Streams::repository($stream)->delete($entry->id);
 
         return Response::json([], 204);
     }

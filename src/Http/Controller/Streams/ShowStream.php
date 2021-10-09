@@ -14,6 +14,7 @@ class ShowStream extends Controller
     /**
      * Return a single Stream.
      *
+     * @param string $stream
      * @return \Illuminate\Http\JsonResponse
      */
     public function __invoke($stream)
@@ -21,15 +22,16 @@ class ShowStream extends Controller
         $instance = Streams::make($stream);
 
         return Response::json([
-            'data' => $instance,
             'meta' => [
                 'parameters' => Request::route()->parameters(),
                 'query' => Request::query(),
             ],
             'links' => [
                 'self' => URL::to(Request::path()),
-                'entries' => URL::route('streams.api.streams.index', ['stream' => $stream]),
+                'streams' => URL::route('streams.api.streams.index'),
+                'entries' => URL::route('streams.api.entries.index', ['stream' => $stream]),
             ],
+            'data' => $instance,
         ], $instance ? 200 : 404);
     }
 }
