@@ -223,7 +223,7 @@ You can manipulate the query using criteria parameters in the URI.
 ### Filtering
 
 ```bash
-curl --location --request PATCH '/api/streams' \
+curl --location --request GET '/api/streams' \
     -H 'Content-Type: application/json' \
     -d '{"query": {"where": ["id", "LIKE", "%doc%"]}}'
 ```
@@ -231,7 +231,7 @@ curl --location --request PATCH '/api/streams' \
 ### Sorting
 
 ```bash
-curl --location --request PATCH '/api/streams/docs/entries' \
+curl --location --request GET '/api/streams/docs/entries' \
     -H 'Content-Type: application/json' \
     -d '{"query": {"where": ["enabled", true]}}'
 ```
