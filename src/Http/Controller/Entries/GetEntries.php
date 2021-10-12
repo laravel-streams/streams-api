@@ -3,6 +3,7 @@
 namespace Streams\Api\Http\Controller\Entries;
 
 use Illuminate\Routing\Controller;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\Response;
 use Illuminate\Support\Facades\URL;
@@ -19,7 +20,16 @@ class GetEntries extends Controller
      */
     public function __invoke($stream)
     {
-        $criteria = Streams::entries($stream)->loadParameters(Request::json('query', []));
+
+        /**
+         * The HTTP spec doesn't allow body content
+         * for GET requests so fallback to JSON param.
+         */
+        if (!$payload = Request::json('query')) {
+            $payload = Arr::get(json_decode(Request::get('json'), true) ?: [], 'query');
+        }
+
+        $criteria = Streams::entries($stream)->loadParameters($payload);
 
         if (Request::has('paginate')) {
             $paginator = $criteria->paginate([
@@ -41,7 +51,7 @@ class GetEntries extends Controller
                     'next_page'     => $paginator->nextPageUrl(),
                     'previous_page' => $paginator->previousPageUrl(),
                     'streams'       => URL::route('streams.api.streams.index'),
-                    'stream'        => URL::route('streams.api.streams.show', [ 'stream' => $stream ]),
+                    'stream'        => URL::route('streams.api.streams.show', ['stream' => $stream]),
                 ],
                 'data'  => $paginator->getCollection(),
             ]);
@@ -57,7 +67,7 @@ class GetEntries extends Controller
             'links' => [
                 'self'    => URL::full(),
                 'streams' => URL::route('streams.api.streams.index'),
-                'stream'  => URL::route('streams.api.streams.show', [ 'stream' => $stream ]),
+                'stream'  => URL::route('streams.api.streams.show', ['stream' => $stream]),
             ],
             'data'  => $entries->toArray(),
         ]);

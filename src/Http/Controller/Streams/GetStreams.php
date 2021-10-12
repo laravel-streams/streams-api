@@ -2,6 +2,7 @@
 
 namespace Streams\Api\Http\Controller\Streams;
 
+use Illuminate\Support\Arr;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Facades\Request;
@@ -18,8 +19,16 @@ class GetStreams extends Controller
      */
     public function __invoke()
     {
+        /**
+         * The HTTP spec doesn't allow body content
+         * for GET requests so fallback to JSON param.
+         */
+        if (!$payload = Request::json('query')) {
+            $payload = Arr::get(json_decode(Request::get('json'), true) ?: [], 'query');
+        }
+        
         $paginator = Streams::entries('core.streams')
-            ->loadParameters(Request::json('query', []))
+            ->loadParameters($payload)
             ->paginate([
                 'per_page' => Request::get('per_page', 100),
                 'page' => Request::get('page', 1),
