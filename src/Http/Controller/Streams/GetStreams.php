@@ -24,7 +24,7 @@ class GetStreams extends Controller
          * for GET requests so fallback to JSON param.
          */
         if (!$payload = Request::json('query')) {
-            $payload = Arr::get(json_decode(Request::get('json'), true) ?: [], 'query');
+            $payload = Arr::get(json_decode(Request::get('json'), true) ?: [], 'query', []);
         }
         
         $paginator = Streams::entries('core.streams')
