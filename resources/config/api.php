@@ -4,10 +4,8 @@ return [
 
     /*
      * Determine if the API should be enabled.
-     * This is disabled by default because
-     * the API is public by default.
      */
-    'enabled' => env('STREAMS_API_ENABLED', false),
+    'enabled' => env('STREAMS_API_ENABLED', true),
 
     /*
      * Specify the API prefix.
