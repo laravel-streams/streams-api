@@ -21,6 +21,9 @@ class GetEntries extends Controller
     public function __invoke($stream)
     {
 
+        // Check for an etag.
+        $etag = Request::header('If-None-Match');
+
         /**
          * The HTTP spec doesn't allow body content
          * for GET requests so fallback to JSON param.
@@ -29,47 +32,55 @@ class GetEntries extends Controller
             $payload = Arr::get(json_decode(Request::get('json'), true) ?: [], 'query', []);
         }
 
+        $checksum = md5(json_encode($payload));
+
+        if ($etag === $checksum) {
+            return Response::make(null, 302);
+        }
+
         $criteria = Streams::entries($stream)->loadParameters($payload);
 
-        if (Request::has('paginate')) {
-            $paginator = $criteria->paginate([
+        $meta = [
+            'parameters'   => Request::route()->parameters(),
+            'payload'      => Request::json(),
+        ];
+
+        $links = [
+            'self' => URL::full(),
+            'streams' => URL::route('streams.api.streams.index'),
+            'stream' => URL::route('streams.api.streams.show', ['stream' => $stream]),
+        ];
+
+        if (Request::get('all') !== true) {
+
+            $results = $criteria->paginate([
                 'per_page' => Request::get('per_page', 100),
                 'page'     => Request::get('page', 1),
             ]);
-            return Response::json([
-                'meta'  => [
-                    'total'        => $paginator->total(),
-                    'per_page'     => $paginator->perPage(),
-                    'last_page'    => $paginator->lastPage(),
-                    'current_page' => $paginator->currentPage(),
-                    'parameters'   => Request::route()->parameters(),
-                    'payload'      => Request::json(),
-                ],
-                'links' => [
-                    'self'          => URL::full(),
-                    'first_page'    => $paginator->url(1),
-                    'next_page'     => $paginator->nextPageUrl(),
-                    'previous_page' => $paginator->previousPageUrl(),
-                    'streams'       => URL::route('streams.api.streams.index'),
-                    'stream'        => URL::route('streams.api.streams.show', ['stream' => $stream]),
-                ],
-                'data'  => $paginator->getCollection(),
-            ]);
+
+            $meta['total'] = $results->total();
+            $meta['per_page'] = $results->perPage();
+            $meta['last_page'] = $results->lastPage();
+            $meta['current_page'] = $results->currentPage();
+
+            $links['first_page'] = $results->url(1);
+            $links['next_page'] = $results->nextPageUrl();
+            $links['previous_page'] = $results->previousPageUrl();
         }
 
-        $entries = $criteria->get();
+        if (!Request::get('all') !== true) {
+
+            $results = $criteria->get();
+
+            $meta['total'] = $results->total();
+        }
+
         return Response::json([
-            'meta'  => [
-                'total'      => $entries->count(),
-                'parameters' => Request::route()->parameters(),
-                'payload'    => Request::json(),
-            ],
-            'links' => [
-                'self'    => URL::full(),
-                'streams' => URL::route('streams.api.streams.index'),
-                'stream'  => URL::route('streams.api.streams.show', ['stream' => $stream]),
-            ],
-            'data'  => $entries->toArray(),
+            'meta' => $meta,
+            'links' => $links,
+            'data' => $results->all(),
+        ], 200, [
+            'ETag' => $checksum,
         ]);
     }
 }
