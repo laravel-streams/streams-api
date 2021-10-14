@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\Response;
 use Streams\Core\Support\Facades\Streams;
+use Symfony\Component\HttpFoundation\ParameterBag;
 
 class PatchEntry extends Controller
 {
@@ -21,7 +22,7 @@ class PatchEntry extends Controller
      */
     public function __invoke($stream, $entry)
     {
-        $payload = Request::json();
+        $payload = new ParameterBag(Request::json('data'));
 
         $payload->remove('id');
 

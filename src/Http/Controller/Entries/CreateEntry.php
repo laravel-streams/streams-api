@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\Response;
 use Streams\Core\Support\Facades\Streams;
+use Symfony\Component\HttpFoundation\ParameterBag;
 
 class CreateEntry extends Controller
 {
@@ -20,7 +21,7 @@ class CreateEntry extends Controller
      */
     public function __invoke($stream)
     {
-        $payload = Request::json();
+        $payload = new ParameterBag(Request::json('data'));
 
         $instance = null;
         $headers = [];
