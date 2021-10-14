@@ -39,8 +39,8 @@ class GetStreams extends Controller
         $criteria = Streams::entries('core.streams')->loadParameters($payload);
 
         $meta = [
-            'parameters'   => Request::route()->parameters(),
-            'payload'      => Request::json(),
+            'parameters' => Request::route()->parameters(),
+            'payload' => Request::json(),
         ];
 
         $links = [
