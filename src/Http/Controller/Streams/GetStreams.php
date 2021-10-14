@@ -33,7 +33,7 @@ class GetStreams extends Controller
         $checksum = md5(json_encode($payload));
 
         if ($etag === $checksum) {
-            return Response::make(null, 302);
+            //return Response::make(null, 302);
         }
 
         $criteria = Streams::entries('core.streams')->loadParameters($payload);

@@ -2,15 +2,18 @@
 
 namespace Streams\Api\Http\Controller\Entries;
 
-use Illuminate\Routing\Controller;
 use Illuminate\Support\Arr;
+use Illuminate\Routing\Controller;
+use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\Response;
-use Illuminate\Support\Facades\URL;
 use Streams\Core\Support\Facades\Streams;
+use Streams\Core\Support\Traits\HasMemory;
 
 class GetEntries extends Controller
 {
+
+    use HasMemory;
 
     /**
      * Return all entries for the stream.
@@ -35,7 +38,7 @@ class GetEntries extends Controller
         $checksum = md5(json_encode($payload));
 
         if ($etag === $checksum) {
-            return Response::make(null, 302);
+            //return Response::make(null, 302);
         }
 
         $criteria = Streams::entries($stream)->loadParameters($payload);
