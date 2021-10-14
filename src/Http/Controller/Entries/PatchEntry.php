@@ -2,13 +2,11 @@
 
 namespace Streams\Api\Http\Controller\Entries;
 
-use Illuminate\Support\Arr;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\Response;
 use Streams\Core\Support\Facades\Streams;
-use Symfony\Component\HttpFoundation\ParameterBag;
 
 class PatchEntry extends Controller
 {
@@ -22,7 +20,7 @@ class PatchEntry extends Controller
      */
     public function __invoke($stream, $entry)
     {
-        $payload = new ParameterBag(Request::json('data'));
+        $payload = Request::json();
 
         $payload->remove('id');
 
