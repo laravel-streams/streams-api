@@ -62,7 +62,7 @@ class PatchEntry extends Controller
         /**
          * Load the new attributes.
          */
-        $instance->loadPrototypeAttributes($payload->all());
+        $instance->loadPrototypeAttributes($payload->all())->strict();
 
         /**
          * Validate the resulting stream.
