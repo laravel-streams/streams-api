@@ -24,21 +24,12 @@ class GetEntries extends Controller
     public function __invoke($stream)
     {
 
-        // Check for an etag.
-        $etag = Request::header('If-None-Match');
-
         /**
          * The HTTP spec doesn't allow body content
          * for GET requests so fallback to JSON param.
          */
         if (!$payload = Request::json('query')) {
             $payload = Arr::get(json_decode(Request::get('json'), true) ?: [], 'query', []);
-        }
-
-        $checksum = md5(json_encode($payload));
-
-        if ($etag === $checksum) {
-            //return Response::make(null, 302);
         }
 
         $criteria = Streams::entries($stream)->loadParameters($payload);
@@ -77,6 +68,12 @@ class GetEntries extends Controller
 
             $meta['total'] = $results->total();
         }
+
+        $checksum = md5(
+            Request::getContent()
+                . json_encode(Request::all())
+                . json_encode(Request::route()->parameters)
+        );
 
         return Response::json([
             'meta' => $meta,
