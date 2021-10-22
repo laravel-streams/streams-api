@@ -3,17 +3,14 @@
 namespace Streams\Api\Http\Controller\Entries;
 
 use Illuminate\Support\Arr;
-use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\Response;
 use Streams\Core\Support\Facades\Streams;
-use Streams\Core\Support\Traits\HasMemory;
+use Streams\Api\Http\Controller\ApiController;
 
-class GetEntries extends Controller
+class GetEntries extends ApiController
 {
-
-    use HasMemory;
 
     /**
      * Return all entries for the stream.
@@ -23,6 +20,8 @@ class GetEntries extends Controller
      */
     public function __invoke($stream)
     {
+
+        $headers = [];
 
         /**
          * The HTTP spec doesn't allow body content
@@ -69,7 +68,7 @@ class GetEntries extends Controller
             $meta['total'] = $results->total();
         }
 
-        $checksum = md5(
+        $headers['ETag'] = md5(
             Request::getContent()
                 . json_encode(Request::all())
                 . json_encode(Request::route()->parameters)
@@ -79,8 +78,6 @@ class GetEntries extends Controller
             'meta' => $meta,
             'links' => $links,
             'data' => $results->all(),
-        ], 200, [
-            'ETag' => $checksum,
-        ]);
+        ], 200, $headers);
     }
 }

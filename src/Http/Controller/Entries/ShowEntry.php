@@ -21,7 +21,7 @@ class ShowEntry extends ApiController
     {
         $instance = Streams::entries($stream)->find($entry);
 
-        return Response::json([
+        $response = Response::json([
             'meta' => [
                 'parameters' => Request::route()->parameters(),
                 'query' => Request::query(),
@@ -33,5 +33,11 @@ class ShowEntry extends ApiController
             ],
             'data' => $instance,
         ], $instance ? 200 : 404);
+
+        if ($instance) {
+            $response->setLastModified($instance->lastModified());
+        }
+
+        return $response;
     }
 }
