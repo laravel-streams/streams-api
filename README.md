@@ -21,7 +21,7 @@ php artisan vendor:publish --provider=Streams\\Api\\ApiServiceProvider --tag=con
 ## [Endpoints](https://streams.dev/docs/api/endpoints)
 
 ```bash
-GET /api/streams/{stream}
+GET /api/streams
 POST /api/streams
 GET /api/streams/{stream}
 PATCH /api/streams/{stream}
