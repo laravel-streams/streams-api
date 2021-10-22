@@ -47,7 +47,7 @@ abstract class ApiController extends Controller
                     'index' => URL::route('streams.api.entries.index', ['stream' => $stream]),
                 ],
                 'errors' => [
-                    "Action [view] authorized for [{$stream}]."
+                    'message' => "Action [view] authorized for [{$stream}]."
                 ]
             ], 403);
         }
