@@ -15,24 +15,24 @@
         "noImplicitThis": false,
         "resolveJsonModule": true,
         "noImplicitUseStrict": false,
+        "declaration": true,
+        "declarationDir": "public/types",
         "baseUrl": ".",
         "typeRoots": [
-            "node_modules/@types",
-            "../../../node_modules/@types"
+            "../node_modules/@types",
+            "../../../../node_modules/@types"
         ],
         "lib": [
             "esnext",
             "scripthost",
             "DOM"
-        ],
-        "paths": {
-        }
+        ]
     },
     "include": [
+        "lib"
     ],
     "exclude": [
         "node_modules",
-        "resources",
         "test"
     ]
 }

@@ -61,6 +61,10 @@ class CreateStreamTest extends ApiControllerTest
         $this->assertTrue(array_key_exists('errors', $content));
     }
 
+    /**
+     * @return void
+     * @expectedException
+     */
     public function test409ResponseStructure()
     {
         $response = $this->callRouteAction([

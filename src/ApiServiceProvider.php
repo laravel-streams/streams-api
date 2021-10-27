@@ -18,7 +18,18 @@ use Streams\Api\Http\Controller\Streams\PatchStream;
 use Streams\Api\Http\Controller\Streams\CreateStream;
 use Streams\Api\Http\Controller\Streams\DeleteStream;
 use Streams\Api\Http\Controller\Streams\UpdateStream;
-
+use OpenApi\Annotations as OA;
+/**
+ * @OA\Info(
+ *     title="Streams API",
+ *      version="1.0.0",
+ *      description="The Streams API provides a full featured and extensible RESTful API. The API provides access and management control to all configured domain information and a streamlined interface to define custom endpoints of your own."
+ * )
+ * @OA\Get(
+ *      path="/api/streams/{stream}/entries"
+ * parameters=""
+ * )
+ */
 class ApiServiceProvider extends ServiceProvider
 {
 
