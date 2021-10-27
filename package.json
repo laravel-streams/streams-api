@@ -9,6 +9,31 @@
         "url": "git@github.com:laravel-streams/api-js",
         "type": "git"
     },
+    "types": "resources/public/types/index.d.ts",
+    "main": "resources/public/js/index.js",
+    "module": "resources/lib/index.ts",
+    "scripts": {
+        "build": "mix",
+        "dev": "mix",
+        "development": "mix",
+        "watch": "mix watch",
+        "watch-poll": "mix watch -- --watch-options-poll=1000",
+        "hot": "mix watch --hot",
+        "prod": "npm run production",
+        "production": "mix --production",
+        "clean": "rimraf resources/lib/**/*.d.ts public/js",
+        "dts": "tsc --project webpack.tsconfig.json --emitDeclarationOnly",
+        "test": "cd test && mocha"
+    },
+    "dependencies": {
+        "@laravel-streams/core": "^1.0.0",
+        "@laravel-streams/streams-api": "^1.0.0",
+        "reflect-metadata": "^0.1.13"
+    },
+    "devDependencies": {
+        "@laravel-streams/mix-extension": "^1.0.0",
+        "laravel-mix": "^6.0.34"
+    },
     "streams": {
         "output": {
             "name": [
@@ -25,29 +50,5 @@
             "watch": "watch",
             "test": "test"
         }
-    },
-    "types": "resources/public/types/index.d.ts",
-    "main": "resources/public/js/index.js",
-    "scripts": {
-        "build": "mix",
-        "dev": "mix",
-        "development": "mix",
-        "watch": "mix watch",
-        "watch-poll": "mix watch -- --watch-options-poll=1000",
-        "hot": "mix watch --hot",
-        "prod": "npm run production",
-        "production": "mix --production",
-        "clean": "rimraf resources/lib/**/*.d.ts public/js",
-        "dts": "tsc --project webpack.tsconfig.json --emitDeclarationOnly",
-        "test": "mocha"
-    },
-    "dependencies": {
-        "@laravel-streams/core": "^1.0.0",
-        "@laravel-streams/streams-api": "workspace:*",
-        "reflect-metadata": "^0.1.13"
-    },
-    "devDependencies": {
-        "@laravel-streams/mix-extension": "^1.0.0",
-        "laravel-mix": "^6.0.34"
     }
 }

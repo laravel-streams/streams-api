@@ -26,7 +26,6 @@
             "DOM"
         ],
         "paths": {
-            "@laravel-streams/streams-api": ["../../@laravel-streams/streams-api/src"]
         }
     },
     "include": [

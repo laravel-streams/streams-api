@@ -4,7 +4,15 @@
     "compilerOptions": {
         "target": "es6",
         "module": "CommonJS",
+        "baseUrl": ".",
+        "paths": {
+//            "@laravel-streams/core": ["../core/resources/lib/index.ts"],
+//            "@laravel-streams/core/*": ["../core/resources/lib/*"],
+//            "@laravel-streams/streams-api": ["../../@laravel-streams/streams-api/src/index.ts"],
+//            "@laravel-streams/streams-api/*": ["../../@laravel-streams/streams-api/src/*"],
+        }
     },
+
     "include": [
         "resources/lib",
         "test"

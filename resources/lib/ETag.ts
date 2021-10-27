@@ -20,12 +20,14 @@ export class ETag {
         return this.streams.client;
     }
 
-    constructor(protected streams: Streams) {
-        // Object.defineProperty(streams, 'etag', {
-        //     get         : () => {return this;},
-        //     configurable: true,
-        //     enumerable  : true,
-        // });
+    constructor(protected streams: Streams, defineStreamProperty:boolean=false) {
+        if(defineStreamProperty) {
+            Object.defineProperty(streams, 'etag', {
+                get         : () => {return this;},
+                configurable: true,
+                enumerable  : true,
+            });
+        }
     }
 
     enableEtag() {

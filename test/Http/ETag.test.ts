@@ -1,26 +1,37 @@
 import { skip, suite, test } from '@testdeck/mocha';
 import { TestCase } from '../TestCase';
 import { ETag } from '../../resources/lib';
+import { Streams } from '@laravel-streams/streams-api';
+
+
+
+
 
 
 @suite
 export class ETagTest extends TestCase {
 
-    @test 'etag can be added to axios'() {
+    protected createStreamsWithEtag(): Streams {
         const streams = this.createStreams();
-        const etag    = new ETag(streams);
+        const etag    = new ETag(streams, true);
+        return streams;
+    }
+
+    @test 'etag can be added to streams'() {
+        const streams = this.createStreams();
+        const etag    = new ETag(streams, true);
         streams.etag.should.eq(etag);
     }
 
     @test 'etag can be enabled'() {
-        const streams = this.createStreams();
+        const streams = this.createStreamsWithEtag();
         streams.etag.isEnabled().should.eq(false);
         streams.etag.enableEtag();
         streams.etag.isEnabled().should.eq(true);
     }
 
     @test 'etag can be disabled'() {
-        const streams = this.createStreams();
+        const streams = this.createStreamsWithEtag();
         streams.etag.isEnabled().should.eq(false);
         streams.etag.enableEtag();
         streams.etag.isEnabled().should.eq(true);
@@ -28,6 +39,4 @@ export class ETagTest extends TestCase {
         streams.etag.isEnabled().should.eq(false);
     }
 
-    @skip
-    @test 'etag integrates in axios requests'() {}
 }

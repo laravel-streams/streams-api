@@ -11,10 +11,10 @@ mix
             declarationDir: './resources/public/types'
         }
     });
-
-mix.alias({
-    '@laravel-streams/streams-api': '@laravel-streams/streams-api/src'
-})
+//
+// mix.alias({
+//     '@laravel-streams/streams-api': '@laravel-streams/streams-api/src'
+// })
 if ( !mix.inProduction() ) {
     mix.sourceMaps();
 }

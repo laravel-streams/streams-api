@@ -1,13 +1,14 @@
 import { bootstrap, env } from './_support/bootstrap';
 import { app, Application, CoreServiceProvider } from '@laravel-streams/core';
-import { FS, ProxyEnv } from './_support/utils';
+import { FS } from './_support/utils';
 
 import { Streams } from '@laravel-streams/streams-api';
-import { ApiServiceProvider } from '../resources/lib';
+import { ApiServiceProvider, ETag } from '../resources/lib';
 
-declare module '@laravel-streams/core/resources/public/types/Foundation/Application' {
-    export interface Application {
-        env: ProxyEnv<any>;
+declare module '@laravel-streams/streams-api/src/Streams' {
+
+    interface Streams {
+        etag:ETag
     }
 }
 
@@ -26,7 +27,7 @@ export abstract class TestCase {
         await this.createApp(env);
     }
 
-    protected createStreams():Streams {
+    protected createStreams(): Streams {
         return this.app.get<Streams>('streams');
     }
 
@@ -45,10 +46,10 @@ export abstract class TestCase {
             ],
             config   : {
                 api    : {
-                    baseURL: app.env.get('APP_URL', 'http://localhost') + '/' + app.env.get('STREAMS_API_PREFIX', 'api'),
+                    baseURL: env.get('APP_URL', 'http://localhost') + '/' + env.get('STREAMS_API_PREFIX', 'api'),
                 },
                 http   : {
-                    baseURL: app.env.get('APP_URL', 'http://localhost') + '/' + app.env.get('STREAMS_API_PREFIX', 'api'),
+                    baseURL: env.get('APP_URL', 'http://localhost') + '/' + env.get('STREAMS_API_PREFIX', 'api'),
                 },
                 streams: {
                     xdebug: true,
