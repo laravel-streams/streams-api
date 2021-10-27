@@ -50,7 +50,7 @@ class CreateEntry extends Controller
         /**
          * Validate the stream input.
          */
-        $validator = Streams::make('core.streams')->validator($payload->all());
+        $validator = Streams::make($stream)->validator($payload->all());
 
         /**
          * If validation passes create
