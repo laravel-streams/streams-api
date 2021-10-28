@@ -16,7 +16,7 @@ class DeleteEntry extends Controller
      *
      * @param $stream
      * @param $entry
-     * @return \Illuminate\Http\JsonResponse
+     * @return \Symfony\Component\HttpFoundation\Response
      */
     public function __invoke($stream, $entry)
     {
@@ -42,6 +42,6 @@ class DeleteEntry extends Controller
 
         Streams::repository($stream)->delete($entry->id);
 
-        return Response::json([], 204);
+        return Response::noContent();
     }
 }
