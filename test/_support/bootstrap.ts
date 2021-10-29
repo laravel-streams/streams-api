@@ -15,7 +15,6 @@ import sinonChai from 'sinon-chai';
 import btoa from 'btoa'
 import {JSDOM} from 'jsdom';
 import { getEnv } from './utils';
-
 export const env = getEnv()
 
 export const dom = new JSDOM(``,{

@@ -3,6 +3,7 @@ import { Client, Http,Streams } from '@laravel-streams/streams-api';
 import { ETagCache } from './ETagCache';
 import { ETag } from './ETag';
 
+
 app.events.on('Application:initialize:defaultConfig', (config: Configuration) => {
     config.api = {
         baseURL: '/api',
