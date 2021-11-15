@@ -16,14 +16,8 @@ class GetEntries extends ApiController
 
         $headers = [];
 
-        // atm doing this in steps for xdebug
-        $parameters = collect(Request::query('parameters', []));
-        $parameters = $parameters->filter(function ($value, $key) {
-            // all statements from frontend streams api are in this array with a numeric key
-            // filtering out stuff like XDEBUG_SESSION=PHPSTORM, which shouldn't be load as parameter
-            return is_numeric($key);
-        });
-        $parameters = $parameters->toArray();
+        $parameters = Request::query('parameters', []);
+
         $criteria = Streams::entries($stream)->loadParameters($parameters);
 
         $results = $criteria->paginate([
