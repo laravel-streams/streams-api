@@ -27,12 +27,19 @@ class HttpCache
         $options = [];
 
         /**
-         * Streams powah only.
+         * Only cache GET/HEAD
+         */
+        if (!$request->isMethodCacheable()) {
+            return $next($request);
+        }
+        
+        /**
+         * Streams powah.
          */
         if (!$stream = $request->route()->parameter('stream')) {
             return $next($request);
         }
-
+        
         $stream = Streams::make($stream);
 
         $ttl = $stream->config('cache.ttl', 60 * 60);
@@ -52,19 +59,16 @@ class HttpCache
         }
 
         /**
-         * Resolve the response.
-         */
-        $response = $next($request);
-
-        /**
          * Check for an etag.
          */
         $etag = $request->header('If-None-Match');
 
         $fingerprint = $options['etag'] = 'etag_' . md5(
-            $request->fullUrl() . $response->getContent()
+            $request->getContent()
+                . $request->fullUrl()
+                . json_encode($request->all())
         );
-        
+
         /**
          * If the etag matches this fingerprint and we've served it before
          * then return a null 302 response without thinking twice about it.
@@ -73,24 +77,23 @@ class HttpCache
             return Response::make(null, 302);
         }
 
-        if ($etag && !$stream->cache()->has($etag)) {
-            $stream->cache()->put($etag, true, $ttl);
-        }
+        /**
+         * This is a bit more sophisticated than versioning
+         * and will cause a miss if any model interactions 
+         * are performed. Prevents the query entirely.
+         */
+        $stream->cache()->put($etag, true, $ttl);
 
         /**
-         * Only cache GET/HEAD
+         * Resolve the response.
          */
-        if (!$request->isMethodCacheable() || !$response->getContent()) {
-            return $response;
-        }
+        $response = $next($request);
 
         /**
          * Set max age according to cache ttl
          */
-        if ($ttl = $stream->config('cache.ttl', 60 * 60)) {
-            $response->setMaxAge($ttl);
-            $response->setSharedMaxAge($ttl);
-        }
+        $response->setMaxAge($ttl);
+        $response->setSharedMaxAge($ttl);
 
         $response->setPublic();
         $response->setEtag($fingerprint);
