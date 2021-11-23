@@ -64,8 +64,7 @@ class HttpCache
         $fingerprint = $options['etag'] = 'etag_' . md5(
             $request->fullUrl() . $response->getContent()
         );
-        dd($response->getContent());
-
+        
         /**
          * If the etag matches this fingerprint and we've served it before
          * then return a null 302 response without thinking twice about it.
