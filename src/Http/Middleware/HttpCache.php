@@ -38,9 +38,9 @@ class HttpCache
         $ttl = $stream->config('cache.ttl', 60 * 60);
 
         /**
-         * Bypass when disabled.
+         * Bypass if not enabled.
          */
-        if ($stream->config('cache.enabled') === false) {
+        if ($stream->config('cache.enabled') !== true) {
             return $next($request);
         }
 
@@ -52,16 +52,24 @@ class HttpCache
         }
 
         /**
+         * Resolve the response.
+         */
+        $response = $next($request);
+
+        /**
          * Check for an etag.
          */
         $etag = $request->header('If-None-Match');
 
         $fingerprint = $options['etag'] = 'etag_' . md5(
-            $request->getContent()
-                . $request->fullUrl()
-                . json_encode($request->all())
+            $request->fullUrl() . $response->getContent()
         );
+        dd($response->getContent());
 
+        /**
+         * If the etag matches this fingerprint and we've served it before
+         * then return a null 302 response without thinking twice about it.
+         */
         if ($etag === $fingerprint && $stream->cache()->has($etag)) {
             return Response::make(null, 302);
         }
@@ -69,11 +77,6 @@ class HttpCache
         if ($etag && !$stream->cache()->has($etag)) {
             $stream->cache()->put($etag, true, $ttl);
         }
-
-        /**
-         * Resolve the response.
-         */
-        $response = $next($request);
 
         /**
          * Only cache GET/HEAD
@@ -85,7 +88,7 @@ class HttpCache
         /**
          * Set max age according to cache ttl
          */
-        if ($ttl = $stream->config('cache.ttl')) {
+        if ($ttl = $stream->config('cache.ttl', 60 * 60)) {
             $response->setMaxAge($ttl);
             $response->setSharedMaxAge($ttl);
         }
