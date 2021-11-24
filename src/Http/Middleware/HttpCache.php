@@ -18,8 +18,6 @@ class HttpCache
      * @param  \Illuminate\Http\Request  $request
      * @param  \Closure  $next
      * @return \Symfony\Component\HttpFoundation\Response
-     *
-     * @throws \InvalidArgumentException
      */
     public function handle($request, Closure $next)
     {
@@ -52,42 +50,21 @@ class HttpCache
         }
 
         /**
-         * Bypass when excluded.
+         * Resolve the response.
          */
-        if ($stream->config('cache.http_enabled') === false) {
-            return $next($request);
-        }
+        $response = $next($request);
 
         /**
          * Check for an etag.
          */
         $etag = $request->header('If-None-Match');
 
-        $fingerprint = $options['etag'] = 'etag_' . md5(
-            $request->getContent()
-                . $request->fullUrl()
-                . json_encode($request->all())
-        );
+        // This should be cached as well if enabled.
+        $fingerprint = $options['etag'] = md5($response->getContent());
 
-        /**
-         * If the etag matches this fingerprint and we've served it before
-         * then return a null 302 response without thinking twice about it.
-         */
-        if ($etag === $fingerprint && $stream->cache()->has($etag)) {
+        if ($etag === $fingerprint) {
             return Response::make(null, 302);
         }
-
-        /**
-         * This is a bit more sophisticated than versioning
-         * and will cause a miss if any model interactions 
-         * are performed. Prevents the query entirely.
-         */
-        $stream->cache()->put($etag, true, $ttl);
-
-        /**
-         * Resolve the response.
-         */
-        $response = $next($request);
 
         /**
          * Set max age according to cache ttl
