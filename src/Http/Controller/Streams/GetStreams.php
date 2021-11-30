@@ -19,15 +19,9 @@ class GetStreams extends Controller
      */
     public function __invoke()
     {
-        /**
-         * The HTTP spec doesn't allow body content
-         * for GET requests so fallback to JSON param.
-         */
-        if (!$payload = Request::json('query')) {
-            $payload = Arr::get(json_decode(Request::get('json'), true) ?: [], 'query', []);
-        }
+        $parameters = Request::query('parameters', Request::json('parameters') ?: []);
 
-        $criteria = Streams::entries('core.streams')->loadParameters($payload);
+        $criteria = Streams::entries('core.streams')->loadParameters($parameters);
 
         $meta = [
             'parameters' => Request::route()->parameters(),
