@@ -2,24 +2,62 @@
 
 namespace Streams\Api\Http\Controller\Entries;
 
+use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\Response;
+use Illuminate\Support\Str;
 use Streams\Core\Support\Facades\Streams;
 use Streams\Api\Http\Controller\ApiController;
+use Streams\Core\Entry\Contract\EntryInterface;
 
 class ShowEntry extends ApiController
 {
 
-    /**
-     * Return all entries for the stream.
-     *
-     * @param $stream
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function __invoke($stream, $entry)
-    {
+    public function __invoke(
+        string $stream,
+        string $entry,
+        string $map = null
+    ): JsonResponse {
+
         $instance = Streams::entries($stream)->find($entry);
+
+        if ($map) {
+
+            $map = explode('/', $map);
+
+            foreach ($map as $key) {
+
+                if ($instance instanceof EntryInterface && $instance->hasAttribute($key)) {
+                    
+                    $instance = $instance->{$key};
+
+                    continue;
+                }
+
+                $accessor = Str::camel("get_{$key}_attribute");
+
+                if (is_object($instance) && method_exists($instance, $accessor)) {
+                    
+                    $instance = $instance->{$accessor}();
+
+                    continue;
+                }
+
+                $method = Str::camel($key);
+
+                if (is_object($instance) && method_exists($instance, $method)) {
+                    
+                    $instance = $instance->{$method}();
+
+                    continue;
+                }
+
+                $target = get_class($instance);
+
+                throw new \Exception("Cannot map [$key] on target [$target].");
+            }
+        }
 
         $response = Response::json([
             'meta' => [
@@ -34,7 +72,7 @@ class ShowEntry extends ApiController
             'data' => $instance,
         ], $instance ? 200 : 404);
 
-        if ($instance) {
+        if (is_object($instance) && method_exists($instance, 'lastModified')) {
             $response->setLastModified($instance->lastModified());
         }
 
