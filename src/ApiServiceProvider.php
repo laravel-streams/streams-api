@@ -121,7 +121,7 @@ class ApiServiceProvider extends ServiceProvider
                     'uses' => CreateEntry::class,
                     'as' => 'streams.api.entries.create',
                 ]);
-                Route::get('streams/{stream}/entries/{entry}/{map?}', [
+                Route::get('streams/{stream}/entries/{entry}', [
                     'uses' => ShowEntry::class,
                     'as' => 'streams.api.entries.show',
                     'where' => [

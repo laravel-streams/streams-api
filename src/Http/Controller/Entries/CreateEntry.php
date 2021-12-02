@@ -47,10 +47,25 @@ class CreateEntry extends Controller
             ], 400, $headers);
         }
 
+        $attributes = $payload->all();
+
+        foreach (Streams::make($stream)->fields as $field) {
+
+            if (!$default = $field->config('default')) {
+                continue;
+            }
+
+            if (array_key_exists($field->handle, $attributes)) {
+                continue;
+            }
+
+            $attributes[$field->handle] = $field->type()->default($default);
+        }
+
         /**
          * Validate the stream input.
          */
-        $validator = Streams::make($stream)->validator($payload->all());
+        $validator = Streams::make($stream)->validator($attributes);
 
         /**
          * If validation passes create
@@ -58,7 +73,7 @@ class CreateEntry extends Controller
          */
         if ($validator->passes()) {
 
-            $instance = Streams::repository($stream)->create($payload->all());
+            $instance = Streams::repository($stream)->create($attributes);
 
             $headers['location'] = URL::route('streams.api.entries.show', [
                 'stream' => $stream,
