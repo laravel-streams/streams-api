@@ -25,17 +25,8 @@ class UpdateStream extends Controller
         $status = 200;
 
         if (!$instance = Streams::entries('core.streams')->find($stream)) {
-            return Response::json([
-                'meta' => [
-                    'parameters' => Request::route()->parameters(),
-                    'payload' => Request::json(),
-                ],
-                'errors' => [
-                    [
-                        'message' => 'Stream not found.',
-                    ],
-                ],
-            ], 404);
+            $createStream = new CreateStream();
+            return $createStream($stream);
         }
 
         /**
