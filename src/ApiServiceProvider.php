@@ -125,7 +125,7 @@ class ApiServiceProvider extends ServiceProvider
                     'uses' => ShowEntry::class,
                     'as' => 'streams.api.entries.show',
                     'where' => [
-                        'map' => '(.*)',
+                        'entry' => '(.*)',
                     ],
                 ]);
                 Route::put('streams/{stream}/entries/{entry}', [
