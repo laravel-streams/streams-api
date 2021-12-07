@@ -15,7 +15,7 @@ class DeleteStream extends Controller
      * Return a single Stream.
      *
      * @param string $stream
-     * @return \Illuminate\Http\JsonResponse
+     * @return \Symfony\Component\HttpFoundation\Response
      */
     public function __invoke($stream)
     {
@@ -37,8 +37,8 @@ class DeleteStream extends Controller
             ], 404);
         }
 
-        Streams::repository('core.streams')->delete($stream->id);
+        Streams::repository('core.streams')->delete($stream);
 
-        return Response::json([], 204);
+        return Response::noContent();
     }
 }

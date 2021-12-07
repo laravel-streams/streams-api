@@ -24,18 +24,10 @@ class UpdateEntry extends Controller
         $errors = [];
         $status = 200;
 
+        // If there is no stream entry found then create the stream entry, as this is PUT request
         if (!$instance = Streams::entries($stream)->find($entry)) {
-            return Response::json([
-                'meta' => [
-                    'parameters' => Request::route()->parameters(),
-                    'payload' => Request::json(),
-                ],
-                'errors' => [
-                    [
-                        'message' => 'Entry not found.',
-                    ],
-                ],
-            ], 404);
+            $createEntry = new CreateEntry();
+            return $createEntry($stream);
         }
 
         /**
