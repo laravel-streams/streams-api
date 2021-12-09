@@ -24,6 +24,7 @@ class UpdateStream extends Controller
         $errors = [];
         $status = 200;
 
+        // If there is no stream found then create the stream, as this is PUT request
         if (!$instance = Streams::entries('core.streams')->find($stream)) {
             $createStream = new CreateStream();
             return $createStream($stream);

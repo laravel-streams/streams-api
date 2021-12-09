@@ -40,7 +40,7 @@ class DeleteEntry extends Controller
             ], 404);
         }
 
-        Streams::repository($stream)->delete($entry->id);
+        Streams::repository($stream)->delete($entry);
 
         return Response::noContent();
     }
