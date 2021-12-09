@@ -61,8 +61,8 @@ class ShowEntry extends ApiController
 
         $response = Response::json([
             'meta' => [
-                'parameters' => Request::route()->parameters(),
-                'query' => Request::query(),
+                'stream' => $stream,
+                'entry' => $entry,
             ],
             'links' => [
                 'self' => URL::to(Request::path()),

@@ -27,7 +27,8 @@ class UpdateEntry extends Controller
         if (!$instance = Streams::entries($stream)->find($entry)) {
             return Response::json([
                 'meta' => [
-                    'parameters' => Request::route()->parameters(),
+                    'stream' => $stream,
+                    'entry' => $entry,
                     'payload' => Request::json(),
                 ],
                 'errors' => [
@@ -45,7 +46,8 @@ class UpdateEntry extends Controller
         if (!$payload) {
             return Response::json([
                 'meta' => [
-                    'parameters' => Request::route()->parameters(),
+                    'stream' => $stream,
+                    'entry' => $entry,
                     'payload' => Request::json(),
                 ],
                 'errors' => [
@@ -100,12 +102,12 @@ class UpdateEntry extends Controller
 
         return Response::json([
             'meta' => [
-                'parameters' => Request::route()->parameters(),
+                'stream' => $stream,
+                'entry' => $entry,
                 'payload' => Request::json(),
             ],
             'links' => [
                 'self' => URL::full(),
-                'streams' => URL::route('streams.api.streams.index'),
                 'stream' => URL::route('streams.api.streams.show', ['stream' => $stream]),
                 'entries' => URL::route('streams.api.entries.index', ['stream' => $stream]),
             ],

@@ -2,9 +2,10 @@
 
 namespace Streams\Api;
 
+use Streams\Core\Support\Provider;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Config;
-use Illuminate\Support\ServiceProvider;
+use Streams\Core\StreamsServiceProvider;
 use Streams\Core\Support\Facades\Assets;
 use Streams\Api\Http\Controller\Entries\ShowEntry;
 use Streams\Api\Http\Controller\Entries\GetEntries;
@@ -19,16 +20,27 @@ use Streams\Api\Http\Controller\Streams\CreateStream;
 use Streams\Api\Http\Controller\Streams\DeleteStream;
 use Streams\Api\Http\Controller\Streams\UpdateStream;
 
-class ApiServiceProvider extends ServiceProvider
+class ApiServiceProvider extends Provider
 {
 
-    /**
-     * Register the service provider.
-     *
-     * @return void
-     */
+    public $aliases = [
+        'Api' => \Streams\Api\Facades\Api::class,
+    ];
+
+    public $singletons = [
+        'api' => \Streams\Api\ApiManager::class,
+    ];
+
+    public $commands = [
+        \Streams\Api\Commands\ApiSchema::class,
+    ];
+
     public function register()
     {
+        $this->app->register(StreamsServiceProvider::class);
+
+        parent::register();
+
         $this->registerConfig();
 
         if (!Config::get('streams.api.enabled')) {
@@ -38,11 +50,10 @@ class ApiServiceProvider extends ServiceProvider
         $this->registerRoutes();
     }
 
-    /**
-     * Boot the service provider.
-     */
     public function boot()
     {
+        parent::boot();
+
         $this->publishes([
             base_path('vendor/streams/api/resources/public')
             => public_path('vendor/streams/api')
@@ -57,10 +68,7 @@ class ApiServiceProvider extends ServiceProvider
         }
     }
 
-    /**
-     * Register API config.
-     */
-    protected function registerConfig()
+    protected function registerConfig(): void
     {
         $this->mergeConfigFrom(__DIR__ . '/../resources/config/api.php', 'streams.api');
 
@@ -73,10 +81,7 @@ class ApiServiceProvider extends ServiceProvider
         ], 'config');
     }
 
-    /**
-     * Register initial API routes.
-     */
-    protected function registerRoutes()
+    protected function registerRoutes(): void
     {
         Route::prefix(Config::get('streams.api.prefix', 'api'))
             ->middleware(Config::get('streams.api.middleware', 'api'))

@@ -14,11 +14,15 @@ class GetEntries extends ApiController
     public function __invoke($stream)
     {
 
+        if (!Streams::exists($stream)) {
+            abort(404, "The stream [$stream] does not exist.");
+        }
+
         $headers = [];
 
-        $parameters = Request::query('parameters', Request::json('parameters') ?: []);
+        $query = Request::query('query', Request::json('query') ?: []);
 
-        $criteria = Streams::entries($stream)->loadParameters($parameters);
+        $criteria = Streams::entries($stream)->loadParameters($query);
 
         $results = $criteria->paginate([
             'per_page' => Request::get('per_page', 100),
@@ -30,8 +34,8 @@ class GetEntries extends ApiController
             'per_page' => $results->perPage(),
             'last_page' => $results->lastPage(),
             'current_page' => $results->currentPage(),
-            'route_parameters' => Request::route()->parameters(),
-            'parameters' => $parameters,
+            'stream' => $stream,
+            'query' => $query,
         ];
 
         $links = [
@@ -40,7 +44,6 @@ class GetEntries extends ApiController
             'previous_page' => $results->previousPageUrl(),
 
             'self'    => URL::full(),
-            'streams' => URL::route('streams.api.streams.index'),
             'stream'  => URL::route('streams.api.streams.show', ['stream' => $stream]),
         ];
 

@@ -31,6 +31,8 @@ class CreateEntry extends Controller
         /**
          * If there is no input then
          * we can't create anything.
+         *
+         * @todo Should this be an exception?
          */
         if (!$payload) {
             return Response::json([
@@ -105,8 +107,9 @@ class CreateEntry extends Controller
 
         return Response::json([
             'meta' => [
-                'parameters' => Request::route()->parameters(),
+                'stream' => $stream,
                 'payload' => Request::json(),
+                'form-data' => Request::input(),
             ],
             'links' => [
                 'self' => URL::full(),
