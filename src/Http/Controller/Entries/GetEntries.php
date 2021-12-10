@@ -20,9 +20,9 @@ class GetEntries extends ApiController
 
         $headers = [];
 
-        $query = Request::query('query', Request::json('query') ?: []);
+        $parameters = Request::query('parameters', Request::json('parameters') ?: []);
 
-        $criteria = Streams::entries($stream)->loadParameters($query);
+        $criteria = Streams::entries($stream)->loadParameters($parameters);
 
         $results = $criteria->paginate([
             'per_page' => Request::get('per_page', 100),
@@ -35,7 +35,7 @@ class GetEntries extends ApiController
             'last_page' => $results->lastPage(),
             'current_page' => $results->currentPage(),
             'stream' => $stream,
-            'query' => $query,
+//            'query' => $query,
         ];
 
         $links = [
