@@ -1,6 +1,6 @@
 <?php
 
-namespace Streams\Api\Commands;
+namespace Streams\Api;
 
 /**
  * @property-read TSBuilder $export
