@@ -7,7 +7,7 @@ namespace Streams\Api;
  * @property-read TSBuilder $declare
  * @property-read TSBuilder $root
  * @property-read TSBuilder $parent
- * @property-read integer   $indent
+ * @property-read int   $indent
  */
 class TSBuilder
 {
@@ -26,10 +26,10 @@ class TSBuilder
     public function __construct(?TSBuilder $parent = null, int $depth = 0, $modifier = null)
     {
         if ($modifier === null) {
-            $modifier = static fn(string $val): string => $val;
+            $modifier = static fn (string $val): string => $val;
         }
-        $this->_parent  = $parent;
-        $this->depth    = $depth;
+        $this->_parent = $parent;
+        $this->depth = $depth;
         $this->modifier = $modifier;
     }
 
@@ -41,11 +41,11 @@ class TSBuilder
     public function __get($name)
     {
         if ($name === 'export') {
-            return new static($this, $this->depth, static fn($v) => "export $v");
+            return new static($this, $this->depth, static fn ($v) => "export $v");
         }
 
         if ($name === 'declare') {
-            return new static($this, $this->depth, static fn($v) => "declare $v");
+            return new static($this, $this->depth, static fn ($v) => "declare $v");
         }
 
         if ($name === 'parent') {
@@ -73,6 +73,7 @@ class TSBuilder
                 break;
             }
         }
+
         return $parent;
     }
 
@@ -86,6 +87,7 @@ class TSBuilder
                 break;
             }
         }
+
         return $parent;
     }
 
@@ -94,32 +96,37 @@ class TSBuilder
         if ($useModifier) {
             $value = call_user_func($this->modifier, $value);
         }
-        $this->root()->lines[] = $this->indent . $value;
+        $this->root()->lines[] = $this->indent.$value;
+
         return $this;
     }
 
     protected function child($modifier = null)
     {
-        $g                = new static($this, $this->depth + 1, $modifier);
+        $g = new static($this, $this->depth + 1, $modifier);
         $this->children[] = $g;
+
         return $g;
     }
 
     public function required(bool $required = true)
     {
         $this->_required = $required;
+
         return $this;
     }
 
     public function open(string $type, string $name)
     {
         $this->line("$type  $name {");
+
         return $this->child();
     }
 
     public function close()
     {
         $this->parent->line('}', false);
+
         return $this->parent;
     }
 
@@ -130,6 +137,7 @@ class TSBuilder
         }
         $assign = $required ? ':' : '?:';
         $this->line("{$name}{$assign} {$type}");
+
         return $this;
     }
 
@@ -146,6 +154,7 @@ class TSBuilder
     public function type(string $name, string $value)
     {
         $this->line("type {$name} = {$value}");
+
         return $this;
     }
 
@@ -157,13 +166,13 @@ class TSBuilder
         if (is_array($comments)) {
             $comments = explode("\n", $comments);
         }
-        $comments = array_map(fn($c) => " * $c", $comments);
+        $comments = array_map(fn ($c) => " * $c", $comments);
         array_unshift($comments, '/**');
         $comments[] = ' */';
         foreach ($comments as $comment) {
             $this->line($comment);
         }
+
         return $this;
     }
 }
-

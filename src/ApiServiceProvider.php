@@ -2,27 +2,26 @@
 
 namespace Streams\Api;
 
-use Streams\Core\Support\Provider;
-use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Config;
-use Streams\Core\StreamsServiceProvider;
-use Streams\Core\Support\Facades\Assets;
-use Streams\Api\Http\Controller\Entries\ShowEntry;
-use Streams\Api\Http\Controller\Entries\GetEntries;
-use Streams\Api\Http\Controller\Entries\PatchEntry;
-use Streams\Api\Http\Controller\Streams\GetStreams;
-use Streams\Api\Http\Controller\Streams\ShowStream;
+use Illuminate\Support\Facades\Route;
 use Streams\Api\Http\Controller\Entries\CreateEntry;
 use Streams\Api\Http\Controller\Entries\DeleteEntry;
+use Streams\Api\Http\Controller\Entries\GetEntries;
+use Streams\Api\Http\Controller\Entries\PatchEntry;
+use Streams\Api\Http\Controller\Entries\ShowEntry;
 use Streams\Api\Http\Controller\Entries\UpdateEntry;
-use Streams\Api\Http\Controller\Streams\PatchStream;
 use Streams\Api\Http\Controller\Streams\CreateStream;
 use Streams\Api\Http\Controller\Streams\DeleteStream;
+use Streams\Api\Http\Controller\Streams\GetStreams;
+use Streams\Api\Http\Controller\Streams\PatchStream;
+use Streams\Api\Http\Controller\Streams\ShowStream;
 use Streams\Api\Http\Controller\Streams\UpdateStream;
+use Streams\Core\StreamsServiceProvider;
+use Streams\Core\Support\Facades\Assets;
+use Streams\Core\Support\Provider;
 
 class ApiServiceProvider extends Provider
 {
-
     public $aliases = [
         'Api' => \Streams\Api\Facades\Api::class,
     ];
@@ -43,7 +42,7 @@ class ApiServiceProvider extends Provider
 
         $this->registerConfig();
 
-        if (!Config::get('streams.api.enabled')) {
+        if (! Config::get('streams.api.enabled')) {
             return;
         }
 
@@ -55,29 +54,28 @@ class ApiServiceProvider extends Provider
         parent::boot();
 
         $this->publishes([
-            base_path('vendor/streams/api/resources/public')
-            => public_path('vendor/streams/api')
+            base_path('vendor/streams/api/resources/public') => public_path('vendor/streams/api'),
         ], ['public']);
 
         Assets::addPath('api', 'vendor/streams/api');
 
         Assets::register('api::js/index.js');
 
-        if (!Config::get('streams.api.enabled')) {
+        if (! Config::get('streams.api.enabled')) {
             return;
         }
     }
 
     protected function registerConfig(): void
     {
-        $this->mergeConfigFrom(__DIR__ . '/../resources/config/api.php', 'streams.api');
+        $this->mergeConfigFrom(__DIR__.'/../resources/config/api.php', 'streams.api');
 
-        if (file_exists($config = __DIR__ . '/../../../../config/streams/api.php')) {
+        if (file_exists($config = __DIR__.'/../../../../config/streams/api.php')) {
             $this->mergeConfigFrom($config, 'streams.api');
         }
 
         $this->publishes([
-            __DIR__ . '/../resources/config/api.php' => config_path('streams/api.php')
+            __DIR__.'/../resources/config/api.php' => config_path('streams/api.php'),
         ], 'config');
     }
 
@@ -87,7 +85,7 @@ class ApiServiceProvider extends Provider
             ->middleware(Config::get('streams.api.middleware', 'api'))
             ->group(function () {
 
-                /**
+                /*
                  * Route Streams API endpoints.
                  */
                 Route::get('streams', [
@@ -115,7 +113,7 @@ class ApiServiceProvider extends Provider
                     'as' => 'streams.api.streams.delete',
                 ]);
 
-                /**
+                /*
                  * Route entries API endpoints.
                  */
                 Route::get('streams/{stream}/entries', [

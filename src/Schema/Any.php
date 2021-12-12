@@ -2,10 +2,8 @@
 
 namespace Streams\Api\Schema;
 
-use GoldSpecDigital\ObjectOrientedOAS\Contracts\SchemaContract;
 use GoldSpecDigital\ObjectOrientedOAS\Objects\AllOf;
 use GoldSpecDigital\ObjectOrientedOAS\Objects\AnyOf;
-use GoldSpecDigital\ObjectOrientedOAS\Objects\BaseObject;
 use GoldSpecDigital\ObjectOrientedOAS\Objects\Not;
 use GoldSpecDigital\ObjectOrientedOAS\Objects\OneOf;
 use GoldSpecDigital\ObjectOrientedOAS\Objects\Schema;

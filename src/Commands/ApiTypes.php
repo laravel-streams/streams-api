@@ -15,14 +15,14 @@ class ApiTypes extends Command
     public function handle()
     {
         $gen = new TSGenerator($this->option('empty'));
-        $generated =$gen->generate();
-        if($this->argument('filepath')) {
+        $generated = $gen->generate();
+        if ($this->argument('filepath')) {
             $path = base_path($this->argument('filepath'));
         } else {
             $path = base_path('packages/@laravel-streams/streams-api/src/types/generated.ts');
         }
         File::ensureDirectoryExists(File::dirname($path));
-        File::put($path,$generated);
+        File::put($path, $generated);
         $this->info("Successfully generated to: $path");
     }
 }

@@ -2,18 +2,17 @@
 
 namespace Streams\Api\Http\Controller;
 
-use Illuminate\Support\Arr;
 use Illuminate\Routing\Controller;
-use Illuminate\Support\Facades\URL;
-use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Config;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\Response;
+use Illuminate\Support\Facades\URL;
 use Streams\Core\Support\Facades\Streams;
 
 abstract class ApiController extends Controller
 {
-
     protected function authorizeActionAbility($ability, $stream, $instance = null)
     {
         $stream = is_object($stream) ? $stream : Streams::make($stream);
@@ -31,11 +30,11 @@ abstract class ApiController extends Controller
             $policy = Gate::getPolicyFor($stream->source['prototype']);
         }
 
-        if (!$policy) {
+        if (! $policy) {
             $policy = Config::get('streams.api.policy');
         }
 
-        if ($policy && !Gate::allows($ability, array_filter(['entry' => $instance]))) {
+        if ($policy && ! Gate::allows($ability, array_filter(['entry' => $instance]))) {
             return Response::json([
                 'data' => null,
                 'meta' => [
@@ -47,8 +46,8 @@ abstract class ApiController extends Controller
                     'index' => URL::route('streams.api.entries.index', ['stream' => $stream]),
                 ],
                 'errors' => [
-                    'message' => "Action [view] authorized for [{$stream}]."
-                ]
+                    'message' => "Action [view] authorized for [{$stream}].",
+                ],
             ], 403);
         }
     }

@@ -2,16 +2,15 @@
 
 namespace Streams\Api\Http\Controller\Entries;
 
-use Illuminate\Support\Arr;
 use Illuminate\Routing\Controller;
-use Illuminate\Support\Facades\URL;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\Response;
+use Illuminate\Support\Facades\URL;
 use Streams\Core\Support\Facades\Streams;
 
 class CreateEntry extends Controller
 {
-
     /**
      * Return all entries for the stream.
      *
@@ -28,13 +27,13 @@ class CreateEntry extends Controller
 
         $status = 201;
 
-        /**
+        /*
          * If there is no input then
          * we can't create anything.
          *
          * @todo Should this be an exception?
          */
-        if (!$payload) {
+        if (! $payload) {
             return Response::json([
                 'data' => $instance,
                 'meta' => [
@@ -52,8 +51,7 @@ class CreateEntry extends Controller
         $attributes = $payload->all();
 
         foreach (Streams::make($stream)->fields as $field) {
-
-            if (!$default = $field->config('default')) {
+            if (! $default = $field->config('default')) {
                 continue;
             }
 
@@ -69,12 +67,11 @@ class CreateEntry extends Controller
          */
         $validator = Streams::make($stream)->validator($attributes);
 
-        /**
+        /*
          * If validation passes create
          * the stream and add Location.
          */
         if ($validator->passes()) {
-
             $instance = Streams::repository($stream)->create($attributes);
 
             $headers['location'] = URL::route('streams.api.entries.show', [
@@ -90,7 +87,6 @@ class CreateEntry extends Controller
         $messages = $validator->messages();
 
         if ($messages->isNotEmpty()) {
-
             $status = 409;
 
             foreach ($messages->messages() as $field => $messages) {

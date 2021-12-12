@@ -3,15 +3,12 @@
 namespace Streams\Api\Http\Middleware;
 
 use Closure;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Response;
 use Streams\Core\Support\Facades\Streams;
 
 class HttpCache
 {
-
-
     /**
      * Add cache related HTTP headers.
      *
@@ -21,28 +18,27 @@ class HttpCache
      */
     public function handle($request, Closure $next)
     {
-
         $options = [];
 
-        /**
+        /*
          * Only cache GET/HEAD
          */
-        if (!$request->isMethodCacheable()) {
+        if (! $request->isMethodCacheable()) {
             return $next($request);
         }
-        
-        /**
+
+        /*
          * Streams powah.
          */
-        if (!$stream = $request->route()->parameter('stream')) {
+        if (! $stream = $request->route()->parameter('stream')) {
             return $next($request);
         }
-        
+
         $stream = Streams::make($stream);
 
         $ttl = $stream->config('cache.ttl', 60 * 60);
 
-        /**
+        /*
          * Bypass if not enabled.
          */
         if ($stream->config('cache.enabled') !== true) {
@@ -66,7 +62,7 @@ class HttpCache
             return Response::make(null, 302);
         }
 
-        /**
+        /*
          * Set max age according to cache ttl
          */
         $response->setMaxAge($ttl);

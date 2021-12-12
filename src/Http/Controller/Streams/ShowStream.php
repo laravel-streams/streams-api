@@ -3,14 +3,13 @@
 namespace Streams\Api\Http\Controller\Streams;
 
 use Illuminate\Routing\Controller;
-use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\Response;
+use Illuminate\Support\Facades\URL;
 use Streams\Core\Support\Facades\Streams;
 
 class ShowStream extends Controller
 {
-
     /**
      * Return a single Stream.
      *

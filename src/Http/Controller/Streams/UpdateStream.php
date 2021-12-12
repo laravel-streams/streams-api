@@ -3,14 +3,13 @@
 namespace Streams\Api\Http\Controller\Streams;
 
 use Illuminate\Routing\Controller;
-use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\Response;
+use Illuminate\Support\Facades\URL;
 use Streams\Core\Support\Facades\Streams;
 
 class UpdateStream extends Controller
 {
-
     /**
      * Update a stream.
      *
@@ -25,16 +24,17 @@ class UpdateStream extends Controller
         $status = 200;
 
         // If there is no stream found then create the stream, as this is PUT request
-        if (!$instance = Streams::entries('core.streams')->find($stream)) {
+        if (! $instance = Streams::entries('core.streams')->find($stream)) {
             $createStream = new CreateStream();
+
             return $createStream($stream);
         }
 
-        /**
+        /*
          * If there is no input then
          * we can't update anything.
          */
-        if (!$payload) {
+        if (! $payload) {
             return Response::json([
                 'meta' => [
                     'parameters' => Request::route()->parameters(),
@@ -48,7 +48,7 @@ class UpdateStream extends Controller
             ], 400);
         }
 
-        /**
+        /*
          * This is an idempotent request.
          */
         $payload->set('id', $instance->id);
@@ -60,7 +60,7 @@ class UpdateStream extends Controller
          */
         $validator = Streams::make('core.streams')->validator($instance);
 
-        /**
+        /*
          * If validation passes
          * update the stream.
          */
@@ -75,7 +75,6 @@ class UpdateStream extends Controller
         $messages = $validator->messages();
 
         if ($messages->isNotEmpty()) {
-
             $status = 409;
 
             foreach ($messages->messages() as $field => $messages) {

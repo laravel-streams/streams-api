@@ -3,14 +3,13 @@
 namespace Streams\Api\Http\Controller\Entries;
 
 use Illuminate\Routing\Controller;
-use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\Response;
+use Illuminate\Support\Facades\URL;
 use Streams\Core\Support\Facades\Streams;
 
 class UpdateEntry extends Controller
 {
-
     /**
      * Return all entries for the stream.
      *
@@ -24,21 +23,20 @@ class UpdateEntry extends Controller
         $errors = [];
         $status = 200;
 
-        /**
+        /*
          * If no entry is found then create one.
          */
-        if (!$instance = Streams::entries($stream)->find($entry)) {
-            
+        if (! $instance = Streams::entries($stream)->find($entry)) {
             $createEntry = new CreateEntry();
-            
+
             return $createEntry($stream);
         }
 
-        /**
+        /*
          * If there is no input then
          * we can't update anything.
          */
-        if (!$payload) {
+        if (! $payload) {
             return Response::json([
                 'meta' => [
                     'stream' => $stream,
@@ -53,7 +51,7 @@ class UpdateEntry extends Controller
             ], 400);
         }
 
-        /**
+        /*
          * This is an idempotent request.
          */
         $payload->set('id', $instance->id);
@@ -65,7 +63,7 @@ class UpdateEntry extends Controller
          */
         $validator = Streams::make($stream)->validator($instance);
 
-        /**
+        /*
          * If validation passes
          * update the stream.
          */
@@ -80,7 +78,6 @@ class UpdateEntry extends Controller
         $messages = $validator->messages();
 
         if ($messages->isNotEmpty()) {
-
             $status = 409;
 
             foreach ($messages->messages() as $field => $messages) {

@@ -9,7 +9,7 @@ use Streams\Core\Support\Facades\Streams;
 
 class TSGenerator
 {
-    const MAP = [
+    public const MAP = [
         Schema::TYPE_ARRAY   => 'any[]',
         Schema::TYPE_BOOLEAN => 'boolean',
         Schema::TYPE_INTEGER => 'number',
@@ -27,10 +27,11 @@ class TSGenerator
 
     protected function getType(Schema $schema)
     {
-        $type = static::MAP[ $schema->type ];
-        if ($schema->format !== null && in_array($schema->format, [ 'date', 'date-time' ])) {
+        $type = static::MAP[$schema->type];
+        if ($schema->format !== null && in_array($schema->format, ['date', 'date-time'])) {
             $type = 'Date';
         }
+
         return $type;
     }
 
@@ -40,11 +41,11 @@ class TSGenerator
 
         $bn = $b->export->open('namespace', 'streams');
         $bn->export
-            ->open('interface', "BaseEntry")
+            ->open('interface', 'BaseEntry')
             ->add('[key:string]', 'any', true)
             ->close();
         $bn->export
-            ->open('interface', "BaseStream")
+            ->open('interface', 'BaseStream')
             ->add('entries', 'BaseEntry')
             ->add('[key:string]', 'any', true)
             ->close();
@@ -59,11 +60,11 @@ class TSGenerator
                     // @todo
                 }
                 if ($schema->properties) {
-                    $name    = str_replace('.', '_', $schema->objectId);
+                    $name = str_replace('.', '_', $schema->objectId);
                     $names[] = $name;
-                    $bns     = $bn->export->open('namespace', $name);
+                    $bns = $bn->export->open('namespace', $name);
                     $bns->export
-                        ->open('interface', "Stream extends BaseStream")
+                        ->open('interface', 'Stream extends BaseStream')
                         ->add('entries', 'Entry')
                         ->close();
                     $bnsi = $bns->export->open('interface', 'Entry extends BaseEntry');
@@ -81,7 +82,7 @@ class TSGenerator
             $name = "'$name'";
             $bnf->add($name, "{$namespace}.Entry", true);
         }
-        $bnf->add('[key:string]', "any", true);
+        $bnf->add('[key:string]', 'any', true);
         $bnf->close();
 
         $bns = $bn->export->open('interface', 'Streams');
@@ -90,7 +91,7 @@ class TSGenerator
             $name = "'$name'";
             $bns->add($name, "{$namespace}.Stream", true);
         }
-        $bns->add('[key:string]', "any", true);
+        $bns->add('[key:string]', 'any', true);
         $bns->close();
         $bn->export->type('StreamID', 'keyof Streams');
         $bn->close();

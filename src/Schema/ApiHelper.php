@@ -33,6 +33,7 @@ class ApiHelper
         }
         if (Type::hasValue($name)) {
             array_unshift($arguments, $name);
+
             return static::getPropFunction()(...$arguments);
         }
         throw new \BadMethodCallException($name);
@@ -40,11 +41,11 @@ class ApiHelper
 
     public static function getPropFunction(): callable
     {
-        /**
+        /*
          * @param Type|string $type
          */
         return function (
-             $type,
+            $type,
             string $id = null,
             string $description = null,
             string $title = null,
@@ -59,12 +60,12 @@ class ApiHelper
                 ->title($title)
                 ->example($example);
             if ($properties !== null) {
-
                 $s = $s->properties(...Arr::wrap($properties));
             }
             if ($additionalProperties !== null) {
                 $s = $s->additionalProperties($additionalProperties);
             }
+
             return $s;
         };
     }
@@ -78,15 +79,16 @@ class ApiHelper
         if ($attributes instanceof Arrayable) {
             $attributes = $attributes->toArray();
         }
+
         return collect($attributes)->mapWithKeys(function ($value, $key) {
             try {
                 $value = static::prop(Type::resolve($value), $key, example: $value);
-            }
-            catch (\Throwable $e) {
+            } catch (\Throwable $e) {
                 return Any::ref('any');
 //                return static::string($key, 'type was not correctly resolved. type may vary');
             }
-            return [ $key => $value ];
+
+            return [$key => $value];
         })->toArray();
     }
 
@@ -94,8 +96,8 @@ class ApiHelper
     {
         return MediaType::json()->schema(
             static::object('response')->properties(
-                static::prop('array', 'available', 'A list of all available data keys you can fetch', 'Available', [ 'app', 'layout', 'config', 'foo' ]),
-                static::prop('string', 'fetched', 'A list of all data keys structures you have fetched', 'Fetched', [ 'app', 'layout', 'config' ]),
+                static::prop('array', 'available', 'A list of all available data keys you can fetch', 'Available', ['app', 'layout', 'config', 'foo']),
+                static::prop('string', 'fetched', 'A list of all data keys structures you have fetched', 'Fetched', ['app', 'layout', 'config']),
                 static::object('data', properties: $schema)
             )
         );

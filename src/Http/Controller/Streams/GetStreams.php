@@ -2,16 +2,14 @@
 
 namespace Streams\Api\Http\Controller\Streams;
 
-use Illuminate\Support\Arr;
 use Illuminate\Routing\Controller;
-use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\Response;
+use Illuminate\Support\Facades\URL;
 use Streams\Core\Support\Facades\Streams;
 
 class GetStreams extends Controller
 {
-
     /**
      * Return an index of Streams.
      *
@@ -33,7 +31,6 @@ class GetStreams extends Controller
         ];
 
         if (Request::get('all') !== true) {
-
             $results = $criteria->paginate([
                 'per_page' => Request::get('per_page', 100),
                 'page'     => Request::get('page', 1),
@@ -49,8 +46,7 @@ class GetStreams extends Controller
             $links['previous_page'] = $results->previousPageUrl();
         }
 
-        if (!Request::get('all') !== true) {
-
+        if (! Request::get('all') !== true) {
             $results = $criteria->get();
 
             $meta['total'] = $results->total();
@@ -58,8 +54,8 @@ class GetStreams extends Controller
 
         $checksum = md5(
             Request::getContent()
-                . json_encode(Request::all())
-                . json_encode(Request::route()->parameters)
+                .json_encode(Request::all())
+                .json_encode(Request::route()->parameters)
         );
 
         return Response::json([

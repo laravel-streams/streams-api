@@ -2,16 +2,15 @@
 
 namespace Streams\Api\Http\Controller\Streams;
 
-use Illuminate\Support\Arr;
 use Illuminate\Routing\Controller;
-use Illuminate\Support\Facades\URL;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\Response;
+use Illuminate\Support\Facades\URL;
 use Streams\Core\Support\Facades\Streams;
 
 class CreateStream extends Controller
 {
-
     /**
      * Create a stream.
      *
@@ -27,11 +26,11 @@ class CreateStream extends Controller
 
         $status = 201;
 
-        /**
+        /*
          * If there is no input then
          * we can't create anything.
          */
-        if (!$payload) {
+        if (! $payload) {
             return Response::json([
                 'data' => $instance,
                 'meta' => [
@@ -51,12 +50,11 @@ class CreateStream extends Controller
          */
         $validator = Streams::make('core.streams')->validator($payload->all());
 
-        /**
+        /*
          * If validation passes create
          * the stream and add Location.
          */
         if ($validator->passes()) {
-
             $instance = Streams::repository('core.streams')->create($payload->all());
 
             $headers['location'] = URL::route('streams.api.streams.show', [
@@ -71,7 +69,6 @@ class CreateStream extends Controller
         $messages = $validator->messages();
 
         if ($messages->isNotEmpty()) {
-
             $status = 409;
 
             foreach ($messages->messages() as $field => $messages) {

@@ -2,23 +2,22 @@
 
 namespace Streams\Api;
 
-use Streams\Core\Stream\Stream;
-use Streams\Core\Support\Facades\Streams;
-use GoldSpecDigital\ObjectOrientedOAS\OpenApi;
-use GoldSpecDigital\ObjectOrientedOAS\Objects\Info;
-use GoldSpecDigital\ObjectOrientedOAS\Objects\Schema;
-use GoldSpecDigital\ObjectOrientedOAS\Objects\Server;
+use GoldSpecDigital\ObjectOrientedOAS\Objects\Components;
 use GoldSpecDigital\ObjectOrientedOAS\Objects\Contact;
+use GoldSpecDigital\ObjectOrientedOAS\Objects\Info;
 use GoldSpecDigital\ObjectOrientedOAS\Objects\License;
-use GoldSpecDigital\ObjectOrientedOAS\Objects\PathItem;
-use GoldSpecDigital\ObjectOrientedOAS\Objects\Response;
 use GoldSpecDigital\ObjectOrientedOAS\Objects\MediaType;
 use GoldSpecDigital\ObjectOrientedOAS\Objects\Operation;
-use GoldSpecDigital\ObjectOrientedOAS\Objects\Components;
+use GoldSpecDigital\ObjectOrientedOAS\Objects\PathItem;
+use GoldSpecDigital\ObjectOrientedOAS\Objects\Response;
+use GoldSpecDigital\ObjectOrientedOAS\Objects\Schema;
+use GoldSpecDigital\ObjectOrientedOAS\Objects\Server;
+use GoldSpecDigital\ObjectOrientedOAS\OpenApi;
+use Streams\Core\Stream\Stream;
+use Streams\Core\Support\Facades\Streams;
 
 class ApiSchema
 {
-
     public static function create()
     {
         return OpenApi::create()
@@ -86,7 +85,7 @@ class ApiSchema
         $get = Operation::get()
             ->tags($tag)
             ->summary('List multiple entries.')
-            ->operationId($stream->id . '.index')
+            ->operationId($stream->id.'.index')
             ->responses(
                 Response::create()
                     ->statusCode(200)
@@ -97,7 +96,7 @@ class ApiSchema
         $post = Operation::post()
             ->tags($tag)
             ->summary('Create a new entry.')
-            ->operationId($stream->id . '.create')
+            ->operationId($stream->id.'.create')
             ->responses(
                 Response::create()
                     ->statusCode(200)
@@ -106,7 +105,7 @@ class ApiSchema
             );
 
         return PathItem::create()
-            ->route('/api/streams/' . $stream->id . '/entries')
+            ->route('/api/streams/'.$stream->id.'/entries')
             ->operations($get, $post);
     }
 
@@ -117,7 +116,7 @@ class ApiSchema
         $get = Operation::get()
             ->tags($tag)
             ->summary('Show an entry.')
-            ->operationId($stream->id . '.show')
+            ->operationId($stream->id.'.show')
             ->responses(
                 Response::create()
                     ->statusCode(200)
@@ -128,7 +127,7 @@ class ApiSchema
         $put = Operation::put()
             ->tags($tag)
             ->summary('Update an entry.')
-            ->operationId($stream->id . '.update')
+            ->operationId($stream->id.'.update')
             ->responses(
                 Response::create()
                     ->statusCode(200)
@@ -139,7 +138,7 @@ class ApiSchema
         $patch = Operation::patch()
             ->tags($tag)
             ->summary('Patch an entry.')
-            ->operationId($stream->id . '.patch')
+            ->operationId($stream->id.'.patch')
             ->responses(
                 Response::create()
                     ->statusCode(200)
@@ -150,7 +149,7 @@ class ApiSchema
         $delete = Operation::delete()
             ->tags($tag)
             ->summary('Delete an entry.')
-            ->operationId($stream->id . '.delete')
+            ->operationId($stream->id.'.delete')
             ->responses(
                 Response::create()
                     ->statusCode(204)
@@ -163,11 +162,10 @@ class ApiSchema
         //     ->schema($stream->fields->id->schema());
 
         return PathItem::create()
-            ->route('/api/streams/' . $stream->id . '/entries/{id}')
+            ->route('/api/streams/'.$stream->id.'/entries/{id}')
             //->parameters($parameter)
             ->operations($get, $put, $patch, $delete);
     }
-
 
     protected static function getEntriesResponse200(Stream $stream)
     {
@@ -189,7 +187,7 @@ class ApiSchema
                     Schema::string('self'),
                 ),
                 Schema::array('data')->items(
-                    Schema::ref('#/components/schemas/' . $stream->id)
+                    Schema::ref('#/components/schemas/'.$stream->id)
                 )
             )
         );
@@ -201,7 +199,7 @@ class ApiSchema
             Schema::object('streams.api.entries.index')->properties(
                 Schema::object('meta')->properties(
                     Schema::string('stream'),
-                    Schema::ref('#/components/schemas/' . $stream->id, 'payload'),
+                    Schema::ref('#/components/schemas/'.$stream->id, 'payload'),
                 ),
                 Schema::object('links')->properties(
                     Schema::string('location')
@@ -219,7 +217,7 @@ class ApiSchema
                     )
                 ),
                 Schema::array('data')->items(
-                    Schema::ref('#/components/schemas/' . $stream->id)
+                    Schema::ref('#/components/schemas/'.$stream->id)
                 )
             )
         );
@@ -238,7 +236,7 @@ class ApiSchema
                     Schema::string('stream'),
                     Schema::string('entries'),
                 ),
-                Schema::ref('#/components/schemas/' . $stream->id, 'data')
+                Schema::ref('#/components/schemas/'.$stream->id, 'data')
             )
         );
     }
@@ -250,7 +248,7 @@ class ApiSchema
                 Schema::object('meta')->properties(
                     Schema::string('stream'),
                     Schema::string('entry'),
-                    Schema::ref('#/components/schemas/' . $stream->id, 'payload'),
+                    Schema::ref('#/components/schemas/'.$stream->id, 'payload'),
                 ),
                 Schema::object('links')->properties(
                     Schema::string('entries'),
@@ -266,7 +264,7 @@ class ApiSchema
                     )
                 ),
                 Schema::array('data')->items(
-                    Schema::ref('#/components/schemas/' . $stream->id)
+                    Schema::ref('#/components/schemas/'.$stream->id)
                 )
             )
         );
@@ -279,7 +277,7 @@ class ApiSchema
                 Schema::object('meta')->properties(
                     Schema::string('stream'),
                     Schema::string('entry'),
-                    Schema::ref('#/components/schemas/' . $stream->id, 'payload'),
+                    Schema::ref('#/components/schemas/'.$stream->id, 'payload'),
                 ),
                 Schema::object('links')->properties(
                     Schema::string('entries'),
@@ -295,7 +293,7 @@ class ApiSchema
                     )
                 ),
                 Schema::array('data')->items(
-                    Schema::ref('#/components/schemas/' . $stream->id)
+                    Schema::ref('#/components/schemas/'.$stream->id)
                 )
             )
         );

@@ -17,13 +17,17 @@ use InvalidArgumentException;
  */
 class Type extends Enum
 {
+    public const ARRAY = Schema::TYPE_ARRAY;
 
-    const ARRAY = Schema::TYPE_ARRAY;
-    const BOOLEAN = Schema::TYPE_BOOLEAN;
-    const INTEGER = Schema::TYPE_INTEGER;
-    const NUMBER = Schema::TYPE_NUMBER;
-    const OBJECT = Schema::TYPE_OBJECT;
-    const STRING = Schema::TYPE_STRING;
+    public const BOOLEAN = Schema::TYPE_BOOLEAN;
+
+    public const INTEGER = Schema::TYPE_INTEGER;
+
+    public const NUMBER = Schema::TYPE_NUMBER;
+
+    public const OBJECT = Schema::TYPE_OBJECT;
+
+    public const STRING = Schema::TYPE_STRING;
 
     public static function resolve($value): Type
     {
@@ -31,6 +35,7 @@ class Type extends Enum
             if (Arr::isAssoc($value)) {
                 return Type::OBJECT();
             }
+
             return Type::ARRAY();
         }
         if (is_bool($value)) {

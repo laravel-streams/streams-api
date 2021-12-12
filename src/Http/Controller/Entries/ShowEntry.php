@@ -3,33 +3,28 @@
 namespace Streams\Api\Http\Controller\Entries;
 
 use Illuminate\Http\JsonResponse;
-use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\Response;
+use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Str;
-use Streams\Core\Support\Facades\Streams;
 use Streams\Api\Http\Controller\ApiController;
 use Streams\Core\Entry\Contract\EntryInterface;
+use Streams\Core\Support\Facades\Streams;
 
 class ShowEntry extends ApiController
 {
-
     public function __invoke(
         string $stream,
         string $entry,
         string $map = null
     ): JsonResponse {
-
         $instance = Streams::entries($stream)->find($entry);
 
         if ($map) {
-
             $map = explode('/', $map);
 
             foreach ($map as $key) {
-
                 if ($instance instanceof EntryInterface && $instance->hasAttribute($key)) {
-                    
                     $instance = $instance->{$key};
 
                     continue;
@@ -38,7 +33,6 @@ class ShowEntry extends ApiController
                 $accessor = Str::camel("get_{$key}_attribute");
 
                 if (is_object($instance) && method_exists($instance, $accessor)) {
-                    
                     $instance = $instance->{$accessor}();
 
                     continue;
@@ -47,7 +41,6 @@ class ShowEntry extends ApiController
                 $method = Str::camel($key);
 
                 if (is_object($instance) && method_exists($instance, $method)) {
-                    
                     $instance = $instance->{$method}();
 
                     continue;

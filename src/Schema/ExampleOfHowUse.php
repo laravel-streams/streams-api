@@ -18,9 +18,10 @@ class ExampleOfHowUse
                 'bar'    => 1,
                 'foobar' => [
                     'title'  => 'Title',
-                    'titles' => [ 'title1', 'title2' ],
+                    'titles' => ['title1', 'title2'],
                 ],
-            ]));
+            ])
+        );
         Schema::object('autoconvert')->properties(...$properties)->additionalProperties(Any::ref('any'));
     }
 }

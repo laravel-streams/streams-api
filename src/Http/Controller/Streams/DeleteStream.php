@@ -3,14 +3,13 @@
 namespace Streams\Api\Http\Controller\Streams;
 
 use Illuminate\Routing\Controller;
-use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\Response;
+use Illuminate\Support\Facades\URL;
 use Streams\Core\Support\Facades\Streams;
 
 class DeleteStream extends Controller
 {
-
     /**
      * Return a single Stream.
      *
@@ -19,7 +18,7 @@ class DeleteStream extends Controller
      */
     public function __invoke($stream)
     {
-        if (!$stream = Streams::entries('core.streams')->find($stream)) {
+        if (! $stream = Streams::entries('core.streams')->find($stream)) {
             return Response::json([
                 'meta' => [
                     'parameters' => Request::route()->parameters(),
