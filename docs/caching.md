@@ -41,6 +41,6 @@ Stream-specific cache configuration can be specified on the stream.
 
 - [Caching](/docs/core/caching)
 - [Query Cache](/docs/core/querying#caching)
-- [API Cache](querying#caching-results)
+- [API Cache](endopints#querying)
 <!-- - [@todo Response Cache](routing#caching-responses) -->
 <!-- - [@todo View Cache](querying#caching-results) -->
