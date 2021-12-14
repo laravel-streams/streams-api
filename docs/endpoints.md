@@ -218,14 +218,14 @@ Deletes an stream.
 
 ## Querying
 
-You can manipulate the query using criteria parameters in the URI.
+You can manipulate the query using [criteria parameters](../core/criteria) in the URI.
 
 ### Filtering
 
 ```bash
 curl --location --request GET '/api/streams' \
     -H 'Content-Type: application/json' \
-    -d '{"parameters": {"where": ["id", "LIKE", "%doc%"]}}'
+    -d '{"query": [{"where": ["id", "LIKE", "%doc%"]}]}'
 ```
 
 ### Sorting
@@ -233,5 +233,5 @@ curl --location --request GET '/api/streams' \
 ```bash
 curl --location --request GET '/api/streams/docs/entries' \
     -H 'Content-Type: application/json' \
-    -d '{"parameters": {"where": ["enabled", true]}}'
+    -d '{"query": [{"where": ["enabled", true]}]}'
 ```
