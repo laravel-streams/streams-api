@@ -55,26 +55,30 @@ class ApiSchema
 
     public static function tags()
     {
-        return Streams::collection()->map(function ($stream) {
-            return $stream->schema()->tag();
-        })->all();
+        return Streams::collection()
+            ->filter(fn ($stream) => strpos($stream->id, '.') === false)
+            ->map(fn ($stream) => $stream->schema()->tag())
+            ->all();
     }
 
     public static function components()
     {
-        return Streams::collection()->map(function ($stream) {
-            return $stream->schema()->object();
-        })->all();
+        return Streams::collection()
+            ->filter(fn ($stream) => strpos($stream->id, '.') === false)
+            ->map(fn ($stream) => $stream->schema()->object())
+            ->all();
     }
 
     public static function paths()
     {
         $paths = [];
 
-        Streams::collection()->map(function ($stream) use (&$paths) {
-            $paths[] = static::entries($stream);
-            $paths[] = static::entry($stream);
-        })->all();
+        Streams::collection()
+            ->filter(fn ($stream) => strpos($stream->id, '.') === false)
+            ->map(function ($stream) use (&$paths) {
+                $paths[] = static::entries($stream);
+                $paths[] = static::entry($stream);
+            })->all();
 
         return $paths;
     }

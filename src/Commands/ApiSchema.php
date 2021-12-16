@@ -5,19 +5,20 @@ namespace Streams\Api\Commands;
 use Streams\Api\Facades\Api;
 use Illuminate\Console\Command;
 use Symfony\Component\Yaml\Yaml;
-use Illuminate\Support\Facades\File;
 
 class ApiSchema extends Command
 {
 
-    protected $signature = 'api:schema';
+    protected $signature = 'api:schema {path?}';
 
     public function handle()
     {
         $yaml = Yaml::dump(Api::schema()->create()->toArray(), 100);
 
-        File::put($path = 'bootstrap/cache/api.yaml', $yaml);
+        $path = base_path($this->argument('path') ?: 'bootstrap/cache/api.yaml');
+        
+        file_put_contents($path, $yaml);
 
-        $this->info('Dumped YAML to ' . base_path($path));
+        $this->info('Dumped YAML to ' . $path);
     }
 }
