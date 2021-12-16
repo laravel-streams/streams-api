@@ -110,7 +110,7 @@ class ApiSchema
             );
 
         return PathItem::create()
-            ->route('/api/streams/' . $stream->id . '/entries')
+            ->route('/streams/' . $stream->id . '/entries')
             ->operations($get, $post);
     }
 
@@ -167,7 +167,7 @@ class ApiSchema
         //     ->schema($stream->fields->id->schema());
 
         return PathItem::create()
-            ->route('/api/streams/' . $stream->id . '/entries/{id}')
+            ->route('/streams/' . $stream->id . '/entries/{id}')
             //->parameters($parameter)
             ->operations($get, $put, $patch, $delete);
     }
