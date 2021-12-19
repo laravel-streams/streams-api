@@ -8,6 +8,7 @@ use GoldSpecDigital\ObjectOrientedOAS\Objects\Info;
 use GoldSpecDigital\ObjectOrientedOAS\Objects\License;
 use GoldSpecDigital\ObjectOrientedOAS\Objects\MediaType;
 use GoldSpecDigital\ObjectOrientedOAS\Objects\Operation;
+use GoldSpecDigital\ObjectOrientedOAS\Objects\Parameter;
 use GoldSpecDigital\ObjectOrientedOAS\Objects\PathItem;
 use GoldSpecDigital\ObjectOrientedOAS\Objects\Response;
 use GoldSpecDigital\ObjectOrientedOAS\Objects\Schema;
@@ -54,14 +55,14 @@ class ApiSchema
 
     public static function tags()
     {
-        return Streams::collection()->map(function ($stream) {
+        return Streams::collection()->map(function (Stream $stream) {
             return $stream->schema()->tag();
         })->all();
     }
 
     public static function components()
     {
-        return Streams::collection()->map(function ($stream) {
+        return Streams::collection()->map(function (Stream $stream) {
             return $stream->schema()->object();
         })->all();
     }
@@ -105,7 +106,7 @@ class ApiSchema
             );
 
         return PathItem::create()
-            ->route('/api/streams/'.$stream->id.'/entries')
+            ->route('/streams/'.$stream->id.'/entries')
             ->operations($get, $post);
     }
 
@@ -162,7 +163,14 @@ class ApiSchema
         //     ->schema($stream->fields->id->schema());
 
         return PathItem::create()
-            ->route('/api/streams/'.$stream->id.'/entries/{id}')
+            ->route('/streams/'.$stream->id.'/entries/{id}')
+            ->parameters(
+                Parameter::create('id')
+                    ->name('id')
+                    ->required(true)
+                    ->in('path')
+                    ->required(true)
+            )
             //->parameters($parameter)
             ->operations($get, $put, $patch, $delete);
     }
