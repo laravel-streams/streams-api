@@ -33,6 +33,7 @@ class ApiServiceProvider extends Provider
 
     public $commands = [
         \Streams\Api\Commands\ApiSchema::class,
+        \Streams\Api\Commands\ApiTypes::class,
     ];
 
     public function register()
