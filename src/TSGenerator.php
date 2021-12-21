@@ -82,6 +82,7 @@ class TSGenerator
             $name = "'$name'";
             $bnf->add($name, "{$namespace}.Entry", true);
         }
+
         $bnf->add('[key:string]', 'any', true);
         $bnf->close();
 
