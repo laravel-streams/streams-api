@@ -38,17 +38,17 @@ class TSGenerator
     public function generate()
     {
         $b = new TSBuilder();
-
-        $bn = $b->export->open('namespace', 'streams');
-        $bn->export
-            ->open('interface', 'BaseEntry')
-            ->add('[key:string]', 'any', true)
-            ->close();
-        $bn->export
-            ->open('interface', 'BaseStream')
-            ->add('entries', 'BaseEntry')
-            ->add('[key:string]', 'any', true)
-            ->close();
+        $b->line('export {};');
+        $bn = $b->declare->open('module', "'@laravel-streams/streams-api'");
+//        $bn->export
+//            ->open('interface', 'BaseEntry')
+//            ->add('[key:string]', 'any', true)
+//            ->close();
+//        $bn->export
+//            ->open('interface', 'BaseStream')
+//            ->add('entries', 'BaseEntry')
+//            ->add('[key:string]', 'any', true)
+//            ->close();
         $names = [];
         if ($this->empty === false) {
             /** @var \GoldSpecDigital\ObjectOrientedOAS\Objects\Schema[] $streamSchemas */
@@ -64,10 +64,10 @@ class TSGenerator
                     $names[] = $name;
                     $bns = $bn->export->open('namespace', $name);
                     $bns->export
-                        ->open('interface', 'Stream extends BaseStream')
+                        ->open('interface', 'Stream') // extends BaseStream
                         ->add('entries', 'Entry')
                         ->close();
-                    $bnsi = $bns->export->open('interface', 'Entry extends BaseEntry');
+                    $bnsi = $bns->export->open('interface', 'Entry'); // extends BaseEntry
                     foreach ($schema->properties as $prop) {
                         $bnsi->add($prop->objectId, $this->getType($prop), $prop->required !== null);
                     }
@@ -76,7 +76,7 @@ class TSGenerator
                 }
             }
         }
-        $bnf = $bn->export->open('interface', 'Entries');
+        $bnf = $bn->export->open('interface', 'IEntries');
         foreach ($names as $namespace) {
             $name = str_replace('_', '.', $namespace);
             $name = "'$name'";
@@ -85,7 +85,7 @@ class TSGenerator
         $bnf->add('[key:string]', 'any', true);
         $bnf->close();
 
-        $bns = $bn->export->open('interface', 'Streams');
+        $bns = $bn->export->open('interface', 'IStreams');
         foreach ($names as $namespace) {
             $name = str_replace('_', '.', $namespace);
             $name = "'$name'";

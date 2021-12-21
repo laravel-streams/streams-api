@@ -19,7 +19,7 @@ class ApiTypes extends Command
         if ($this->argument('filepath')) {
             $path = base_path($this->argument('filepath'));
         } else {
-            $path = base_path('packages/@laravel-streams/streams-api/src/types/generated.ts');
+            $path = resource_path('ts/streams.d.ts');
         }
         File::ensureDirectoryExists(File::dirname($path));
         File::put($path, $generated);
