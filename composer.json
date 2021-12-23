@@ -10,10 +10,12 @@
         }
     ],
     "require": {
-        "streams/core": "^2.0"
+        "streams/core": "^2.0",
+        "justinrainbow/json-schema": "^5.2"
     },
     "require-dev": {
-        "friendsofphp/php-cs-fixer": "^3.4"
+        "friendsofphp/php-cs-fixer": "^3.4",
+        "streams/testing": "^1.0"
     },
     "autoload": {
         "psr-4": {
