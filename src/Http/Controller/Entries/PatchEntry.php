@@ -24,6 +24,7 @@ class PatchEntry extends Controller
 
         $errors = [];
         $status = 200;
+        $headers = [];
 
         $meta = [
             'parameters' => Request::route()->parameters(),
@@ -37,6 +38,8 @@ class PatchEntry extends Controller
         if (!$instance = Streams::entries($stream)->find($entry)) {
             
             $attributes = $payload->all();
+
+            $attributes[Streams::make($stream)->config('key_name', 'id')] = $entry;
 
             foreach (Streams::make($stream)->fields as $field) {
                 if (is_null($default = $field->config('default'))) {
