@@ -33,7 +33,7 @@ class CreateEntry extends Controller
          *
          * @todo Should this be an exception?
          */
-        if (! $payload) {
+        if (!$payload) {
             return Response::json([
                 'data' => $instance,
                 'meta' => [
@@ -51,7 +51,7 @@ class CreateEntry extends Controller
         $attributes = $payload->all();
 
         foreach (Streams::make($stream)->fields as $field) {
-            if (! $default = $field->config('default')) {
+            if (is_null($default = $field->config('default'))) {
                 continue;
             }
 
