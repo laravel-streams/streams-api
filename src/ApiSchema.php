@@ -110,11 +110,7 @@ class ApiSchema
             );
 
         return PathItem::create()
-<<<<<<< HEAD
-            ->route('/streams/'.$stream->id.'/entries')
-=======
             ->route('/streams/' . $stream->id . '/entries')
->>>>>>> 1.0
             ->operations($get, $post);
     }
 
@@ -171,18 +167,7 @@ class ApiSchema
         //     ->schema($stream->fields->id->schema());
 
         return PathItem::create()
-<<<<<<< HEAD
-            ->route('/streams/'.$stream->id.'/entries/{id}')
-            ->parameters(
-                Parameter::create('id')
-                    ->name('id')
-                    ->required(true)
-                    ->in('path')
-                    ->required(true)
-            )
-=======
             ->route('/streams/' . $stream->id . '/entries/{id}')
->>>>>>> 1.0
             //->parameters($parameter)
             ->operations($get, $put, $patch, $delete);
     }
