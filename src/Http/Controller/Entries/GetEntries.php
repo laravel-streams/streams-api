@@ -18,7 +18,7 @@ class GetEntries extends ApiController
 
         $headers = [];
 
-        $parameters = Request::query('parameters', Request::json('parameters') ?: []);
+        $parameters = Request::query('parameters', Request::json('parameters')) ?: [];
 
         $criteria = Streams::entries($stream)->loadParameters($parameters);
 
