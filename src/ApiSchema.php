@@ -55,26 +55,42 @@ class ApiSchema
 
     public static function tags()
     {
+<<<<<<< HEAD
         return Streams::collection()->map(function (Stream $stream) {
             return $stream->schema()->tag();
         })->all();
+=======
+        return Streams::collection()
+            ->filter(fn ($stream) => strpos($stream->id, '.') === false)
+            ->map(fn ($stream) => $stream->schema()->tag())
+            ->all();
+>>>>>>> 1.0
     }
 
     public static function components()
     {
+<<<<<<< HEAD
         return Streams::collection()->map(function (Stream $stream) {
             return $stream->schema()->object();
         })->all();
+=======
+        return Streams::collection()
+            ->filter(fn ($stream) => strpos($stream->id, '.') === false)
+            ->map(fn ($stream) => $stream->schema()->object())
+            ->all();
+>>>>>>> 1.0
     }
 
     public static function paths()
     {
         $paths = [];
 
-        Streams::collection()->map(function ($stream) use (&$paths) {
-            $paths[] = static::entries($stream);
-            $paths[] = static::entry($stream);
-        })->all();
+        Streams::collection()
+            ->filter(fn ($stream) => strpos($stream->id, '.') === false)
+            ->map(function ($stream) use (&$paths) {
+                $paths[] = static::entries($stream);
+                $paths[] = static::entry($stream);
+            })->all();
 
         return $paths;
     }
@@ -106,7 +122,11 @@ class ApiSchema
             );
 
         return PathItem::create()
+<<<<<<< HEAD
             ->route('/streams/'.$stream->id.'/entries')
+=======
+            ->route('/streams/' . $stream->id . '/entries')
+>>>>>>> 1.0
             ->operations($get, $post);
     }
 
@@ -163,6 +183,7 @@ class ApiSchema
         //     ->schema($stream->fields->id->schema());
 
         return PathItem::create()
+<<<<<<< HEAD
             ->route('/streams/'.$stream->id.'/entries/{id}')
             ->parameters(
                 Parameter::create('id')
@@ -171,6 +192,9 @@ class ApiSchema
                     ->in('path')
                     ->required(true)
             )
+=======
+            ->route('/streams/' . $stream->id . '/entries/{id}')
+>>>>>>> 1.0
             //->parameters($parameter)
             ->operations($get, $put, $patch, $delete);
     }
