@@ -2,20 +2,20 @@
 
 namespace Streams\Api;
 
-use GoldSpecDigital\ObjectOrientedOAS\Objects\Components;
-use GoldSpecDigital\ObjectOrientedOAS\Objects\Contact;
+use Streams\Core\Stream\Stream;
+use Streams\Core\Support\Facades\Streams;
+use GoldSpecDigital\ObjectOrientedOAS\OpenApi;
 use GoldSpecDigital\ObjectOrientedOAS\Objects\Info;
+use GoldSpecDigital\ObjectOrientedOAS\Objects\Schema;
+use GoldSpecDigital\ObjectOrientedOAS\Objects\Server;
+use GoldSpecDigital\ObjectOrientedOAS\Objects\Contact;
 use GoldSpecDigital\ObjectOrientedOAS\Objects\License;
+use GoldSpecDigital\ObjectOrientedOAS\Objects\PathItem;
+use GoldSpecDigital\ObjectOrientedOAS\Objects\Response;
 use GoldSpecDigital\ObjectOrientedOAS\Objects\MediaType;
 use GoldSpecDigital\ObjectOrientedOAS\Objects\Operation;
 use GoldSpecDigital\ObjectOrientedOAS\Objects\Parameter;
-use GoldSpecDigital\ObjectOrientedOAS\Objects\PathItem;
-use GoldSpecDigital\ObjectOrientedOAS\Objects\Response;
-use GoldSpecDigital\ObjectOrientedOAS\Objects\Schema;
-use GoldSpecDigital\ObjectOrientedOAS\Objects\Server;
-use GoldSpecDigital\ObjectOrientedOAS\OpenApi;
-use Streams\Core\Stream\Stream;
-use Streams\Core\Support\Facades\Streams;
+use GoldSpecDigital\ObjectOrientedOAS\Objects\Components;
 
 class ApiSchema
 {
@@ -55,30 +55,18 @@ class ApiSchema
 
     public static function tags()
     {
-<<<<<<< HEAD
-        return Streams::collection()->map(function (Stream $stream) {
-            return $stream->schema()->tag();
-        })->all();
-=======
         return Streams::collection()
             ->filter(fn ($stream) => strpos($stream->id, '.') === false)
             ->map(fn ($stream) => $stream->schema()->tag())
             ->all();
->>>>>>> 1.0
     }
 
     public static function components()
     {
-<<<<<<< HEAD
-        return Streams::collection()->map(function (Stream $stream) {
-            return $stream->schema()->object();
-        })->all();
-=======
         return Streams::collection()
             ->filter(fn ($stream) => strpos($stream->id, '.') === false)
             ->map(fn ($stream) => $stream->schema()->object())
             ->all();
->>>>>>> 1.0
     }
 
     public static function paths()
