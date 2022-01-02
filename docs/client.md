@@ -22,6 +22,7 @@ yarn add @laravel-streams/api-client
 npm install @laravel-streams/api-client
 ```
 
+
 ## Getting Started
 
 To get started, import `Streams` and instantiate it with the `baseURL` of your Streams API server. The resulting streams object is equivelant to the PHP Streams facade.
@@ -33,6 +34,22 @@ export const streams = new Streams({
     baseURL: "http://127.0.0.1:8000/api",
 });
 ```
+
+### Stream Instances
+
+You can return stream instances for later use using the `make` method.
+
+```js
+const stream: Stream = await streams.make("contacts");
+```
+
+Streams can return their respective repositories and entry criteria using corresponding methods.
+
+```js
+const repository: Repository = stream.getRepository();
+const query: Criteria = stream.getEntries();
+```
+
 
 ### Repositories
 
@@ -63,6 +80,7 @@ await repository.save(entry);
 await repository.delete(entry);
 ```
 
+
 ### Queries
 
 You can return an [entry criteria](/docs/core/querying) using the `entries` method.
@@ -84,22 +102,8 @@ let paginator: Paginator = await query
     .paginate(10);
 ```
 
-## Stream Instances
 
-You can return stream instances for later use using the `make` method.
-
-```js
-const stream: Stream = await streams.make("contacts");
-```
-
-Streams can return their respective repositories and entry criteria using corresponding methods.
-
-```js
-const repository: Repository = stream.getRepository();
-const query: Criteria = stream.getEntries();
-```
-
-## Entry Instances
+## Entries
 
 Working with entry instances is consistent to their PHP counterparts.
 
