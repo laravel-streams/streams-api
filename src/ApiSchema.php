@@ -103,9 +103,9 @@ class ApiSchema
             ->summary('Create a new entry.')
             ->operationId($stream->id . '.create')
             ->parameters(
-                Parameter::create()->in('body')->content(
+                Parameter::create('body')->in('body')->name('body')->content(
                     MediaType::json()->schema($stream->schema()->object())
-                )
+                )->example($stream->factory()->create()->toJson())
             )
             ->responses(
                 Response::create()
