@@ -102,6 +102,11 @@ class ApiSchema
             ->tags($tag)
             ->summary('Create a new entry.')
             ->operationId($stream->id . '.create')
+            ->parameters(
+                Parameter::create()->in('body')->content(
+                    MediaType::json()->schema($stream->schema()->object())
+                )
+            )
             ->responses(
                 Response::create()
                     ->statusCode(200)
@@ -167,8 +172,8 @@ class ApiSchema
         return PathItem::create()
             ->route('/streams/' . $stream->id . '/entries/{id}')
             ->parameters(
-                Parameter::create('id')
-                    ->name($keyField->name())
+                Parameter::path('id')
+                    ->name('id')
                     ->description(__($keyField->description))
                     ->schema($keyField->type()->schema()->property())
             )
