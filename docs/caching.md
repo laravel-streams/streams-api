@@ -7,21 +7,7 @@ stage: drafting
 enabled: true
 ---
 
-## Cache Parameter
-
-The `cache` parameter can be specified in seconds when sending `query` parameters:
-
-```json
-// GET /api/streams/examples/entries
-{
-    "query": [
-        {"cache": [300]}
-        {"where": ["statu", "active"]}
-    ]
-}
-```
-
-## Cache configuration
+## Configuration
 
 Stream-specific cache configuration can be specified on the stream.
 
@@ -34,6 +20,20 @@ Stream-specific cache configuration can be specified on the stream.
             "ttl": 300
         }
     }
+}
+```
+
+## Cache Parameter
+
+The `cache` parameter can be specified in seconds when sending `query` parameters:
+
+```json
+// GET /api/streams/examples/entries
+{
+    "query": [
+        {"cache": [300]}
+        {"where": ["statu", "active"]}
+    ]
 }
 ```
 

@@ -3,12 +3,12 @@
 namespace Streams\Api\Http\Middleware;
 
 use Closure;
-use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Response;
 use Streams\Core\Support\Facades\Streams;
 
 class HttpCache
 {
+
     /**
      * Add cache related HTTP headers.
      *
@@ -23,14 +23,14 @@ class HttpCache
         /*
          * Only cache GET/HEAD
          */
-        if (! $request->isMethodCacheable()) {
+        if (!$request->isMethodCacheable()) {
             return $next($request);
         }
 
         /*
          * Streams powah.
          */
-        if (! $stream = $request->route()->parameter('stream')) {
+        if (!$stream = $request->route()->parameter('stream')) {
             return $next($request);
         }
 

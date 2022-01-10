@@ -1,9 +1,9 @@
 ---
 title: Client
 category: basics
-sort: 99
 stage: outlining
 enabled: true
+sort: 99
 ---
 
 ## Introduction
@@ -117,4 +117,34 @@ await entry.save();
 await entry.delete();
 
 const obj = entry.serialize();
+```
+
+
+## Caching
+
+The API Client comes with built-in ETag support. To get started, enable the feature on the client.
+
+```js
+import { Streams } from "@laravel-streams/api-client";
+
+export const streams = new Streams({
+    baseURL: "http://127.0.0.1:8000/api",
+    etag: {
+        enabled:true
+    }
+});
+```
+
+You must also [enable cache](caching#configuration) on the desired stream:
+
+```json
+// streams/examples.json
+{
+    "config": {
+        "cache": {
+            "enabled": true,
+            "ttl": 300
+        }
+    }
+}
 ```
