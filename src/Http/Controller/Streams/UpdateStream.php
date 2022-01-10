@@ -3,9 +3,9 @@
 namespace Streams\Api\Http\Controller\Streams;
 
 use Illuminate\Routing\Controller;
+use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\Response;
-use Illuminate\Support\Facades\URL;
 use Streams\Core\Support\Facades\Streams;
 
 class UpdateStream extends Controller
@@ -23,8 +23,10 @@ class UpdateStream extends Controller
         $errors = [];
         $status = 200;
 
+        $target = Streams::entries('core.streams');
+
         // If there is no stream found then create the stream, as this is PUT request
-        if (! $instance = Streams::entries('core.streams')->find($stream)) {
+        if (! $instance = $target->find($stream)) {
             $createStream = new CreateStream();
 
             return $createStream($stream);
@@ -35,6 +37,7 @@ class UpdateStream extends Controller
          * we can't update anything.
          */
         if (! $payload) {
+
             return Response::json([
                 'meta' => [
                     'parameters' => Request::route()->parameters(),
@@ -58,14 +61,14 @@ class UpdateStream extends Controller
         /**
          * Validate the resulting stream.
          */
-        $validator = Streams::make('core.streams')->validator($instance);
+        $validator = $target->validator($instance, false);
 
         /*
          * If validation passes
          * update the stream.
          */
         if ($validator->passes()) {
-            Streams::repository('core.streams')->save($instance);
+            $target->repository()->save($instance);
         }
 
         /**
@@ -75,6 +78,7 @@ class UpdateStream extends Controller
         $messages = $validator->messages();
 
         if ($messages->isNotEmpty()) {
+            
             $status = 409;
 
             foreach ($messages->messages() as $field => $messages) {
