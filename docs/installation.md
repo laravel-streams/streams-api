@@ -13,7 +13,7 @@ This package is added to existing Laravel projects as a dependency by requiring 
 composer require streams/api
 ```
 
-The Streams API comes pre-configured with the [Streams starter application](/docs/installation).
+The Streams API comes pre-configured with the [Streams starter application](/docs/installation) and some of the [examples](/docs/examples).
 
 ## Updating
 

@@ -2,49 +2,46 @@
 
 namespace Streams\Api;
 
-use Illuminate\Support\Facades\Config;
+use Illuminate\Console\Application;
+use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Route;
-use Streams\Api\Http\Controller\Entries\CreateEntry;
-use Streams\Api\Http\Controller\Entries\DeleteEntry;
-use Streams\Api\Http\Controller\Entries\GetEntries;
-use Streams\Api\Http\Controller\Entries\PatchEntry;
-use Streams\Api\Http\Controller\Entries\ShowEntry;
-use Streams\Api\Http\Controller\Entries\UpdateEntry;
-use Streams\Api\Http\Controller\OpenApiController;
-use Streams\Api\Http\Controller\Streams\CreateStream;
-use Streams\Api\Http\Controller\Streams\DeleteStream;
-use Streams\Api\Http\Controller\Streams\GetStreams;
-use Streams\Api\Http\Controller\Streams\PatchStream;
-use Streams\Api\Http\Controller\Streams\ShowStream;
-use Streams\Api\Http\Controller\Streams\UpdateStream;
+use Illuminate\Support\Facades\Config;
+use Illuminate\Support\ServiceProvider;
 use Streams\Core\StreamsServiceProvider;
 use Streams\Core\Support\Facades\Assets;
-use Streams\Core\Support\Provider;
+use Streams\Api\Http\Controller\Entries\ShowEntry;
+use Streams\Api\Http\Controller\OpenApiController;
+use Streams\Api\Http\Controller\Entries\GetEntries;
+use Streams\Api\Http\Controller\Entries\PatchEntry;
+use Streams\Api\Http\Controller\Streams\GetStreams;
+use Streams\Api\Http\Controller\Streams\ShowStream;
+use Streams\Api\Http\Controller\Entries\CreateEntry;
+use Streams\Api\Http\Controller\Entries\DeleteEntry;
+use Streams\Api\Http\Controller\Entries\UpdateEntry;
+use Streams\Api\Http\Controller\Streams\PatchStream;
+use Streams\Api\Http\Controller\Streams\CreateStream;
+use Streams\Api\Http\Controller\Streams\DeleteStream;
+use Streams\Api\Http\Controller\Streams\UpdateStream;
 
-class ApiServiceProvider extends Provider
+class ApiServiceProvider extends ServiceProvider
 {
-    public $aliases = [
-        'Api' => \Streams\Api\Facades\Api::class,
-    ];
-
-    public $singletons = [
-        'api' => \Streams\Api\ApiManager::class,
-    ];
-
-    public $commands = [
-        \Streams\Api\Commands\ApiSchema::class,
-        \Streams\Api\Commands\ApiTypes::class,
-    ];
-
     public function register()
     {
         $this->app->register(StreamsServiceProvider::class);
 
-        parent::register();
+        App::alias('Api', \Streams\Api\Facades\Api::class);
+        App::singleton('api', \Streams\Api\ApiManager::class);
+
+        Application::starting(function ($artisan) {
+            $artisan->resolveCommands([
+                \Streams\Api\Commands\ApiSchema::class,
+                \Streams\Api\Commands\ApiTypes::class,
+            ]);
+        });
 
         $this->registerConfig();
 
-        if ( ! Config::get('streams.api.enabled')) {
+        if (!Config::get('streams.api.enabled')) {
             return;
         }
 
@@ -55,23 +52,21 @@ class ApiServiceProvider extends Provider
 
     public function boot()
     {
-        parent::boot();
-
         $this->publishes([
             __DIR__ . '/../resources/public'  => public_path('vendor/streams/api'),
-        ], [ 'public' ]);
+        ], ['public']);
 
-        if(config('streams.api.openapi.documentation')) {
+        if (config('streams.api.openapi.documentation')) {
             $this->publishes([
                 __DIR__ . '/../resources/openapi' => public_path('vendor/streams/openapi'),
-            ], [ 'openapi' ]);
+            ], ['openapi']);
         }
 
         Assets::addPath('api', 'vendor/streams/api');
 
         Assets::register('api::js/index.js');
 
-        if ( ! Config::get('streams.api.enabled')) {
+        if (!Config::get('streams.api.enabled')) {
             return;
         }
     }
@@ -91,18 +86,18 @@ class ApiServiceProvider extends Provider
 
     protected function registerRoutes(): void
     {
-        if(config('streams.api.openapi.documentation')) {
+        if (config('streams.api.openapi.documentation')) {
             Route::get('openapi', [
                 'as'         => 'streams.api.openapi',
                 'uses'       => OpenApiController::class . '@documentation',
-                'middleware' => [ 'web' ],
+                'middleware' => ['web'],
             ]);
         }
         Route::prefix(Config::get('streams.api.prefix', 'api'))
             ->middleware(Config::get('streams.api.middleware', 'api'))
             ->group(function () {
 
-                if(config('streams.api.openapi.specification')) {
+                if (config('streams.api.openapi.specification')) {
                     Route::get('/', [
                         'uses' => OpenApiController::class . '@specification',
                         'as'   => 'streams.api',
