@@ -65,7 +65,7 @@ class PatchStream extends Controller
         /**
          * Validate the resulting stream.
          */
-        $validator = Streams::make('core.streams')->validator($instance);
+        $validator = Streams::make('core.streams')->validator($instance, false);
 
         /*
          * If validation passes

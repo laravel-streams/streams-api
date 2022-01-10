@@ -25,23 +25,27 @@ class PatchEntry extends Controller
         $errors = [];
         $status = 200;
         $headers = [];
+        $fresh = false;
+
+        $target = Streams::make($stream);
 
         $meta = [
             'parameters' => Request::route()->parameters(),
             'payload' => Request::json(),
         ];
 
+        $payload->set($target->config('key_name', 'id'), $entry);
+
         /**
          * Create the entry instead.
          * @todo abstract these things so that we don't have so much copied code.
          */
-        if (!$instance = Streams::entries($stream)->find($entry)) {
+        if (!$instance = $target->entries()->find($entry)) {
             
             $attributes = $payload->all();
 
-            $attributes[Streams::make($stream)->config('key_name', 'id')] = $entry;
-
-            foreach (Streams::make($stream)->fields as $field) {
+            foreach ($target->fields as $field) {
+                
                 if (is_null($default = $field->config('default'))) {
                     continue;
                 }
@@ -50,19 +54,22 @@ class PatchEntry extends Controller
                     continue;
                 }
 
-                $attributes[$field->handle] = $field->type()->default($default);
+                $attributes[$field->handle] = $field->default($default);
             }
+
+            $fresh = true;
 
             /**
              * Validate the stream input.
              */
-            $validator = Streams::make($stream)->validator($attributes);
+            $validator = $target->validator($attributes, $fresh);
 
             /*
             * If validation passes create
             * the stream and add Location.
             */
             if ($validator->passes()) {
+                
                 $instance = Streams::repository($stream)->create($attributes);
 
                 $headers['location'] = URL::route('streams.api.entries.show', [
@@ -105,7 +112,7 @@ class PatchEntry extends Controller
                     'entries' => URL::route('streams.api.entries.index', ['stream' => $stream]),
                 ],
                 'errors' => $errors,
-                'data' => $instance,
+                'data' => $errors ? null : $instance,
             ], $status, $headers);
         }
 
@@ -132,7 +139,7 @@ class PatchEntry extends Controller
         /**
          * Validate the resulting stream.
          */
-        $validator = Streams::make($stream)->validator($instance);
+        $validator = Streams::make($stream)->validator($instance, $fresh);
 
         /*
          * If validation passes
@@ -172,7 +179,7 @@ class PatchEntry extends Controller
                 'entries' => URL::route('streams.api.entries.index', ['stream' => $stream]),
             ],
             'errors' => $errors,
-            'data' => $instance,
+            'data' => $errors ? null : $instance,
         ], $status);
     }
 }

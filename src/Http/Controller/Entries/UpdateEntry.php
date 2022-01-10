@@ -23,10 +23,13 @@ class UpdateEntry extends Controller
         $errors = [];
         $status = 200;
 
+        $target = Streams::make($stream);
+
         /*
          * If no entry is found then create one.
          */
-        if (! $instance = Streams::entries($stream)->find($entry)) {
+        if (!$instance = $target->entries()->find($entry)) {
+            
             $createEntry = new CreateEntry();
 
             return $createEntry($stream);
@@ -36,7 +39,8 @@ class UpdateEntry extends Controller
          * If there is no input then
          * we can't update anything.
          */
-        if (! $payload) {
+        if (!$payload) {
+            
             return Response::json([
                 'meta' => [
                     'stream' => $stream,
@@ -61,14 +65,14 @@ class UpdateEntry extends Controller
         /**
          * Validate the resulting stream.
          */
-        $validator = Streams::make($stream)->validator($instance);
+        $validator = $target->validator($instance, false);
 
         /*
          * If validation passes
          * update the stream.
          */
         if ($validator->passes()) {
-            Streams::repository($stream)->save($instance);
+            $target->repository()->save($instance);
         }
 
         /**

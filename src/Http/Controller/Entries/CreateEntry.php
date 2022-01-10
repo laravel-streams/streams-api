@@ -34,6 +34,7 @@ class CreateEntry extends Controller
          * @todo Should this be an exception?
          */
         if (!$payload) {
+
             return Response::json([
                 'data' => $instance,
                 'meta' => [
@@ -50,7 +51,10 @@ class CreateEntry extends Controller
 
         $attributes = $payload->all();
 
-        foreach (Streams::make($stream)->fields as $field) {
+        $target = Streams::make($stream);
+
+        foreach ($target->fields as $field) {
+            
             if (is_null($default = $field->config('default'))) {
                 continue;
             }
@@ -59,20 +63,21 @@ class CreateEntry extends Controller
                 continue;
             }
 
-            $attributes[$field->handle] = $field->type()->default($default);
+            $attributes[$field->handle] = $field->default($default);
         }
 
         /**
          * Validate the stream input.
          */
-        $validator = Streams::make($stream)->validator($attributes);
+        $validator = $target->validator($attributes);
 
         /*
          * If validation passes create
          * the stream and add Location.
          */
         if ($validator->passes()) {
-            $instance = Streams::repository($stream)->create($attributes);
+
+            $instance = $target->repository()->create($attributes);
 
             $headers['location'] = URL::route('streams.api.entries.show', [
                 'stream' => $stream,
