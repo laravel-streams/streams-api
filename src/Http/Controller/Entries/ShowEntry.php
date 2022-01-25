@@ -13,18 +13,18 @@ use Streams\Core\Support\Facades\Streams;
 
 class ShowEntry extends ApiController
 {
-    public function __invoke(
-        string $stream,
-        string $entry,
-        string $map = null
-    ): JsonResponse {
+    public function __invoke(string $stream, string $entry, string $map = null): JsonResponse
+    {
         $instance = Streams::entries($stream)->find($entry);
 
         if ($map) {
+
             $map = explode('/', $map);
 
             foreach ($map as $key) {
+
                 if ($instance instanceof EntryInterface && $instance->hasAttribute($key)) {
+
                     $instance = $instance->{$key};
 
                     continue;
@@ -33,6 +33,7 @@ class ShowEntry extends ApiController
                 $accessor = Str::camel("get_{$key}_attribute");
 
                 if (is_object($instance) && method_exists($instance, $accessor)) {
+
                     $instance = $instance->{$accessor}();
 
                     continue;
@@ -41,6 +42,7 @@ class ShowEntry extends ApiController
                 $method = Str::camel($key);
 
                 if (is_object($instance) && method_exists($instance, $method)) {
+
                     $instance = $instance->{$method}();
 
                     continue;
@@ -52,16 +54,34 @@ class ShowEntry extends ApiController
             }
         }
 
+        $links = [
+            'self' => URL::to(Request::path()),
+            'stream' => URL::route('streams.api.streams.show', ['stream' => $stream]),
+            'entries' => URL::route('streams.api.entries.index', ['stream' => $stream]),
+        ];
+
+        if ($instance) {
+
+            foreach ($instance->stream()->fields as $field) {
+
+                if ($field->type == 'relationship') {
+
+                    $keyName = $instance->stream()->config('key_name', 'id');
+
+                    $links[$field->handle] = URL::route('streams.api.entries.show', [
+                        'stream' => $stream,
+                        'entry' => $instance->{$keyName},
+                    ]);
+                }
+            }
+        }
+
         $response = Response::json([
             'meta' => [
                 'stream' => $stream,
                 'entry' => $entry,
             ],
-            'links' => [
-                'self' => URL::to(Request::path()),
-                'stream' => URL::route('streams.api.streams.show', ['stream' => $stream]),
-                'entries' => URL::route('streams.api.entries.index', ['stream' => $stream]),
-            ],
+            'links' => $links,
             'data' => $instance,
         ], $instance ? 200 : 404);
 
