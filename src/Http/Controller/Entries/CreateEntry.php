@@ -34,7 +34,6 @@ class CreateEntry extends Controller
          * @todo Should this be an exception?
          */
         if (!$payload) {
-
             return Response::json([
                 'data' => $instance,
                 'meta' => [
@@ -49,35 +48,24 @@ class CreateEntry extends Controller
             ], 400, $headers);
         }
 
-        $attributes = $payload->all();
-
         $target = Streams::make($stream);
 
-        foreach ($target->fields as $field) {
-            
-            if (is_null($default = $field->config('default'))) {
-                continue;
-            }
+        $attributes = $payload->all();
 
-            if (array_key_exists($field->handle, $attributes)) {
-                continue;
-            }
-
-            $attributes[$field->handle] = $field->default($default);
-        }
+        $instance = $target->entries()->newInstance($attributes);
 
         /**
          * Validate the stream input.
          */
-        $validator = $target->validator($attributes);
+        $validator = $target->validator($instance->toArray());
 
         /*
          * If validation passes create
          * the stream and add Location.
          */
-        if ($validator->passes()) {
-
-            $instance = $target->repository()->create($attributes);
+        if ($success = $validator->passes()) {
+            
+            $instance->save();
 
             $headers['location'] = URL::route('streams.api.entries.show', [
                 'stream' => $stream,
@@ -92,6 +80,7 @@ class CreateEntry extends Controller
         $messages = $validator->messages();
 
         if ($messages->isNotEmpty()) {
+            
             $status = 409;
 
             foreach ($messages->messages() as $field => $messages) {
@@ -119,7 +108,7 @@ class CreateEntry extends Controller
                 'entries' => URL::route('streams.api.entries.index', ['stream' => $stream]),
             ],
             'errors' => $errors,
-            'data' => $instance,
+            'data' => $success ? $instance : null,
         ], $status, $headers);
     }
 }
