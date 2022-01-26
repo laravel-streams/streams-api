@@ -57,7 +57,7 @@ class CreateEntry extends Controller
         /**
          * Validate the stream input.
          */
-        $validator = $target->validator($instance->toArray());
+        $validator = $target->validator($instance);
 
         /*
          * If validation passes create
