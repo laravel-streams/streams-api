@@ -2,42 +2,16 @@
 
 namespace Streams\Api\Http\Controller\Streams;
 
+use Illuminate\Http\JsonResponse;
 use Illuminate\Routing\Controller;
-use Illuminate\Support\Facades\Request;
-use Illuminate\Support\Facades\Response;
-use Illuminate\Support\Facades\URL;
-use Streams\Core\Support\Facades\Streams;
+use Streams\Api\Http\Controller\Entries\DeleteEntry;
 
 class DeleteStream extends Controller
 {
-    /**
-     * Return a single Stream.
-     *
-     * @param string $stream
-     * @return \Symfony\Component\HttpFoundation\Response
-     */
-    public function __invoke($stream)
+    public function __invoke(string $stream): JsonResponse
     {
-        if (! $stream = Streams::entries('core.streams')->find($stream)) {
-            return Response::json([
-                'meta' => [
-                    'parameters' => Request::route()->parameters(),
-                    'payload' => Request::json(),
-                ],
-                'links' => [
-                    'self' => URL::full(),
-                    'streams' => URL::route('streams.api.streams.index'),
-                ],
-                'errors' => [
-                    [
-                        'message' => 'Stream not found.',
-                    ],
-                ],
-            ], 404);
-        }
+        $deleteEntry = new DeleteEntry;
 
-        Streams::repository('core.streams')->delete($stream);
-
-        return Response::noContent();
+        return $deleteEntry('core.streams', $stream);
     }
 }

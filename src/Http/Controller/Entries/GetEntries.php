@@ -2,53 +2,37 @@
 
 namespace Streams\Api\Http\Controller\Entries;
 
+use Streams\Api\ApiResponse;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Request;
-use Illuminate\Support\Facades\Response;
-use Illuminate\Support\Facades\URL;
 use Streams\Api\Http\Controller\ApiController;
-use Streams\Core\Support\Facades\Streams;
 
 class GetEntries extends ApiController
 {
-    public function __invoke($stream)
+    public function __invoke(string $stream): JsonResponse
     {
-        if (! Streams::exists($stream)) {
-            abort(404, "The stream [$stream] does not exist.");
-        }
-
-        $headers = [];
+        $response = new ApiResponse($stream);
 
         $parameters = Request::query('parameters', Request::json('parameters')) ?: [];
 
-        $criteria = Streams::entries($stream)->loadParameters($parameters);
+        $criteria = $response->stream
+            ->entries()
+            ->loadParameters($parameters);
 
         $results = $criteria->paginate([
             'per_page' => Request::get('per_page', 100),
-            'page'     => Request::get('page', 1),
+            'page' => Request::get('page', 1),
         ]);
 
-        $meta = [
-            'total' => $results->total(),
-            'per_page' => $results->perPage(),
-            'last_page' => $results->lastPage(),
-            'current_page' => $results->currentPage(),
-            'stream' => $stream,
-//            'query' => $query,
-        ];
+        $response->addMeta('total', $results->total());
+        $response->addMeta('per_page', $results->perPage());
+        $response->addMeta('last_page', $results->lastPage());
+        $response->addMeta('current_page', $results->currentPage());
 
-        $links = [
-            'first_page' => $results->url(1),
-            'next_page' => $results->nextPageUrl(),
-            'previous_page' => $results->previousPageUrl(),
+        $response->addLink('first_page', $results->url(1));
+        $response->addLink('next_page', $results->nextPageUrl());
+        $response->addLink('previous_page', $results->previousPageUrl());
 
-            'self'    => URL::full(),
-            'stream'  => URL::route('streams.api.streams.show', ['stream' => $stream]),
-        ];
-
-        return Response::json([
-            'meta'  => $meta,
-            'links' => $links,
-            'data'  => $results->all(),
-        ], 200, $headers);
+        return $response->make($results->all());
     }
 }

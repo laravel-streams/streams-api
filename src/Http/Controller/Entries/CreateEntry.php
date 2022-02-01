@@ -2,113 +2,72 @@
 
 namespace Streams\Api\Http\Controller\Entries;
 
+use Streams\Api\ApiResponse;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Routing\Controller;
-use Illuminate\Support\Arr;
-use Illuminate\Support\Facades\Request;
-use Illuminate\Support\Facades\Response;
 use Illuminate\Support\Facades\URL;
-use Streams\Core\Support\Facades\Streams;
+use Illuminate\Support\Facades\Request;
+use Symfony\Component\HttpFoundation\ParameterBag;
 
 class CreateEntry extends Controller
 {
-    /**
-     * Return all entries for the stream.
-     *
-     * @param $stream
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function __invoke($stream)
+
+    protected ParameterBag $payload;
+
+    public function __construct(ParameterBag $payload = null)
     {
-        $payload = Request::json();
+        $this->payload = $payload ?: Request::json();
+    }
 
-        $instance = null;
-        $headers = [];
-        $errors = [];
+    public function __invoke(string $stream): JsonResponse
+    {
+        $response = new ApiResponse($stream);
 
-        $status = 201;
+        $instance = $response->stream
+            ->entries()
+            ->newInstance($this->payload->all());
 
-        /*
-         * If there is no input then
-         * we can't create anything.
-         *
-         * @todo Should this be an exception?
-         */
-        if (!$payload) {
-            return Response::json([
-                'data' => $instance,
-                'meta' => [
-                    'parameters' => Request::route()->parameters(),
-                    'payload' => Request::json(),
-                ],
-                'errors' => [
-                    [
-                        'message' => 'Invalid (empty) input.',
-                    ],
-                ],
-            ], 400, $headers);
-        }
+        $validator = $response->stream->validator($instance);
 
-        $target = Streams::make($stream);
+        $valid = $validator->passes();
 
-        $attributes = $payload->all();
+        if ($valid) {
 
-        $instance = $target->entries()->newInstance($attributes);
-
-        /**
-         * Validate the stream input.
-         */
-        $validator = $target->validator($instance);
-
-        /*
-         * If validation passes create
-         * the stream and add Location.
-         */
-        if ($success = $validator->passes()) {
-            
             $instance->save();
 
-            $headers['location'] = URL::route('streams.api.entries.show', [
+            $response->setStatus(201);
+
+            $response->setData($instance);
+
+            $response->addHeader('location', URL::route('streams.api.entries.show', [
                 'stream' => $stream,
                 'entry' => $instance->id,
-            ]);
+            ]));
+
+            $response->addLink('location', URL::route('streams.api.entries.show', [
+                'stream' => $stream,
+                'entry' => $instance->id,
+            ]));
         }
 
-        /**
-         * If validation failed then add
-         * the errors to the response.
-         */
-        $messages = $validator->messages();
+        if (!$valid) {
 
-        if ($messages->isNotEmpty()) {
-            
-            $status = 409;
+            $messages = $validator->messages();
+
+            $response->setStatus(409);
 
             foreach ($messages->messages() as $field => $messages) {
                 foreach ($messages as $message) {
-                    $errors[] = [
+                    $response->addError([
                         'message' => $message,
                         'meta' => [
                             'field' => $field,
                         ],
-                    ];
+                    ]);
                 }
             }
         }
 
-        return Response::json([
-            'meta' => [
-                'stream' => $stream,
-                'payload' => Request::json(),
-                'form-data' => Request::input(),
-            ],
-            'links' => [
-                'self' => URL::full(),
-                'location' => Arr::get($headers, 'location'),
-                'stream' => URL::route('streams.api.streams.show', ['stream' => $stream]),
-                'entries' => URL::route('streams.api.entries.index', ['stream' => $stream]),
-            ],
-            'errors' => $errors,
-            'data' => $success ? $instance : null,
-        ], $status, $headers);
+        return $response->make();
     }
 }

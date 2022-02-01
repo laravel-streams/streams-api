@@ -2,35 +2,16 @@
 
 namespace Streams\Api\Http\Controller\Streams;
 
+use Illuminate\Http\JsonResponse;
 use Illuminate\Routing\Controller;
-use Illuminate\Support\Facades\Request;
-use Illuminate\Support\Facades\Response;
-use Illuminate\Support\Facades\URL;
-use Streams\Core\Support\Facades\Streams;
+use Streams\Api\Http\Controller\Entries\ShowEntry;
 
 class ShowStream extends Controller
 {
-    /**
-     * Return a single Stream.
-     *
-     * @param string $stream
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function __invoke($stream)
+    public function __invoke(string $stream): JsonResponse
     {
-        $instance = Streams::make($stream);
+        $showEntry = new ShowEntry;
 
-        return Response::json([
-            'meta' => [
-                'parameters' => Request::route()->parameters(),
-                'query' => Request::query(),
-            ],
-            'links' => [
-                'self' => URL::to(Request::path()),
-                'streams' => URL::route('streams.api.streams.index'),
-                'entries' => URL::route('streams.api.entries.index', ['stream' => $stream]),
-            ],
-            'data' => $instance,
-        ], $instance ? 200 : 404);
+        return $showEntry('core.streams', $stream);
     }
 }

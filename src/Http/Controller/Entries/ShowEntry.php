@@ -2,11 +2,10 @@
 
 namespace Streams\Api\Http\Controller\Entries;
 
-use Illuminate\Http\JsonResponse;
-use Illuminate\Support\Facades\Request;
-use Illuminate\Support\Facades\Response;
-use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Str;
+use Streams\Api\ApiResponse;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\URL;
 use Streams\Api\Http\Controller\ApiController;
 use Streams\Core\Entry\Contract\EntryInterface;
 use Streams\Core\Support\Facades\Streams;
@@ -15,80 +14,71 @@ class ShowEntry extends ApiController
 {
     public function __invoke(string $stream, string $entry, string $map = null): JsonResponse
     {
-        $instance = Streams::entries($stream)->find($entry);
+        $response = new ApiResponse($stream);
 
-        if ($map) {
+        if (!$instance = $response->stream->entries()->find($entry)) {
+            return $response->make(null, 404);
+        }
 
-            $map = explode('/', $map);
+        // if ($map) {
 
-            foreach ($map as $key) {
+        //     $map = explode('/', $map);
 
-                if ($instance instanceof EntryInterface && $instance->hasAttribute($key)) {
+        //     foreach ($map as $key) {
 
-                    $instance = $instance->{$key};
+        //         if ($instance instanceof EntryInterface && $instance->hasAttribute($key)) {
 
+        //             $instance = $instance->{$key};
+
+        //             continue;
+        //         }
+
+        //         $accessor = Str::camel("get_{$key}_attribute");
+
+        //         if (is_object($instance) && method_exists($instance, $accessor)) {
+
+        //             $instance = $instance->{$accessor}();
+
+        //             continue;
+        //         }
+
+        //         $method = Str::camel($key);
+
+        //         if (is_object($instance) && method_exists($instance, $method)) {
+
+        //             $instance = $instance->{$method}();
+
+        //             continue;
+        //         }
+
+        //         $target = get_class($instance);
+
+        //         throw new \Exception("Cannot map [$key] on target [$target].");
+        //     }
+        // }
+
+        $this->addRelationshipLinks($response, $instance);
+
+        return $response->make($instance);
+    }
+
+    public function addRelationshipLinks(ApiResponse $response, EntryInterface $instance)
+    {
+        foreach ($instance->stream()->fields as $field) {
+
+            if ($field->type == 'relationship') {
+
+                if (!$value = $instance->getRawAttribute($field->handle)) {
                     continue;
                 }
 
-                $accessor = Str::camel("get_{$key}_attribute");
+                $stream = Streams::make($field->config('related'));
 
-                if (is_object($instance) && method_exists($instance, $accessor)) {
-
-                    $instance = $instance->{$accessor}();
-
-                    continue;
-                }
-
-                $method = Str::camel($key);
-
-                if (is_object($instance) && method_exists($instance, $method)) {
-
-                    $instance = $instance->{$method}();
-
-                    continue;
-                }
-
-                $target = get_class($instance);
-
-                throw new \Exception("Cannot map [$key] on target [$target].");
+                $response->addLink($field->handle, URL::route('streams.api.entries.show', [
+                    'stream' => $stream->id,
+                    'entry' => $value,
+                ]));
             }
         }
-
-        $links = [
-            'self' => URL::to(Request::path()),
-            'stream' => URL::route('streams.api.streams.show', ['stream' => $stream]),
-            'entries' => URL::route('streams.api.entries.index', ['stream' => $stream]),
-        ];
-
-        if ($instance) {
-
-            foreach ($instance->stream()->fields as $field) {
-
-                if ($field->type == 'relationship') {
-
-                    $keyName = $instance->stream()->config('key_name', 'id');
-
-                    $links[$field->handle] = URL::route('streams.api.entries.show', [
-                        'stream' => $stream,
-                        'entry' => $instance->{$keyName},
-                    ]);
-                }
-            }
-        }
-
-        $response = Response::json([
-            'meta' => [
-                'stream' => $stream,
-                'entry' => $entry,
-            ],
-            'links' => $links,
-            'data' => $instance,
-        ], $instance ? 200 : 404);
-
-        if (is_object($instance) && method_exists($instance, 'lastModified')) {
-            $response->setLastModified($instance->lastModified());
-        }
-
-        return $response;
     }
 }
