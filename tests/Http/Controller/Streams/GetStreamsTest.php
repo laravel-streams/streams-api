@@ -14,8 +14,6 @@ class GetStreamsTest extends ApiControllerTest
 
     public function testResponseStructure()
     {
-        //Streams::load(base_path('vendor/streams/api/tests/examples.json'));
-
         $response = $this->callRouteAction();
 
         $response->assertStatus(200);
