@@ -2,16 +2,16 @@
 
 namespace Streams\Api;
 
+use Illuminate\Support\Arr;
 use Streams\Core\Stream\Stream;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Facades\Request;
+use Illuminate\Support\Facades\Response;
+use Streams\Core\Support\Facades\Streams;
 use Illuminate\Contracts\Support\Jsonable;
 use Streams\Core\Support\Traits\Prototype;
 use Illuminate\Contracts\Support\Arrayable;
-use Illuminate\Http\JsonResponse;
-use Illuminate\Support\Arr;
-use Illuminate\Support\Facades\Response;
-use Illuminate\Support\Facades\URL;
-use Streams\Core\Support\Facades\Streams;
 
 class ApiResponse implements Arrayable, Jsonable
 {

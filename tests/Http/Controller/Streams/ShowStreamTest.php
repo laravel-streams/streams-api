@@ -2,33 +2,50 @@
 
 namespace Streams\Api\Tests\Http\Controller\Streams;
 
+use Streams\Api\Tests\ApiTestCase;
+use Illuminate\Support\Facades\URL;
 use Streams\Core\Support\Facades\Streams;
-use Streams\Api\Tests\Http\Controller\ApiControllerTest;
 
-class ShowStreamTest extends ApiControllerTest
+class ShowStreamTest extends ApiTestCase
 {
 
-    public function getRouteName(): string
+    public function test_it_returns_standard_response_structure()
     {
-        return 'streams.api.streams.show';
-    }
-
-    public function testResponseStructure()
-    {
-        Streams::load(base_path('vendor/streams/api/tests/examples.json'));
-
-        $response = $this->callRouteAction([], [
-            'stream' => 'testing.examples',
-        ]);
+        $response = $this->get(URL::route('streams.api.streams.show', [
+            'stream' => 'people',
+        ]));
 
         $response->assertStatus(200);
 
-        $json = $response->getContent();
+        $this->assertTrue(isset($response['errors']));
+        $this->assertTrue(isset($response['links']));
+        $this->assertTrue(isset($response['meta']));
+        $this->assertTrue(isset($response['data']));
+    }
 
-        $content = json_decode($json, true);
+    public function test_it_returns_404_if_not_found()
+    {
+        $response = $this->get(URL::route('streams.api.streams.show', [
+            'stream' => 'lost',
+        ]));
 
-        $this->assertTrue(array_key_exists('data', $content));
-        $this->assertTrue(array_key_exists('meta', $content));
-        $this->assertTrue(array_key_exists('links', $content));
+        $response->assertStatus(404);
+
+        $this->assertTrue(isset($response['errors']));
+        $this->assertTrue(isset($response['links']));
+        $this->assertTrue(isset($response['meta']));
+        $this->assertNull($response['data']);
+    }
+
+    public function test_it_returns_a_stream_entry()
+    {
+        $response = $this->get(URL::route('streams.api.streams.show', [
+            'stream' => 'people',
+        ]));
+
+        $this->assertTrue(isset($response['errors']));
+        $this->assertTrue(isset($response['links']));
+        $this->assertTrue(isset($response['meta']));
+        $this->assertTrue(isset($response['data']));
     }
 }
