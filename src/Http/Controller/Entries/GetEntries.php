@@ -4,10 +4,10 @@ namespace Streams\Api\Http\Controller\Entries;
 
 use Streams\Api\ApiResponse;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\Request;
-use Streams\Api\Http\Controller\ApiController;
 
-class GetEntries extends ApiController
+class GetEntries extends Controller
 {
     public function __invoke(string $stream): JsonResponse
     {

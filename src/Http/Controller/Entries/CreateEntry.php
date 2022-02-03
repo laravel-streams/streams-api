@@ -16,7 +16,13 @@ class CreateEntry extends Controller
 
     public function __construct(ParameterBag $payload = null)
     {
-        $this->payload = $payload ?: Request::json();
+        if ($payload && $payload->all()) {
+            $this->payload = $payload;
+        }
+
+        if (!isset($this->payload)) {
+            $this->payload = Request::json();
+        }
     }
 
     public function __invoke(string $stream): JsonResponse
@@ -39,14 +45,16 @@ class CreateEntry extends Controller
 
             $response->setData($instance);
 
+            $keyName = $response->stream->config('key_name', 'id');
+
             $response->addHeader('location', URL::route('streams.api.entries.show', [
                 'stream' => $stream,
-                'entry' => $instance->id,
+                'entry' => $instance->{$keyName},
             ]));
 
             $response->addLink('location', URL::route('streams.api.entries.show', [
                 'stream' => $stream,
-                'entry' => $instance->id,
+                'entry' => $instance->{$keyName},
             ]));
         }
 

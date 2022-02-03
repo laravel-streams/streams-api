@@ -4,7 +4,6 @@ namespace Streams\Api\Tests\Http\Controller\Streams;
 
 use Streams\Api\Tests\ApiTestCase;
 use Illuminate\Support\Facades\URL;
-use Streams\Core\Support\Facades\Streams;
 
 class ShowStreamTest extends ApiTestCase
 {

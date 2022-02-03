@@ -2,15 +2,14 @@
 
 namespace Streams\Api\Http\Controller\Entries;
 
-use Illuminate\Support\Str;
 use Streams\Api\ApiResponse;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\URL;
-use Streams\Api\Http\Controller\ApiController;
-use Streams\Core\Entry\Contract\EntryInterface;
 use Streams\Core\Support\Facades\Streams;
+use Streams\Core\Entry\Contract\EntryInterface;
 
-class ShowEntry extends ApiController
+class ShowEntry extends Controller
 {
     public function __invoke(string $stream, string $entry, string $map = null): JsonResponse
     {
@@ -19,43 +18,6 @@ class ShowEntry extends ApiController
         if (!$instance = $response->stream->entries()->find($entry)) {
             return $response->make(null, 404);
         }
-
-        // if ($map) {
-
-        //     $map = explode('/', $map);
-
-        //     foreach ($map as $key) {
-
-        //         if ($instance instanceof EntryInterface && $instance->hasAttribute($key)) {
-
-        //             $instance = $instance->{$key};
-
-        //             continue;
-        //         }
-
-        //         $accessor = Str::camel("get_{$key}_attribute");
-
-        //         if (is_object($instance) && method_exists($instance, $accessor)) {
-
-        //             $instance = $instance->{$accessor}();
-
-        //             continue;
-        //         }
-
-        //         $method = Str::camel($key);
-
-        //         if (is_object($instance) && method_exists($instance, $method)) {
-
-        //             $instance = $instance->{$method}();
-
-        //             continue;
-        //         }
-
-        //         $target = get_class($instance);
-
-        //         throw new \Exception("Cannot map [$key] on target [$target].");
-        //     }
-        // }
 
         $this->addRelationshipLinks($response, $instance);
 

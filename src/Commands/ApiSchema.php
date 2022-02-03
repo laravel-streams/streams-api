@@ -15,7 +15,7 @@ class ApiSchema extends Command
     {
         $yaml = Yaml::dump(Api::schema()->create()->toArray(), 100);
 
-        $path = base_path($this->argument('path') ?: 'bootstrap/cache/api.yaml');
+        $path = base_path($this->argument('path') ?: 'api.yaml');
         
         file_put_contents($path, $yaml);
 

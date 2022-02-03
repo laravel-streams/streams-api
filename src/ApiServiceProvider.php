@@ -34,8 +34,7 @@ class ApiServiceProvider extends ServiceProvider
 
         Application::starting(function ($artisan) {
             $artisan->resolveCommands([
-                \Streams\Api\Commands\ApiSchema::class,
-                \Streams\Api\Commands\ApiTypes::class,
+                \Streams\Api\Commands\ApiSchema::class
             ]);
         });
 
@@ -75,7 +74,7 @@ class ApiServiceProvider extends ServiceProvider
     {
         $this->mergeConfigFrom(__DIR__ . '/../resources/config/api.php', 'streams.api');
 
-        if (file_exists($config = __DIR__ . '/../../../../config/streams/api.php')) {
+        if (file_exists($config = config_path('streams/api.php'))) {
             $this->mergeConfigFrom($config, 'streams.api');
         }
 
@@ -86,6 +85,7 @@ class ApiServiceProvider extends ServiceProvider
 
     protected function registerRoutes(): void
     {
+        // @todo
         if (config('streams.api.openapi.documentation')) {
             Route::get('openapi', [
                 'as'         => 'streams.api.openapi',
@@ -93,6 +93,7 @@ class ApiServiceProvider extends ServiceProvider
                 'middleware' => ['web'],
             ]);
         }
+
         Route::prefix(Config::get('streams.api.prefix', 'api'))
             ->middleware(Config::get('streams.api.middleware', 'api'))
             ->group(function () {
