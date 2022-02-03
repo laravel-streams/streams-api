@@ -10,7 +10,6 @@ use Illuminate\Support\ServiceProvider;
 use Streams\Core\StreamsServiceProvider;
 use Streams\Core\Support\Facades\Assets;
 use Streams\Api\Http\Controller\Entries\ShowEntry;
-use Streams\Api\Http\Controller\OpenApiController;
 use Streams\Api\Http\Controller\Entries\GetEntries;
 use Streams\Api\Http\Controller\Entries\PatchEntry;
 use Streams\Api\Http\Controller\Streams\GetStreams;
@@ -44,8 +43,6 @@ class ApiServiceProvider extends ServiceProvider
             return;
         }
 
-        $this->app->view->addNamespace('openapi', __DIR__ . '/../resources/views/openapi');
-
         $this->registerRoutes();
     }
 
@@ -54,12 +51,6 @@ class ApiServiceProvider extends ServiceProvider
         $this->publishes([
             __DIR__ . '/../resources/public'  => public_path('vendor/streams/api'),
         ], ['public']);
-
-        if (config('streams.api.openapi.documentation')) {
-            $this->publishes([
-                __DIR__ . '/../resources/openapi' => public_path('vendor/streams/openapi'),
-            ], ['openapi']);
-        }
 
         Assets::addPath('api', 'vendor/streams/api');
 
@@ -85,25 +76,10 @@ class ApiServiceProvider extends ServiceProvider
 
     protected function registerRoutes(): void
     {
-        // @todo
-        if (config('streams.api.openapi.documentation')) {
-            Route::get('openapi', [
-                'as'         => 'streams.api.openapi',
-                'uses'       => OpenApiController::class . '@documentation',
-                'middleware' => ['web'],
-            ]);
-        }
-
         Route::prefix(Config::get('streams.api.prefix', 'api'))
             ->middleware(Config::get('streams.api.middleware', 'api'))
             ->group(function () {
 
-                if (config('streams.api.openapi.specification')) {
-                    Route::get('/', [
-                        'uses' => OpenApiController::class . '@specification',
-                        'as'   => 'streams.api',
-                    ]);
-                }
                 /*
                  * Route Streams API endpoints.
                  */

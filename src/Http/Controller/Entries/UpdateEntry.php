@@ -13,13 +13,13 @@ class UpdateEntry extends Controller
     public function __invoke(string $stream, string $entry): JsonResponse
     {
         $response = new ApiResponse($stream);
-        
+
         $payload = Request::json();
 
         $payload->set($response->stream->config('key_name', 'id'), $entry);
 
         if (!$instance = $response->stream->entries()->find($entry)) {
-            
+
             $createEntry = new CreateEntry($payload);
 
             return $createEntry($stream);

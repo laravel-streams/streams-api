@@ -6,7 +6,7 @@ use Streams\Api\ApiResponse;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\Response;
 use Streams\Core\Support\Facades\Streams;
-use Illuminate\Http\Response as HttpResponse;
+use Symfony\Component\HttpFoundation\Response as HttpResponse;
 
 class DeleteEntry extends Controller
 {

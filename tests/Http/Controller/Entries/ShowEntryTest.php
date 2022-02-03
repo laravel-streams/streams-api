@@ -13,7 +13,7 @@ class ShowEntryTest extends ApiTestCase
     {
         $response = $this->get(URL::route('streams.api.entries.show', [
             'stream' => 'people',
-            'entry' => '1',
+            'entry' => 1,
         ]));
 
         $response->assertStatus(200);
@@ -43,7 +43,7 @@ class ShowEntryTest extends ApiTestCase
     {
         $response = $this->get(URL::route('streams.api.entries.show', [
             'stream' => 'people',
-            'entry' => '1',
+            'entry' => 1,
         ]));
 
         $this->assertEquals(Streams::entries('people')->find(1)->name, $response['data']['name']);
@@ -53,9 +53,19 @@ class ShowEntryTest extends ApiTestCase
     {
         $response = $this->get(URL::route('streams.api.entries.show', [
             'stream' => 'people',
-            'entry' => '1',
+            'entry' => 1,
         ]));
 
         $this->assertTrue(isset($response['links']['homeworld']));
+    }
+
+    public function test_it_omits_unset_relationship_links()
+    {
+        $response = $this->get(URL::route('streams.api.entries.show', [
+            'stream' => 'species',
+            'entry' => 2,
+        ]));
+
+        $this->assertFalse(isset($response['links']['homeworld']));
     }
 }
