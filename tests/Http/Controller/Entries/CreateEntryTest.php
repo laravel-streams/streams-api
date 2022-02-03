@@ -27,28 +27,27 @@ class CreateEntryTest extends ApiTestCase
         $this->assertEquals(8, Streams::entries('films')->count());
     }
 
-    // public function test_it_returns_409_if_conflict()
-    // {
-    //     $film = $this->filmData();
+    public function test_it_returns_409_if_conflict()
+    {
+        $film = $this->filmData();
 
-    //     unset($film['title']);
+        unset($film['title']);
 
-    //     $response = $this->json('POST', URL::route('streams.api.entries.create', [
-    //         'stream' => 'films',
-    //     ]), $film);
+        $response = $this->json('POST', URL::route('streams.api.entries.create', [
+            'stream' => 'films',
+        ]), $film);
 
-    //     $response->assertStatus(409);
+        $response->assertStatus(409);
 
-    //     $this->assertTrue(isset($response['errors'][0]['message']));
+        $this->assertTrue(isset($response['errors'][0]['message']));
 
-    //     $this->assertTrue(isset($response['links']));
-    //     $this->assertTrue(isset($response['meta']));
-    //     $this->assertTrue(isset($response['data']));
+        $this->assertTrue(isset($response['links']));
+        $this->assertTrue(isset($response['meta']));
 
-    //     $this->assertNull($response['data']);
+        $this->assertNull($response['data']);
 
-    //     $this->assertEquals(7, Streams::entries('films')->count());
-    // }
+        $this->assertEquals(7, Streams::entries('films')->count());
+    }
 
     protected function filmData()
     {
