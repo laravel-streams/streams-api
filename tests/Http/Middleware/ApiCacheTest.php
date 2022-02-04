@@ -13,14 +13,6 @@ class ApiCacheTest extends ApiTestCase
 {
     public function test_it_skips_non_cacheable_requests()
     {
-        Streams::extend('films', [
-            'config' => [
-                'cache' => [
-                    'enabled' => true,
-                ]
-            ]
-        ]);
-
         $request = $this->createPatchEntryRequest();
 
         $response = (new ApiCache)->handle($request, function () {
@@ -37,14 +29,6 @@ class ApiCacheTest extends ApiTestCase
 
     public function test_it_respects_no_cache_header()
     {
-        Streams::extend('films', [
-            'config' => [
-                'cache' => [
-                    'enabled' => true,
-                ]
-            ]
-        ]);
-
         $request = $this->createGetEntriesRequest();
 
         $request->headers->set('Cache-Control', 'no-cache');
@@ -56,14 +40,6 @@ class ApiCacheTest extends ApiTestCase
         });
 
         $response->assertHeader('cache-control', 'no-cache, private');
-
-        // $file = base_path('streams/data/films.json');
-
-        // $json = json_decode(file_get_contents($file), true);
-
-        // unset($json[4]);
-
-        // file_put_contents($file, json_encode($json, JSON_PRETTY_PRINT));
     }
 
     public function test_it_skips_when_stream_is_unknown()
@@ -81,6 +57,117 @@ class ApiCacheTest extends ApiTestCase
         });
 
         $response->assertHeader('cache-control', 'no-cache, private');
+    }
+
+    public function test_it_skips_when_cache_is_disabled()
+    {
+        Streams::extend('films', [
+            'config' => [
+                'cache' => [
+                    'enabled' => false,
+                ]
+            ]
+        ]);
+
+        $request = $this->createGetEntriesRequest();
+
+        $response = (new ApiCache)->handle($request, function () {
+            return $this->call('GET', URL::route('streams.api.entries.index', [
+                'stream' => 'films',
+            ]));
+        });
+
+        $response->assertHeader('cache-control', 'no-cache, private');
+    }
+
+    public function test_it_handles_max_age()
+    {
+        $request = $this->createGetEntriesRequest();
+
+        /**
+         * The request should miss and
+         * return an accurate entry count.
+         */
+        $request->headers->set('Cache-Control', 'max-age=600');
+
+        $response = (new ApiCache)->handle($request, function () {
+            return $this->call('GET', URL::route('streams.api.entries.index', [
+                'stream' => 'films',
+            ]));
+        });
+
+        $this->assertSame(Streams::entries('films')->count(), count($response['data']));
+
+        /**
+         * Manually remove an item to bypass
+         * internal cache management actions.
+         */
+        $file = base_path('streams/data/films.json');
+
+        $json = json_decode(file_get_contents($file), true);
+
+        unset($json[4]);
+
+        file_put_contents($file, json_encode($json, JSON_PRETTY_PRINT));
+
+        /**
+         * The request should hit cache and return 
+         * the previous count of data despite above.
+         */
+        $response = (new ApiCache)->handle($request, function () {
+            return $this->call('GET', URL::route('streams.api.entries.index', [
+                'stream' => 'films',
+            ]));
+        });
+
+        $this->assertSame(Streams::entries('films')->count() + 1, count($response['data']));
+
+        /**
+         * The request should miss again and
+         * return an accurate entry count.
+         */
+        $request->headers->set('Cache-Control', 'max-age=0');
+
+        $response = (new ApiCache)->handle($request, function () {
+            return $this->call('GET', URL::route('streams.api.entries.index', [
+                'stream' => 'films',
+            ]));
+        });
+
+        $this->assertSame(Streams::entries('films')->count(), count($response['data']));
+    }
+
+    public function test_it_handles_if_none_match()
+    {
+        $request = $this->createGetEntriesRequest();
+
+        /**
+         * The request should miss and
+         * return an accurate entry count.
+         */
+        $response = (new ApiCache)->handle($request, function () {
+            return $this->call('GET', URL::route('streams.api.entries.index', [
+                'stream' => 'films',
+            ]));
+        });
+
+        $response->assertHeader('Etag', '"' . md5($response->getContent()) . '"');
+
+        $this->assertSame(Streams::entries('films')->count(), count($response['data']));
+
+        /**
+         * The request should cause an empty 302 response
+         */
+        $request->headers->set('If-None-Match', $response->headers->get('Etag'));
+
+        $response = (new ApiCache)->handle($request, function () {
+            return $this->call('GET', URL::route('streams.api.entries.index', [
+                'stream' => 'films',
+            ]));
+        });
+
+        $this->assertSame(304, $response->getStatusCode());
+        $this->assertSame('', $response->getContent());
     }
 
     protected function createPatchEntryRequest()

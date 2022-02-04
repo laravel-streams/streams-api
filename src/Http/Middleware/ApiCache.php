@@ -5,6 +5,7 @@ namespace Streams\Api\Http\Middleware;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Response;
+use Illuminate\Support\Facades\URL;
 use Streams\Core\Support\Facades\Streams;
 
 class ApiCache
@@ -18,37 +19,51 @@ class ApiCache
         if ($request->isNoCache()) {
             return $next($request);
         }
-        
+
         if (!$stream = $this->resolveStream($request)) {
             return $next($request);
         }
 
         $stream = Streams::make($stream);
 
-        $ttl = $stream->config('cache.ttl', 60 * 60);
-
         if ($stream->config('cache.enabled') === false) {
             return $next($request);
         }
 
-        $response = $next($request);
+        $fingerprint = md5(
+            $request->url()
+                . $request->method()
+                . $request->getContent()
+                . json_encode($request->all())
+        );
 
-        $etag = $request->header('If-None-Match');
-        
-        $fingerprint = md5($response->getContent());
-
-        if ($etag === $fingerprint) {
-            return Response::make(null, 302);
+        if ($maxAge = $request->headers->getCacheControlDirective('max-age')) {
+            return $stream->cache()->remember(
+                $fingerprint,
+                $maxAge,
+                function () use ($next, $request) {
+                    return $next($request);
+                }
+            );
         }
 
-        /*
-         * Set max age according to cache ttl
-         */
+        $response = $next($request);
+
+        $checksum = '"' . md5($response->getContent()) . '"';
+
+        $etag = $request->header('If-None-Match');
+
+        if ($etag === $checksum) {
+            $response = Response::noContent(302);
+        }
+
+        $ttl = $stream->config('cache.ttl', 60 * 60);
+
         $response->setMaxAge($ttl);
         $response->setSharedMaxAge($ttl);
 
         $response->setPublic();
-        $response->setEtag($fingerprint);
+        $response->setEtag($checksum);
         $response->isNotModified($request);
 
         return $response;
@@ -62,10 +77,6 @@ class ApiCache
             return $stream;
         }
 
-        if ($stream = Arr::get($route->action, 'stream')) {
-            return $stream;
-        }
-
-        return null;
+        return Arr::get($route->action, 'stream');
     }
 }
