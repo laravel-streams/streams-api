@@ -2,10 +2,9 @@
 
 namespace Streams\Api\Http\Middleware;
 
-use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Response;
-use Illuminate\Support\Facades\URL;
 use Streams\Core\Support\Facades\Streams;
 
 class ApiCache
