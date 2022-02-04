@@ -25,12 +25,12 @@ Stream-specific cache configuration can be specified on the stream.
 
 ## Cache Parameter
 
-The `cache` parameter can be specified in seconds when sending `query` parameters:
+The `cache` parameter can be specified in seconds when sending query `parameters`:
 
 ```json
 // GET /api/streams/examples/entries
 {
-    "query": [
+    "parameters": [
         {"cache": [300]}
         {"where": ["statu", "active"]}
     ]
