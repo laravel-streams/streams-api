@@ -35,9 +35,4 @@ return [
      */
     'middleware' => env('STREAMS_API_MIDDLEWARE', 'api'),
 
-    'openapi' => [
-        'specification' => true,
-        'documentation' => true
-    ]
-
 ];
