@@ -36,10 +36,11 @@ return [
 
     /*
      * Determine if the API should be enabled.
-     * This is DISABLED by default because
-     * the API is public by default.
+     *
+     * This is disabled by default because
+     * The API is public by default.
      */
-    'enabled' => env('STREAMS_API_ENABLED', false),
+    'enabled' => env('STREAMS_API_ENABLED', true),
 
     /*
      * Specify the API prefix.
@@ -47,18 +48,10 @@ return [
     'prefix' => env('STREAMS_API_PREFIX', 'api'),
 
     /*
-     * Specify the API fallback policy.
-     * 
-     * This policy will be ran if no stream
-     * or route policy is otherwise specified.
-     */
-    'policy' => env('STREAMS_API_POLICY'),
-
-    /*
      * Specify the API group middleware.
-     * 
+     *
      * This is designed to match out of the box
-     * "app/Providers/RouteServiceProvider.php" 
+     * "app/Providers/RouteServiceProvider.php"
      * and "app/Http/Kernel.php" Laravel files.
      *
      * Changing this value will require
@@ -80,12 +73,11 @@ protected $middlewareGroups = [
     'api' => [
         'throttle:60,1',
         'bindings',
+        Streams\Api\Http\Middleware\ApiCache::class,
     ],
 ];
 ```
 
-### Routes File
+### API Routes File
 
-The `app/Providers/RouteServiceProvider.php` file typically uses the `api` middleware group when loading the `routes/api.php` file. By default this file is compatible with this package and routes defined there will be properly prefixed and grouped.
-
-If you configure a non-standard middleware group to use, you will have to adjust all the above files accordingly.
+The `app/Providers/RouteServiceProvider.php` file typically uses the `api` middleware group when loading the `routes/api.php` file. By default this is compatible and routes defined there will be properly prefixed and grouped.
