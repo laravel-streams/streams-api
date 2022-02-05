@@ -73,7 +73,7 @@ protected $middlewareGroups = [
     'api' => [
         'throttle:60,1',
         'bindings',
-        Streams\Api\Http\Middleware\ApiCache::class,
+        \Streams\Api\Http\Middleware\ApiCache::class,
     ],
 ];
 ```
