@@ -15,7 +15,7 @@ class ShowEntry extends Controller
     {
         $response = new ApiResponse($stream);
 
-        if (!$instance = $response->stream->entries()->find($entry)) {
+        if (!$instance = $response->stream->repository()->find($entry)) {
             return $response->make(null, 404);
         }
 

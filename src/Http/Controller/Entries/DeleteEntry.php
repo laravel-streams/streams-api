@@ -14,7 +14,7 @@ class DeleteEntry extends Controller
     {
         $response = new ApiResponse($stream);
 
-        if (!$entry = Streams::entries($stream)->find($entry)) {
+        if (!$entry = Streams::repository($stream)->find($entry)) {
 
             $response->addError([
                 'message' => 'Entry not found.',
