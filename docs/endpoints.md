@@ -5,233 +5,108 @@ sort: 0
 enabled: true
 ---
 
-## Entries
+## Resources
 
-### List
+The API package is a universal RESTful API and has some resources available right out of the box.
 
-Return entries within a configured stream.
+### Entries
 
-`GET` `/api/streams/{stream}/entries`
+Entries represent the data within your configured [Streams](streams). Use the Entries API to interact with streams data.
 
-```json
+- [Available Methods](/docs/api/entries)
+
+
+### Streams
+
+Entries represent the data within your configured [Streams](#streams). Use the Entries API to interact with streams data.
+
+- [Available Methods](/docs/api/streams)
+
+
+## Custom Endpoints
+
+In general, routing endpoints for the API is very similar to routing anything else in Laravel.
+
+If you are using the [ApiCache](caching) middleware you will want to make sure and include the `stream` hint in your routes action.
+
+```php
+// routes/api.php
+Route::streams('examples/{id}/do-something', [
+    'stream' => 'examples',
+    'uses' => DoSomething::class
+]);
+```
+
+### Defining API Routes
+
+You can define API in a number of different 
+
+#### API Routes File
+
+The `app/Providers/RouteServiceProvider.php` file typically uses the `api` middleware group when loading the `routes/api.php` file. By default this is compatible and routes defined there will be properly prefixed and grouped.
+
+#### Using the Router
+
+You may also route API endpoints using the router directly.
+
+```php
+Route::prefix('api')
+    ->middleware('api')
+    ->group(function () {
+        // Define your routes.
+    });
+```
+
+When routing API endpoints from a package, the API prefix and middleware group is potentially unknown. You may use the API configuration to determine the correct values:
+
+```php
+Route::prefix(Config::get('streams.api.prefix', 'api'))
+    ->middleware(Config::get('streams.api.middleware', 'api'))
+    ->group(function () {
+        // Define your routes.
+    });
+```
+
+### API Responses
+
+You may use the `ApiResponse` utility to return standardized JSON responses.
+
+Responses will automatically include built-in links and meta and will default to a `200` status code.
+
+```php
+// app\Controller\Api\DoSomething;
+use Streams\Api\ApiResponse;
+
+public function __invoke($id)
 {
-    "data": [
-        {
-            "title": "Hello World"
-        }
-    ],
-    "links": {...},
-    "meta": {...}
+    $response = new ApiResponse('examples');
+
+    // Your endpoint logic...
+
+    return $response->make();
 }
 ```
 
-### Create
+#### Available Methods
 
-Create a new entry.
-
-`POST` `/api/streams/{stream}/entries`
-
-```bash
-curl --location --request POST '/api/streams/{stream}/entries' \
-    -H 'Content-Type: application/json' \
-    -d '{"id": "hello_world", "title": "Hello World"}'   
-```
-
-Return result:
-
-```json
-{
-    "data": [
-        {
-            "id": "hello_world",
-            "title": "Hello World"
-        }
-    ],
-    "links": {...},
-    "meta": {...}
-}
-```
-
-### Show
-
-Return a single entry.
-
-`GET` `/api/streams/{stream}/entries/{entry}`
-
-```json
-{
-    "data": [
-        {
-            "title": "Hello World"
-        }
-    ],
-    "links": {...},
-    "meta": {...}
-}
-```
-
-### Update
-
-To update select values of an entry, use **patch**.
-
-`PATCH` `/api/streams/{stream}/entries/{entry}`
-
-To replace the entry attributes entirely, use **put**.
-
-`PUT` `/api/streams/{stream}/entries/{entry}`
-
-```bash
-curl --location --request PATCH '/api/streams/{stream}/entries/{entry}' \
-    -H 'Content-Type: application/json' \
-    -d '{"title": "New Title"}'
-```
-
-Return result:
-
-```json
-{
-    "data": [
-        {
-            "id": "hello_world",
-            "title": "Hello World!"
-        }
-    ],
-    "links": {...},
-    "meta": {...}
-}
-```
-
-### Delete
-
-Deletes an entry.
-
-`DELETE` `/api/streams/{stream}/entries/{entry}`
+Below is a list of methods you can use to configure the response:
 
 
+```php
+$response->setStatus(int $status): self
 
-## Streams
+$response->addHeader(string $name, mixed $value): self
+$response->removeHeader(string $name): self
 
-### List
+$response->addError(array $error): self
 
-Return configured streams.
+$response->addLink(string $name, mixed $value): self
+$response->removeLink(string $name): self
 
-`GET` `/api/streams/{stream}`
+$response->addMeta(string $name, mixed $value): self
+$response->removeMeta(string $name): self
 
-```json
-{
-    "data": {...},
-    "links": {...},
-    "meta": {...}
-}
-```
+$response->setData(mixed $data): self
 
-### Create
-
-Create a new stream.
-
-`POST` `/api/streams`
-
-```bash
-curl --location --request POST '/api/streams' \
-    -H 'Content-Type: application/json' \
-    -d '{"id": "contacts", "name": "Contacts", "fields": {...}}'   
-```
-
-Return result:
-
-```json
-{
-    "data": [
-        {
-            "id": "contacts",
-            "name": "Contacts"
-        }
-    ],
-    "links": {...},
-    "meta": {...}
-}
-```
-
-### Show
-
-Return a single stream.
-
-`GET` `/api/streams/{stream}`
-
-```json
-{
-    "data": [
-        {
-            "name": "Contacts"
-        }
-    ],
-    "links": {...},
-    "meta": {...}
-}
-```
-
-### Update
-
-To update select values of a stream, use **patch**.
-
-`PATCH` `/api/streams/{stream}`
-
-To replace the attributes entirely, use **put**.
-
-`PUT` `/api/streams/{stream}`
-
-```bash
-curl --location --request PATCH '/api/streams/{stream}' \
-    -H 'Content-Type: application/json' \
-    -d '{"description": "A simple contacts listing."}'   
-```
-
-Return result:
-
-```json
-{
-    "data": [
-        {
-            "title": "Contacts",
-            "description": "A simple contacts listing."
-        }
-    ],
-    "links": {...},
-    "meta": {...}
-}
-```
-
-### Delete
-
-Deletes an stream.
-
-`DELETE` `/api/streams/{stream}`
-
-```json
-{
-    "data": [],
-    "links": {...},
-    "meta": {...}
-}
-```
-
-
-## Querying
-
-You can manipulate the query using [criteria parameters](../core/criteria) in the URI.
-
-### Filtering
-
-```bash
-curl --location --request GET '/api/streams' \
-    -H 'Content-Type: application/json' \
-    -d '{"query": [{"where": ["id", "LIKE", "%doc%"]}]}'
-```
-
-### Sorting
-
-```bash
-curl --location --request GET '/api/streams/docs/entries' \
-    -H 'Content-Type: application/json' \
-    -d '{"query": [{"where": ["enabled", true]}]}'
+$response->make(mixed $data = null, int $status = null, array $headers = []): JsonResponse
 ```

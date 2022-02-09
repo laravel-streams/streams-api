@@ -16,14 +16,6 @@ return [
     'prefix' => env('STREAMS_API_PREFIX', 'api'),
 
     /*
-     * Specify the API fallback policy.
-     *
-     * This policy will be ran if no stream
-     * or route policy is otherwise specified.
-     */
-    'policy' => env('STREAMS_API_POLICY'),
-
-    /*
      * Specify the API group middleware.
      *
      * This is designed to match out of the box

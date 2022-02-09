@@ -7,40 +7,71 @@ stage: drafting
 enabled: true
 ---
 
-## Configuration
+## API Cache
 
-Stream-specific cache configuration can be specified on the stream.
+You may enable API level caching with the `ApiCache` middleware:
+
+```php
+// app/Http/Kernel.php
+
+protected $middlewareGroups = [
+    'api' => [
+        ...
+        \Streams\Api\Http\Middleware\ApiCache::class,
+    ],
+];
+```
+
+### Cache Control
+
+You may control the API cache with the following headers:
+
+#### Disable Cache
+
+To force fresh results use the `no-cache` directive:
+
+```bash
+Cache-Control: no-cache
+```
+
+#### Allow Cache
+
+Use the `max-age` directive to allow cached results for a certain amount of seconds:
+
+```bash
+Cache-Control: max-age=600
+```
+
+## Application Cache
+
+Streams may be cached by default at the application level according to their [configuration](../core/caching).
+### Configuration
+
+Application-level streams cache can be specified in the stream configuration:
 
 ```json
-// streams/examples.json
+//streams/examples.json
 {
     "config": {
         "cache": {
-            "enabled": true,
-            "ttl": 300
+            "enabled": "true",
+            "store": "default",
+            "ttl": 3600
         }
     }
 }
 ```
 
-## Cache Parameter
+### Cache Parameter
 
-The `cache` parameter can be specified in seconds when sending `query` parameters:
+You may enable application-level cache using the `cache` parameter:
 
 ```json
 // GET /api/streams/examples/entries
 {
-    "query": [
+    "parameters": [
         {"cache": [300]}
         {"where": ["statu", "active"]}
     ]
 }
 ```
-
-## Related Documentation
-
-- [Caching](/docs/core/caching)
-- [Query Cache](/docs/core/querying#caching)
-- [API Cache](endpoints#querying)
-<!-- - [@todo Response Cache](routing#caching-responses) -->
-<!-- - [@todo View Cache](querying#caching-results) -->

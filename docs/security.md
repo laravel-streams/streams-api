@@ -3,7 +3,7 @@ title: Security
 category: basics
 sort: 99
 stage: outlining
-enabled: true
+enabled: false
 ---
 
 ## Introduction
