@@ -6,6 +6,7 @@ use Streams\Api\ApiResponse;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\Request;
+use Streams\Core\Criteria\Criteria;
 
 class GetEntries extends Controller
 {
@@ -15,9 +16,9 @@ class GetEntries extends Controller
 
         $parameters = Request::query('parameters', Request::json('parameters')) ?: [];
 
-        $criteria = $response->stream
-            ->entries()
-            ->loadParameters($parameters);
+        $criteria = $response->stream->entries();
+
+        $this->loadParameters($criteria, $parameters);
 
         $results = $criteria->paginate([
             'per_page' => Request::get('per_page', 100),
@@ -34,5 +35,18 @@ class GetEntries extends Controller
         $response->addLink('previous_page', $results->previousPageUrl());
 
         return $response->make($results->all());
+    }
+
+    public function loadParameters(Criteria $criteria, $payload)
+    {
+        $parameters = [];
+
+        foreach ($payload as $parameter) {
+            foreach ($parameter as $method => $arguments) {
+                $parameters[$method][] = $arguments;
+            }
+        }
+
+        $criteria->setParameters($parameters);
     }
 }
