@@ -76,7 +76,9 @@ class ApiResponse implements Arrayable, Jsonable
             $stream = Streams::make($stream);
         }
 
-        $this->stream = $stream;
+        if ($stream) {
+            $this->stream = $stream;
+        }
 
         if ($query = Request::query()) {
             $this->addMeta('query', $query);
