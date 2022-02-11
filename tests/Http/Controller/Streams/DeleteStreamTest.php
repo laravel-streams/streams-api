@@ -17,7 +17,7 @@ class DeleteStreamTest extends ApiTestCase
 
         $response->assertNoContent(204);
 
-        $this->assertNull(Streams::entries('core.streams')->find('films'));
+        $this->assertNull(Streams::repository('core.streams')->find('films'));
     }
 
     public function test_it_returns_404_not_found()

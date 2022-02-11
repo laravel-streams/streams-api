@@ -28,7 +28,7 @@ class PatchStreamTest extends ApiTestCase
 
         $this->assertEquals(
             'Star Wars movies.',
-            Streams::entries('core.streams')->find('films')->description
+            Streams::repository('core.streams')->find('films')->description
         );
     }
 
@@ -51,7 +51,7 @@ class PatchStreamTest extends ApiTestCase
 
         $this->assertEquals(
             'Star Wars data sources.',
-            Streams::entries('core.streams')->find('sources')->description
+            Streams::repository('core.streams')->find('sources')->description
         );
     }
 }

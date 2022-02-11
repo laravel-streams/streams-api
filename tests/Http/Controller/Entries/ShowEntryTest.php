@@ -46,7 +46,7 @@ class ShowEntryTest extends ApiTestCase
             'entry' => 1,
         ]));
 
-        $this->assertEquals(Streams::entries('people')->find(1)->name, $response['data']['name']);
+        $this->assertEquals(Streams::repository('people')->find(1)->name, $response['data']['name']);
     }
 
     public function test_it_includes_relationship_links()

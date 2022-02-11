@@ -27,7 +27,7 @@ class UpdateStreamTest extends ApiTestCase
 
         $this->assertTrue(isset($response['data']));
 
-        $entry = Streams::entries('core.streams')->find('films');
+        $entry = Streams::repository('core.streams')->find('films');
 
         $this->assertEquals('Test Name', $entry->name);
     }
@@ -51,7 +51,7 @@ class UpdateStreamTest extends ApiTestCase
 
         $this->assertInstanceOf(
             Entry::class,
-            Streams::entries('core.streams')->find('sources')
+            Streams::repository('core.streams')->find('sources')
         );
     }
 

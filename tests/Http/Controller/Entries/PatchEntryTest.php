@@ -27,7 +27,7 @@ class PatchEntryTest extends ApiTestCase
 
         $this->assertTrue(isset($response['data']));
 
-        $this->assertEquals('Test Title', Streams::entries('films')->find(4)->title);
+        $this->assertEquals('Test Title', Streams::repository('films')->find(4)->title);
     }
 
     public function test_it_returns_409_if_conflict()
@@ -48,7 +48,7 @@ class PatchEntryTest extends ApiTestCase
 
         $this->assertNull($response['data']);
 
-        $this->assertEquals('A New Hope', Streams::entries('films')->find(4)->title);
+        $this->assertEquals('A New Hope', Streams::repository('films')->find(4)->title);
     }
 
     public function test_it_creates_entries_if_not_found()

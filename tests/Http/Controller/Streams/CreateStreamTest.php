@@ -27,7 +27,7 @@ class CreateStreamTest extends ApiTestCase
 
         $this->assertInstanceOf(
             Entry::class,
-            Streams::entries('core.streams')->find('sources')
+            Streams::repository('core.streams')->find('sources')
         );
     }
 
@@ -48,7 +48,7 @@ class CreateStreamTest extends ApiTestCase
 
         $this->assertNull($response['data']);
 
-        $this->assertNull(Streams::entries('core.streams')->find('sources'));
+        $this->assertNull(Streams::repository('core.streams')->find('sources'));
     }
 
     protected function streamData()

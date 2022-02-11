@@ -5,8 +5,8 @@ namespace Streams\Api\Http\Controller\Entries;
 use Streams\Api\ApiResponse;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Routing\Controller;
-use Illuminate\Support\Facades\Request;
 use Streams\Core\Criteria\Criteria;
+use Illuminate\Support\Facades\Request;
 
 class GetEntries extends Controller
 {
@@ -14,7 +14,7 @@ class GetEntries extends Controller
     {
         $response = new ApiResponse($stream);
 
-        $parameters = Request::query('parameters', Request::json('parameters')) ?: [];
+        $parameters = $this->queryParametersFromRequest();
 
         $criteria = $response->stream->entries();
 
@@ -37,7 +37,7 @@ class GetEntries extends Controller
         return $response->make($results->all());
     }
 
-    public function loadParameters(Criteria $criteria, $payload)
+    protected function loadParameters(Criteria $criteria, $payload)
     {
         $parameters = [];
 
@@ -48,5 +48,21 @@ class GetEntries extends Controller
         }
 
         $criteria->setParameters($parameters);
+    }
+
+    protected function queryParametersFromRequest()
+    {
+        if ($parameters = Request::json('parameters')) {
+            return $parameters;
+        }
+        
+        if (!$parameters = Request::query('parameters')) {
+            return [];
+        }
+
+        $parameters = urldecode($parameters);
+        $parameters = base64_decode($parameters);
+        
+        return json_decode($parameters) ?: [];
     }
 }

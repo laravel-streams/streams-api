@@ -27,7 +27,7 @@ class UpdateEntryTest extends ApiTestCase
 
         $this->assertTrue(isset($response['data']));
 
-        $entry = Streams::entries('films')->find(4);
+        $entry = Streams::repository('films')->find(4);
 
         $this->assertEquals('Test Title', $entry->title);
         $this->assertNull($entry->directors);
@@ -51,7 +51,7 @@ class UpdateEntryTest extends ApiTestCase
 
         $this->assertNull($response['data']);
 
-        $this->assertEquals('A New Hope', Streams::entries('films')->find(4)->title);
+        $this->assertEquals('A New Hope', Streams::repository('films')->find(4)->title);
     }
 
     public function test_it_creates_entries_if_not_found()
