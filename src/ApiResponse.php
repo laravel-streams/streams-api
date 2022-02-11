@@ -81,6 +81,13 @@ class ApiResponse implements Arrayable, Jsonable
         }
 
         if ($query = Request::query()) {
+
+            if (isset($query['parameters'])) {
+                $query['parameters'] = urldecode($query['parameters']);
+                $query['parameters'] = base64_decode($query['parameters']);
+                $query['parameters'] = json_decode($query['parameters']);
+            }
+
             $this->addMeta('query', $query);
         }
 
@@ -147,7 +154,7 @@ class ApiResponse implements Arrayable, Jsonable
         if (is_object($data) && method_exists($data, 'lastModified')) {
 
             $date = $data->lastModified();
-            
+
             if ($date instanceof \DateTime) {
                 $date = \DateTimeImmutable::createFromMutable($date);
             }
