@@ -54,7 +54,7 @@ Application-level streams cache can be specified in the stream configuration:
 {
     "config": {
         "cache": {
-            "enabled": "true",
+            "enabled": true,
             "store": "default",
             "ttl": 3600
         }
@@ -71,7 +71,7 @@ You may enable application-level cache using the `cache` parameter:
 {
     "parameters": [
         {"cache": [300]}
-        {"where": ["statu", "active"]}
+        {"where": ["status", "active"]}
     ]
 }
 ```
