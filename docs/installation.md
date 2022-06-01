@@ -15,6 +15,12 @@ composer require streams/api
 
 The Streams API comes pre-configured with the [Streams starter application](/docs/installation) and some of the [examples](/docs/examples).
 
+### Cloning with Git
+
+```bash
+git clone git@github.com:laravel-streams/streams-api.git
+```
+
 ## Updating
 
 From within your project, use Composer to update this individual package:
