@@ -70,8 +70,6 @@ class ApiResponse implements Arrayable, Jsonable
 
     public function __construct($stream = null)
     {
-        $this->constructPrototype();
-
         if ($stream && is_string($stream)) {
             $stream = Streams::make($stream);
         }
@@ -79,6 +77,8 @@ class ApiResponse implements Arrayable, Jsonable
         if ($stream) {
             $this->stream = $stream;
         }
+
+        $this->constructPrototype();
 
         if ($query = Request::query()) {
 
