@@ -2,8 +2,6 @@
 
 namespace Streams\Api;
 
-use Illuminate\Console\Application;
-use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\ServiceProvider;
@@ -27,15 +25,6 @@ class ApiServiceProvider extends ServiceProvider
     public function register()
     {
         $this->app->register(StreamsServiceProvider::class);
-
-        App::alias('Api', \Streams\Api\Facades\Api::class);
-        App::singleton('api', \Streams\Api\ApiManager::class);
-
-        Application::starting(function ($artisan) {
-            $artisan->resolveCommands([
-                \Streams\Api\Commands\ApiSchema::class
-            ]);
-        });
 
         $this->registerConfig();
 

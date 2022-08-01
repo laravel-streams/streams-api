@@ -1,6 +1,0 @@
-#!/bin/sh
-
-
-
-
-composer run pre-commit
