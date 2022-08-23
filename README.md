@@ -9,7 +9,7 @@ This project is documented at [streams.dev](https://streams.dev/docs/api/introdu
 ## [Installation](https://streams.dev/docs/api/installation)
 
 ```bash
-composer require streams/api
+composer require streams/api:1.0.x-dev
 ```
 
 ## [Configuration](https://streams.dev/docs/api/configuration)

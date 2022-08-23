@@ -10,7 +10,7 @@ enabled: true
 This package is added to existing Laravel projects as a dependency by requiring it with Composer.
 
 ```bash
-composer require streams/api
+composer require streams/api:1.0.x-dev
 ```
 
 The Streams API comes pre-configured with the [Streams starter application](/docs/installation) and some of the [examples](/docs/examples).

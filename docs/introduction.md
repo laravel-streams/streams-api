@@ -14,7 +14,7 @@ This package can serve as the primary API, supplement an exisinting API, or add 
 ### [Installation](installation)
 
 ```bash
-composer require streams/api
+composer require streams/api:1.0.x-dev
 ```
 
 ### [Configuration](configuration)
