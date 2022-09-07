@@ -37,10 +37,6 @@ class ApiServiceProvider extends ServiceProvider
 
     public function boot()
     {
-        $this->publishes([
-            __DIR__ . '/../resources/public'  => public_path('vendor/streams/api'),
-        ], ['public']);
-
         Assets::addPath('api', 'vendor/streams/api');
 
         Assets::register('api::js/index.js');
