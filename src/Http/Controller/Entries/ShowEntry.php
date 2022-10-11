@@ -30,7 +30,7 @@ class ShowEntry extends Controller
 
             if ($field->type == 'relationship') {
 
-                if (!$value = $instance->getRawAttribute($field->handle)) {
+                if (!$value = $instance->getAttribute($field->handle)) {
                     continue;
                 }
 
