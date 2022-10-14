@@ -8,10 +8,8 @@ use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Facades\Request;
 use Symfony\Component\HttpFoundation\ParameterBag;
-
 class CreateEntry extends Controller
 {
-
     protected ParameterBag $payload;
 
     public function __construct(ParameterBag $payload = null)
@@ -20,8 +18,12 @@ class CreateEntry extends Controller
             $this->payload = $payload;
         }
 
-        if (!isset($this->payload)) {
+        if (!isset($this->payload) && Request::isJson()) {
             $this->payload = Request::json();
+        }
+
+        if (!isset($this->payload)) {
+            $this->payload = new ParameterBag(Request::post());
         }
     }
 

@@ -27,6 +27,24 @@ class CreateEntryTest extends ApiTestCase
         $this->assertEquals(8, Streams::entries('films')->count());
     }
 
+    public function test_it_supports_form_data()
+    {
+        $response = $this->post(URL::route('streams.api.entries.create', [
+            'stream' => 'films',
+        ]), $this->filmData());
+
+        $response->assertStatus(201);
+
+        $this->assertTrue(isset($response['errors']));
+        $this->assertTrue(isset($response['links']));
+        $this->assertTrue(isset($response['meta']));
+        $this->assertTrue(isset($response['data']));
+
+        $this->assertTrue(isset($response['data']));
+
+        $this->assertEquals(8, Streams::entries('films')->count());
+    }
+
     public function test_it_returns_409_if_conflict()
     {
         $film = $this->filmData();
