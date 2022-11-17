@@ -37,13 +37,19 @@ class ApiServiceProvider extends ServiceProvider
 
     public function boot()
     {
-        Assets::addPath('api', 'vendor/streams/api');
-
-        Assets::register('api::js/index.js');
+        if ($this->app->runningInConsole()) {
+            $this->commands([
+                \Streams\Api\Commands\DumpSchema::class,
+            ]);
+        }
 
         if (!Config::get('streams.api.enabled')) {
             return;
         }
+
+        Assets::addPath('api', 'vendor/streams/api');
+
+        Assets::register('api::js/index.js');
     }
 
     protected function registerConfig(): void
