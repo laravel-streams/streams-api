@@ -39,7 +39,8 @@ class ApiServiceProvider extends ServiceProvider
     {
         if ($this->app->runningInConsole()) {
             $this->commands([
-                \Streams\Api\Commands\DumpSchema::class,
+                \Streams\Api\Commands\DumpApiSchema::class,
+                \Streams\Api\Commands\CreateApiDocumentation::class,
             ]);
         }
 

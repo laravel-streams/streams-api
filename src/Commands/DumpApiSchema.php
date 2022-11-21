@@ -2,11 +2,11 @@
 
 namespace Streams\Api\Commands;
 
-use Illuminate\Console\Command;
 use Streams\Api\ApiSchema;
+use Illuminate\Console\Command;
 use Symfony\Component\Yaml\Yaml;
 
-class DumpSchema extends Command
+class DumpApiSchema extends Command
 {
 
     protected $signature = 'api:schema {path?}';
@@ -19,6 +19,6 @@ class DumpSchema extends Command
         
         file_put_contents($path, $yaml);
 
-        $this->info('Dumped YAML to ' . $path);
+        $this->info('Generated YAML: ' . $path);
     }
 }
