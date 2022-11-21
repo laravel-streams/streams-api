@@ -10,6 +10,7 @@ use GoldSpecDigital\ObjectOrientedOAS\Objects\Schema;
 use GoldSpecDigital\ObjectOrientedOAS\Objects\Server;
 use GoldSpecDigital\ObjectOrientedOAS\Objects\Contact;
 use GoldSpecDigital\ObjectOrientedOAS\Objects\License;
+use GoldSpecDigital\ObjectOrientedOAS\Objects\Encoding;
 use GoldSpecDigital\ObjectOrientedOAS\Objects\PathItem;
 use GoldSpecDigital\ObjectOrientedOAS\Objects\Response;
 use GoldSpecDigital\ObjectOrientedOAS\Objects\MediaType;
@@ -21,6 +22,12 @@ class ApiSchema
 {
     public static function create()
     {
+        $jsonEncoding = Encoding::create('JSON')->contentType('application/json');
+        $formEncoding = Encoding::create('Form Data')->contentType('multipart/form-data');
+
+        $mediaType = MediaType::json()
+            ->encoding($jsonEncoding, $formEncoding);
+
         return OpenApi::create()
             ->openapi(OpenApi::OPENAPI_3_0_2)
             ->info(
@@ -113,7 +120,7 @@ class ApiSchema
                     ->statusCode(200)
                     ->description('Entry created successfully.')
                     ->content(static::postEntriesResponse200($stream))
-                    //->links()
+                //->links()
             );
 
         return PathItem::create()
@@ -125,7 +132,7 @@ class ApiSchema
     {
         $keyName = $stream->config('key_name', 'id');
         $keyField = $stream->fields->get($keyName);
-        
+
         $tag = $stream->schema()->tag();
 
         $get = Operation::get()
