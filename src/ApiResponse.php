@@ -2,6 +2,7 @@
 
 namespace Streams\Api;
 
+use Carbon\Carbon;
 use Illuminate\Support\Arr;
 use Streams\Core\Stream\Stream;
 use Illuminate\Http\JsonResponse;
@@ -157,6 +158,10 @@ class ApiResponse implements Arrayable, Jsonable
 
             if ($date instanceof \DateTime) {
                 $date = \DateTimeImmutable::createFromMutable($date);
+            }
+
+            if (is_string($date)) {
+                $date = Carbon::parse($date);
             }
 
             $date = $date->setTimezone(new \DateTimeZone('UTC'));

@@ -16,9 +16,11 @@ use Streams\Api\Http\Controller\Entries\CreateEntry;
 use Streams\Api\Http\Controller\Entries\DeleteEntry;
 use Streams\Api\Http\Controller\Entries\UpdateEntry;
 use Streams\Api\Http\Controller\Streams\PatchStream;
+use Streams\Api\Http\Controller\Entries\QueryEntries;
 use Streams\Api\Http\Controller\Streams\CreateStream;
 use Streams\Api\Http\Controller\Streams\DeleteStream;
 use Streams\Api\Http\Controller\Streams\UpdateStream;
+use Streams\Api\Http\Controller\Entries\RepositoryMethod;
 
 class ApiServiceProvider extends ServiceProvider
 {
@@ -117,6 +119,14 @@ class ApiServiceProvider extends ServiceProvider
                     'where' => [
                         'entry' => '(.*)',
                     ],
+                ]);
+                Route::get('streams/{stream}/repository/{method}', [
+                    'uses'  => RepositoryMethod::class,
+                    'as'    => 'streams.api.entries.repository',
+                ]);
+                Route::post('streams/{stream}/query/{method?}', [
+                    'uses'  => QueryEntries::class,
+                    'as'    => 'streams.api.entries.query',
                 ]);
                 Route::put('streams/{stream}/entries/{entry}', [
                     'uses' => UpdateEntry::class,
