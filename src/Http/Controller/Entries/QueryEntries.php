@@ -18,20 +18,24 @@ class QueryEntries extends Controller
     {
         $response = new ApiResponse($stream);
 
-        $parameters = $this->queryParametersFromRequest();
+        $parameters = Request::json('parameters', []);
 
         $criteria = $response->stream->entries();
 
-        if ($method) {
-            $criteria = $criteria->{Str::camel($method)}(...Request::query());
-        }
+        // Seems unnecessary with the performPayload.
+        // if ($method) {
+        //     $criteria = $criteria->{Str::camel($method)}(...Request::query());
+        // }
 
-        $this->loadParameters($criteria, $parameters);
+        $this->performPayload($criteria, $parameters);
 
         if (Request::get('limit') == 1) {
-            $results = $criteria->first();
+            
+            if ($results = $criteria->first()) {
+                $this->addRelationshipLinks($response, $results);
+            }
 
-            $response->setData($results->first());
+            $response->setData($results);
         } else {
             $results = $criteria->paginate([
                 'per_page' => Request::get('per_page', 100),
@@ -53,33 +57,13 @@ class QueryEntries extends Controller
         return $response->make();
     }
 
-    protected function loadParameters(Criteria $criteria, $payload)
+    protected function performPayload(Criteria $criteria, $payload)
     {
-        $parameters = [];
-
         foreach ($payload as $parameter) {
-            foreach ($parameter as $method => $arguments) {
-                $parameters[$method][] = $arguments;
+            foreach ($parameter as $method => $arguments) { 
+                $criteria->{$method}(...$arguments);
             }
         }
-
-        $criteria->setParameters($parameters);
-    }
-
-    protected function queryParametersFromRequest()
-    {
-        if ($parameters = Request::json('parameters')) {
-            return $parameters;
-        }
-
-        if (!$parameters = Request::query('parameters')) {
-            return [];
-        }
-
-        $parameters = urldecode($parameters);
-        $parameters = base64_decode($parameters);
-
-        return json_decode($parameters) ?: [];
     }
 
     public function addRelationshipLinks(ApiResponse $response, EntryInterface $instance)

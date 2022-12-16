@@ -14,7 +14,7 @@ class CreateEntryTest extends ApiTestCase
         $response = $this->json('POST', URL::route('streams.api.entries.create', [
             'stream' => 'films',
         ]), $this->filmData());
-
+        
         $response->assertStatus(201);
 
         $this->assertTrue(isset($response['errors']));
