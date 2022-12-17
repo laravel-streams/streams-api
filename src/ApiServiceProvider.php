@@ -105,10 +105,6 @@ class ApiServiceProvider extends ServiceProvider
                 /*
                  * Route entries API endpoints.
                  */
-                Route::get('streams/{stream}/entries', [
-                    'uses' => GetEntries::class,
-                    'as'   => 'streams.api.entries.index',
-                ]);
                 Route::post('streams/{stream}/entries', [
                     'uses' => CreateEntry::class,
                     'as'   => 'streams.api.entries.create',
@@ -120,25 +116,39 @@ class ApiServiceProvider extends ServiceProvider
                         'entry' => '(.*)',
                     ],
                 ]);
-                Route::get('streams/{stream}/repository/{method}', [
-                    'uses'  => RepositoryMethod::class,
-                    'as'    => 'streams.api.entries.repository',
-                ]);
-                Route::post('streams/{stream}/query/{method?}', [
-                    'uses'  => QueryEntries::class,
-                    'as'    => 'streams.api.entries.query',
-                ]);
                 Route::put('streams/{stream}/entries/{entry}', [
                     'uses' => UpdateEntry::class,
                     'as'   => 'streams.api.entries.update',
+                    'where' => [
+                        'entry' => '(.*)',
+                    ],
                 ]);
                 Route::patch('streams/{stream}/entries/{entry}', [
                     'uses' => PatchEntry::class,
                     'as'   => 'streams.api.entries.patch',
+                    'where' => [
+                        'entry' => '(.*)',
+                    ],
                 ]);
                 Route::delete('streams/{stream}/entries/{entry}', [
                     'uses' => DeleteEntry::class,
                     'as'   => 'streams.api.entries.delete',
+                    'where' => [
+                        'entry' => '(.*)',
+                    ],
+                ]);
+
+                Route::get('streams/{stream}/entries', [
+                    'uses'  => GetEntries::class,
+                    'as'    => 'streams.api.entries.index',
+                ]);
+                Route::post('streams/{stream}/query', [
+                    'uses'  => QueryEntries::class,
+                    'as'    => 'streams.api.entries.query',
+                ]);
+                Route::get('streams/{stream}/repository/{method}', [
+                    'uses'  => RepositoryMethod::class,
+                    'as'    => 'streams.api.entries.repository',
                 ]);
             });
     }

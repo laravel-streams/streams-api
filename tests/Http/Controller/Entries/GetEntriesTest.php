@@ -34,26 +34,10 @@ class GetEntriesTest extends ApiTestCase
 
     public function test_it_returns_constrained_stream_entries()
     {
-        $response = $this->call('GET', URL::route('streams.api.entries.index', [
+        $response = $this->get(URL::route('streams.api.entries.index', [
             'stream' => 'films',
-        ]), [], [], [], [], json_encode([
-            'parameters' => [['where' => ['director', 'George Lucas']]]
+            'where[director]' => 'George Lucas'
         ]));
-
-        $entries = Streams::entries('films')->where('director', 'George Lucas')->count();
-
-        $this->assertEquals($entries, count($response['data']));
-
-        /**
-         * Query String Parameters
-         */
-        $parameters = http_build_query([
-            'parameters' => base64_encode(json_encode([['where' => ['director', 'George Lucas']]]))
-        ]);
-
-        $response = $this->call('GET', URL::route('streams.api.entries.index', [
-            'stream' => 'films',
-        ]) . '?' . $parameters);
 
         $entries = Streams::entries('films')->where('director', 'George Lucas')->count();
 

@@ -61,15 +61,6 @@ class QueryEntriesTest extends ApiTestCase
         $this->assertTrue(isset($response['meta']['current_page']));
     }
 
-    public function test_it_returns_entry_relationships()
-    {
-        $response = $this->call('POST', URL::route('streams.api.entries.query', [
-            'stream' => 'people',
-        ]), ['limit' => 1, 'skip' => 1]);
-
-        $this->assertTrue(isset($response['links']['homeworld']));
-    }
-
     public function test_it_supports_custom_methods()
     {
         Streams::overload('films', [
@@ -87,18 +78,6 @@ class QueryEntriesTest extends ApiTestCase
         $entries = Streams::entries('films')->where('title', 'LIKE', '%Jedi%')->count();
 
         $this->assertEquals($entries, count($response['data']));
-
-
-        $response = $this->call('POST', URL::route('streams.api.entries.query', [
-            'stream' => 'films',
-            'limit' => 1,
-        ]), [], [], [], [], json_encode([
-            'parameters' => [['jedi' => []]]
-        ]));
-
-        $entry = Streams::entries('films')->where('title', 'LIKE', '%Jedi%')->first();
-
-        $this->assertEquals($entry->title, $response['data']['title']);
     }
 }
 

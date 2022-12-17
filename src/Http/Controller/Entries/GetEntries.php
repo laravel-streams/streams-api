@@ -14,11 +14,9 @@ class GetEntries extends Controller
     {
         $response = new ApiResponse($stream);
 
-        $parameters = $this->queryParametersFromRequest();
-
         $criteria = $response->stream->entries();
 
-        $this->loadParameters($criteria, $parameters);
+        $this->applyFilters($criteria);
 
         $results = $criteria->paginate([
             'per_page' => Request::get('per_page', 100),
@@ -37,32 +35,14 @@ class GetEntries extends Controller
         return $response->make($results->all());
     }
 
-    protected function loadParameters(Criteria $criteria, $payload)
+    protected function applyFilters(Criteria $criteria)
     {
-        $parameters = [];
-
-        foreach ($payload as $parameter) {
-            foreach ($parameter as $method => $arguments) {
-                $parameters[$method][] = $arguments;
-            }
+        foreach (Request::query('where', []) as $field => $value) {
+            $criteria->where($field, '=', $value);
         }
 
-        $criteria->setParameters($parameters);
-    }
-
-    protected function queryParametersFromRequest()
-    {
-        if ($parameters = Request::json('parameters')) {
-            return $parameters;
+        if ($limit = Request::query('limit')) {
+            $criteria->limit($limit, Request::query('skip'));
         }
-        
-        if (!$parameters = Request::query('parameters')) {
-            return [];
-        }
-
-        $parameters = urldecode($parameters);
-        $parameters = base64_decode($parameters);
-        
-        return json_decode($parameters) ?: [];
     }
 }
