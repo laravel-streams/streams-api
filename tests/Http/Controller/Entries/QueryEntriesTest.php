@@ -79,6 +79,17 @@ class QueryEntriesTest extends ApiTestCase
 
         $this->assertEquals($entries, count($response['data']));
     }
+
+    public function test_it_has_protected_methods()
+    {
+        $response = $this->call('POST', URL::route('streams.api.entries.query', [
+            'stream' => 'films',
+        ]), [], [], [], [], json_encode([
+            'parameters' => [['delete' => []]]
+        ]));
+
+        $response->assertStatus(500);
+    }
 }
 
 class QueryEntriesTestCriteria extends Criteria

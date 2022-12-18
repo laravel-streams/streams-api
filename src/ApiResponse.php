@@ -195,9 +195,9 @@ class ApiResponse implements Arrayable, Jsonable
     {
         $parameters = ['stream' => $stream->id];
 
-        $this->addLink('streams', URL::route('streams.api.streams.index'));
+        $this->addLink('streams', URL::route('streams.api.streams.list'));
         $this->addLink('stream', URL::route('streams.api.streams.show', $parameters));
-        $this->addLink('entries', URL::route('streams.api.entries.index',  $parameters));
+        $this->addLink('entries', URL::route('streams.api.entries.list',  $parameters));
 
         return $this;
     }

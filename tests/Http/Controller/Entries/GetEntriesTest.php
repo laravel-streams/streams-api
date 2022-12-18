@@ -11,7 +11,7 @@ class GetEntriesTest extends ApiTestCase
 
     public function test_it_returns_standard_response_structure()
     {
-        $response = $this->get(URL::route('streams.api.entries.index', [
+        $response = $this->get(URL::route('streams.api.entries.list', [
             'stream' => 'films',
         ]));
 
@@ -25,7 +25,7 @@ class GetEntriesTest extends ApiTestCase
 
     public function test_it_returns_stream_entries()
     {
-        $response = $this->get(URL::route('streams.api.entries.index', [
+        $response = $this->get(URL::route('streams.api.entries.list', [
             'stream' => 'films',
         ]));
 
@@ -34,21 +34,41 @@ class GetEntriesTest extends ApiTestCase
 
     public function test_it_returns_constrained_stream_entries()
     {
-        $response = $this->get(URL::route('streams.api.entries.index', [
+        $response = $this->get(URL::route('streams.api.entries.list', [
             'stream' => 'films',
-            'where[director]' => 'George Lucas'
+            'where[director]' => 'George Lucas',
         ]));
 
         $entries = Streams::entries('films')->where('director', 'George Lucas')->count();
 
         $this->assertEquals($entries, count($response['data']));
+
+
+        $response = $this->get(URL::route('streams.api.entries.list', [
+            'stream' => 'films',
+            'where[director]' => 'George Lucas',
+            'limit' => 1,
+            'skip' => 2,
+        ]));
+
+        $entries = Streams::entries('films')
+            ->where('director', 'George Lucas')
+            ->limit(1, 2)
+            ->get();
+
+        $this->assertEquals(
+            $entries->first()->title,
+            array_values($response['data'])[0]['title']
+        );
     }
 
     public function test_it_returns_paginated_stream_entries()
     {
-        $response = $this->call('GET', URL::route('streams.api.entries.index', [
+        $response = $this->get(URL::route('streams.api.entries.list', [
             'stream' => 'films',
-        ]), ['per_page' => 2, 'page' => 2]);
+            'per_page' => 2,
+            'page' => 2,
+        ]));
 
         $this->assertTrue(isset($response['links']['next_page']));
         $this->assertTrue(isset($response['links']['first_page']));

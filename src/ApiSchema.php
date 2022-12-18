@@ -97,7 +97,7 @@ class ApiSchema
         $get = Operation::get()
             ->tags($tag)
             ->summary('List multiple entries.')
-            ->operationId($stream->id . '.index')
+            ->operationId($stream->id . '.list')
             ->responses(
                 Response::create()
                     ->statusCode(200)
@@ -192,7 +192,7 @@ class ApiSchema
     protected static function getEntriesResponse200(Stream $stream)
     {
         return MediaType::json()->schema(
-            Schema::object('streams.api.entries.index')->properties(
+            Schema::object('streams.api.entries.list')->properties(
                 Schema::object('meta')->properties(
                     Schema::integer('total'),
                     Schema::integer('per_page'),
@@ -218,7 +218,7 @@ class ApiSchema
     protected static function postEntriesResponse200(Stream $stream)
     {
         return MediaType::json()->schema(
-            Schema::object('streams.api.entries.index')->properties(
+            Schema::object('streams.api.entries.list')->properties(
                 Schema::object('meta')->properties(
                     Schema::string('stream'),
                     Schema::ref('#/components/schemas/' . $stream->id, 'payload'),

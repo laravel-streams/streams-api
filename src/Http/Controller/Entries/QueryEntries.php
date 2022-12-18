@@ -14,6 +14,11 @@ use Streams\Core\Support\Facades\Streams;
 
 class QueryEntries extends Controller
 {
+    protected $protected = [
+        'delete',
+        'truncate',
+    ];
+
     public function __invoke(string $stream): JsonResponse
     {
         $response = new ApiResponse($stream);
@@ -47,6 +52,11 @@ class QueryEntries extends Controller
     {
         foreach ($payload as $parameter) {
             foreach ($parameter as $method => $arguments) {
+
+                if (in_array($method, $this->protected)) {
+                    throw new \Exception("Method [$method] not allowed.");
+                }
+
                 $criteria->{$method}(...$arguments);
             }
         }

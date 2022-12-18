@@ -20,7 +20,6 @@ use Streams\Api\Http\Controller\Entries\QueryEntries;
 use Streams\Api\Http\Controller\Streams\CreateStream;
 use Streams\Api\Http\Controller\Streams\DeleteStream;
 use Streams\Api\Http\Controller\Streams\UpdateStream;
-use Streams\Api\Http\Controller\Entries\RepositoryMethod;
 
 class ApiServiceProvider extends ServiceProvider
 {
@@ -79,7 +78,7 @@ class ApiServiceProvider extends ServiceProvider
                  */
                 Route::get('streams', [
                     'uses' => GetStreams::class,
-                    'as'   => 'streams.api.streams.index',
+                    'as'   => 'streams.api.streams.list',
                 ]);
                 Route::post('streams', [
                     'uses' => CreateStream::class,
@@ -140,15 +139,11 @@ class ApiServiceProvider extends ServiceProvider
 
                 Route::get('streams/{stream}/entries', [
                     'uses'  => GetEntries::class,
-                    'as'    => 'streams.api.entries.index',
+                    'as'    => 'streams.api.entries.list',
                 ]);
                 Route::post('streams/{stream}/query', [
                     'uses'  => QueryEntries::class,
                     'as'    => 'streams.api.entries.query',
-                ]);
-                Route::get('streams/{stream}/repository/{method}', [
-                    'uses'  => RepositoryMethod::class,
-                    'as'    => 'streams.api.entries.repository',
                 ]);
             });
     }

@@ -34,7 +34,7 @@ class ApiCacheTest extends ApiTestCase
         $request->headers->set('Cache-Control', 'no-cache');
 
         $response = (new ApiCache)->handle($request, function () {
-            return $this->call('GET', URL::route('streams.api.entries.index', [
+            return $this->call('GET', URL::route('streams.api.entries.list', [
                 'stream' => 'films',
             ]));
         });
@@ -72,7 +72,7 @@ class ApiCacheTest extends ApiTestCase
         $request = $this->createGetEntriesRequest();
 
         $response = (new ApiCache)->handle($request, function () {
-            return $this->call('GET', URL::route('streams.api.entries.index', [
+            return $this->call('GET', URL::route('streams.api.entries.list', [
                 'stream' => 'films',
             ]));
         });
@@ -91,7 +91,7 @@ class ApiCacheTest extends ApiTestCase
         $request->headers->set('Cache-Control', 'max-age=600');
 
         $response = (new ApiCache)->handle($request, function () {
-            return $this->call('GET', URL::route('streams.api.entries.index', [
+            return $this->call('GET', URL::route('streams.api.entries.list', [
                 'stream' => 'films',
             ]));
         });
@@ -115,7 +115,7 @@ class ApiCacheTest extends ApiTestCase
          * the previous count of data despite above.
          */
         $response = (new ApiCache)->handle($request, function () {
-            return $this->call('GET', URL::route('streams.api.entries.index', [
+            return $this->call('GET', URL::route('streams.api.entries.list', [
                 'stream' => 'films',
             ]));
         });
@@ -129,7 +129,7 @@ class ApiCacheTest extends ApiTestCase
         $request->headers->set('Cache-Control', 'max-age=0');
 
         $response = (new ApiCache)->handle($request, function () {
-            return $this->call('GET', URL::route('streams.api.entries.index', [
+            return $this->call('GET', URL::route('streams.api.entries.list', [
                 'stream' => 'films',
             ]));
         });
@@ -146,7 +146,7 @@ class ApiCacheTest extends ApiTestCase
          * return an accurate entry count.
          */
         $response = (new ApiCache)->handle($request, function () {
-            return $this->call('GET', URL::route('streams.api.entries.index', [
+            return $this->call('GET', URL::route('streams.api.entries.list', [
                 'stream' => 'films',
             ]));
         });
@@ -161,7 +161,7 @@ class ApiCacheTest extends ApiTestCase
         $request->headers->set('If-None-Match', $response->headers->get('Etag'));
 
         $response = (new ApiCache)->handle($request, function () {
-            return $this->call('GET', URL::route('streams.api.entries.index', [
+            return $this->call('GET', URL::route('streams.api.entries.list', [
                 'stream' => 'films',
             ]));
         });
@@ -190,7 +190,7 @@ class ApiCacheTest extends ApiTestCase
 
     protected function createGetEntriesRequest()
     {
-        $request = Request::create(URL::route('streams.api.entries.index', [
+        $request = Request::create(URL::route('streams.api.entries.list', [
             'stream' => 'films',
         ]), 'GET');
 

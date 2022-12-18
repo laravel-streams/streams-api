@@ -5,6 +5,7 @@ namespace Streams\Api\Http\Controller\Entries;
 use Streams\Api\ApiResponse;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Routing\Controller;
+use Illuminate\Support\Arr;
 use Streams\Core\Criteria\Criteria;
 use Illuminate\Support\Facades\Request;
 
@@ -37,8 +38,10 @@ class GetEntries extends Controller
 
     protected function applyFilters(Criteria $criteria)
     {
+        $constraints = Request::query('constraint', []);
+
         foreach (Request::query('where', []) as $field => $value) {
-            $criteria->where($field, '=', $value);
+            $criteria->where($field, Arr::get($constraints, $field, '='), $value);
         }
 
         if ($limit = Request::query('limit')) {
