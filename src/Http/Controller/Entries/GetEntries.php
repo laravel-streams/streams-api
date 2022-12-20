@@ -45,7 +45,7 @@ class GetEntries extends Controller
         }
 
         if ($limit = Request::query('limit')) {
-            $criteria->limit($limit, Request::query('skip'));
+            $criteria->limit($limit, Request::query('skip', 0));
         }
     }
 }

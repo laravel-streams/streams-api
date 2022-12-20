@@ -4,17 +4,17 @@ namespace Streams\Api;
 
 use Carbon\Carbon;
 use Illuminate\Support\Arr;
+use Streams\Core\Field\Field;
 use Streams\Core\Stream\Stream;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\Response;
 use Streams\Core\Support\Facades\Streams;
-use Illuminate\Contracts\Support\Jsonable;
 use Streams\Core\Support\Traits\Prototype;
 use Illuminate\Contracts\Support\Arrayable;
 
-class ApiResponse implements Arrayable, Jsonable
+class ApiResponse implements Arrayable
 {
     use Prototype {
         Prototype::__construct as private constructPrototype;
@@ -22,52 +22,52 @@ class ApiResponse implements Arrayable, Jsonable
 
     public Stream $stream;
 
-    protected $__attributes = [
-        'status' => 200,
-        'headers' => [],
-        'errors' => [],
-        'links' => [],
-        'meta' => [],
-        'data' => null,
-    ];
+    #[Field([
+        'type' => 'integer',
+        'rules' => [
+            'in:200,201,204,400,404,409'
+        ],
+        'config' => [
+            'default' => 200,
+        ],
+    ])]
+    public int $status = 200;
 
-    protected $__properties = [
-        'status' => [
-            'type' => 'integer',
-            'rules' => [
-                'in:200,201,204,400,404,409'
-            ],
-            'config' => [
-                'default' => 200,
-            ],
-        ],
-        'headers' => [
-            'type' => 'array',
-        ],
-        'errors' => [
-            'type' => 'array',
-            'config' => [
-                'items' => [
-                    [
-                        'properties' => [
-                            'message' => [
-                                'type' => 'string',
-                            ],
-                            'field' => [
-                                'type' => 'string',
-                            ],
+    #[Field([
+        'type' => 'array',
+    ])]
+    public array $headers = [];
+
+    #[Field([
+        'type' => 'array',
+        'config' => [
+            'items' => [
+                [
+                    'properties' => [
+                        'message' => [
+                            'type' => 'string',
+                        ],
+                        'field' => [
+                            'type' => 'string',
                         ],
                     ],
                 ],
             ],
         ],
-        'links' => [
-            'type' => 'array',
-        ],
-        'meta' => [
-            'type' => 'object',
-        ],
-    ];
+    ])]
+    public array $errors = [];
+
+    #[Field([
+        'type' => 'array',
+    ])]
+    public array $links = [];
+
+    #[Field([
+        'type' => 'object',
+    ])]
+    public array $meta = [];
+
+    public $data = null;
 
     public function __construct($stream = null)
     {
@@ -82,13 +82,6 @@ class ApiResponse implements Arrayable, Jsonable
         $this->constructPrototype();
 
         if ($query = Request::query()) {
-
-            if (isset($query['parameters'])) {
-                $query['parameters'] = urldecode($query['parameters']);
-                $query['parameters'] = base64_decode($query['parameters']);
-                $query['parameters'] = json_decode($query['parameters']);
-            }
-
             $this->addMeta('query', $query);
         }
 
@@ -96,7 +89,7 @@ class ApiResponse implements Arrayable, Jsonable
             $this->addMeta('payload', $payload);
         }
 
-        if ($parameters = Request::route()->parameters()) {
+        if ($parameters = Request::route()?->parameters()) {
             $this->addMeta('parameters', $parameters);
         }
 
@@ -122,6 +115,8 @@ class ApiResponse implements Arrayable, Jsonable
 
         $status = $status ?: Arr::get($attributes, 'status');
         $headers = $headers ?: Arr::get($attributes, 'headers');
+        
+        Arr::set($attributes, 'data', Arr::get($attributes, 'data'));
 
         Arr::pull($attributes, 'status');
         Arr::pull($attributes, 'headers');
@@ -226,20 +221,5 @@ class ApiResponse implements Arrayable, Jsonable
     public function toArray()
     {
         return $this->getPrototypeAttributes();
-    }
-
-    public function toJson($options = 0)
-    {
-        return json_encode($this->toArray(), $options);
-    }
-
-    public function jsonSerialize()
-    {
-        return $this->toArray();
-    }
-
-    public function __toString()
-    {
-        return $this->toJson();
     }
 }
