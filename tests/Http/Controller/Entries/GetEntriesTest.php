@@ -49,10 +49,12 @@ class GetEntriesTest extends ApiTestCase
             'where[director]' => 'George Lucas',
             'limit' => 1,
             'skip' => 2,
+            'order_by[title]' => 'ASC',
         ]));
 
         $entries = Streams::entries('films')
             ->where('director', 'George Lucas')
+            ->orderBy('title', 'ASC')
             ->limit(1, 2)
             ->get();
 

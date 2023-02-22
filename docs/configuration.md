@@ -40,7 +40,7 @@ return [
      * This is disabled by default because
      * The API is public by default.
      */
-    'enabled' => env('STREAMS_API_ENABLED', true),
+    'enabled' => env('STREAMS_API_ENABLED', false),
 
     /*
      * Specify the API prefix.
@@ -58,7 +58,6 @@ return [
      * adjusting the above files.
      */
     'middleware' => env('STREAMS_API_MIDDLEWARE', 'api'),
-
 ];
 ```
 

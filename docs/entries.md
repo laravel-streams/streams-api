@@ -70,12 +70,10 @@ curl --location --request GET 'http://127.0.0.1:8000/api/streams/{stream}/entrie
 
 ### Filtering Results
 
-You may filter entries by providing a JSON array of [criteria](../core/querying#filtering) parameters.
+You may filter entries by providing field constraint options.
 
 ```bash
-curl --location --request GET '/api/streams/{stream}/entries' \
-    -H 'Content-Type: application/json' \
-    -d '{"parameters": [{"where": ["name", "LIKE", "%Example%"]}]}'
+curl --location --request GET '/api/streams/{stream}/entries?where[field]=value&constraint[fiel]=operator'
 ```
 
 ### Sorting Results
@@ -83,9 +81,7 @@ curl --location --request GET '/api/streams/{stream}/entries' \
 You may specify sorting and ordering within the JSON array of [criteria](../core/querying#sorting-ordering) parameters.
 
 ```bash
-curl --location --request GET '/api/streams/{stream}/entries' \
-    -H 'Content-Type: application/json' \
-    -d '{"parameters": [{"order_by": ["name", "asc"]}]}'
+curl --location --request GET '/api/streams/{stream}/entries?orderBy[field]=asc|desc'
 ```
 
 

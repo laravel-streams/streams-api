@@ -44,6 +44,10 @@ class GetEntries extends Controller
             $criteria->where($field, Arr::get($constraints, $field, '='), $value);
         }
 
+        foreach (Request::query('order_by', []) as $field => $direction) {
+            $criteria->orderBy($field, $direction);
+        }
+
         if ($limit = Request::query('limit')) {
             $criteria->limit($limit, Request::query('skip', 0));
         }

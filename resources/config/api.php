@@ -26,19 +26,4 @@ return [
      * adjusting the above files.
      */
     'middleware' => env('STREAMS_API_MIDDLEWARE', 'api'),
-
-    /*
-     * Specify the default value for
-     * enabling Streams in the API
-     * or not.
-     * 
-     * @todo this is odd looking
-     */
-    'default_enabled_status' => true,
-
-    /*
-     * Specify the API enabled streams
-     * and their corresponding config.
-     */
-    'streams' => [],
 ];
