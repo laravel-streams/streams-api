@@ -58,10 +58,6 @@ class ApiServiceProvider extends ServiceProvider
     {
         $this->mergeConfigFrom(__DIR__ . '/../resources/config/api.php', 'streams.api');
 
-        if (file_exists($config = config_path('streams/api.php'))) {
-            $this->mergeConfigFrom($config, 'streams.api');
-        }
-
         $this->publishes([
             __DIR__ . '/../resources/config/api.php' => config_path('streams/api.php'),
         ], 'config');
