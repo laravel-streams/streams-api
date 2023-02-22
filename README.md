@@ -18,7 +18,7 @@ composer require streams/api:1.0.x-dev
 php artisan vendor:publish --provider=Streams\\Api\\ApiServiceProvider --tag=config
 ```
 
-## [Endpoints](https://streams.dev/docs/api/endpoints)
+## [Reference](https://streams.dev/docs/api/endpoints)
 
 ```bash
 GET /api/streams
