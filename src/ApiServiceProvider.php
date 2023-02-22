@@ -104,6 +104,10 @@ class ApiServiceProvider extends ServiceProvider
                 /*
                  * Route entries API endpoints.
                  */
+                Route::get('streams/{stream}/entries', [
+                    'uses'  => GetEntries::class,
+                    'as'    => 'streams.api.entries.list',
+                ]);
                 Route::post('streams/{stream}/entries', [
                     'uses' => CreateEntry::class,
                     'as'   => 'streams.api.entries.create',
@@ -135,11 +139,6 @@ class ApiServiceProvider extends ServiceProvider
                     'where' => [
                         'entry' => '(.*)',
                     ],
-                ]);
-
-                Route::get('streams/{stream}/entries', [
-                    'uses'  => GetEntries::class,
-                    'as'    => 'streams.api.entries.list',
                 ]);
                 Route::post('streams/{stream}/query', [
                     'uses'  => QueryEntries::class,

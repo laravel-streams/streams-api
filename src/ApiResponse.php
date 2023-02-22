@@ -149,17 +149,7 @@ class ApiResponse implements Arrayable
     {
         if (is_object($data) && method_exists($data, 'lastModified')) {
 
-            $date = $data->lastModified();
-
-            if ($date instanceof \DateTime) {
-                $date = \DateTimeImmutable::createFromMutable($date);
-            }
-
-            if (is_string($date)) {
-                $date = Carbon::parse($date);
-            }
-
-            $date = $date->setTimezone(new \DateTimeZone('UTC'));
+            $date = $data->lastModified()->setTimezone(new \DateTimeZone('UTC'));
 
             $this->addHeader('Last-Modified', $date->format('D, d M Y H:i:s') . ' GMT');
         }

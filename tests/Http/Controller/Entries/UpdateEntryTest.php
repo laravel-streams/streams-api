@@ -2,7 +2,6 @@
 
 namespace Streams\Api\Tests\Http\Controller\Entries;
 
-use Illuminate\Support\Facades\Log;
 use Streams\Api\Tests\ApiTestCase;
 use Illuminate\Support\Facades\URL;
 use Streams\Core\Support\Facades\Streams;
@@ -10,6 +9,10 @@ use Streams\Core\Support\Facades\Streams;
 class UpdateEntryTest extends ApiTestCase
 {
 
+    /**
+     * @preserveGlobalState disabled
+     * @runInSeparateProcess
+     */
     public function test_it_returns_standard_response_structure()
     {
         $response = $this->json('PUT', URL::route('streams.api.entries.update', [
@@ -34,6 +37,10 @@ class UpdateEntryTest extends ApiTestCase
         $this->assertNull($entry->directors);
     }
 
+    /**
+     * @preserveGlobalState disabled
+     * @runInSeparateProcess
+     */
     public function test_it_returns_409_if_conflict()
     {
         $response = $this->json('PUT', URL::route('streams.api.entries.update', [
@@ -55,6 +62,10 @@ class UpdateEntryTest extends ApiTestCase
         $this->assertEquals('A New Hope', Streams::repository('films')->find(4)->title);
     }
 
+    /**
+     * @preserveGlobalState disabled
+     * @runInSeparateProcess
+     */
     public function test_it_creates_entries_if_not_found()
     {
         $response = $this->json('PUT', URL::route('streams.api.entries.update', [

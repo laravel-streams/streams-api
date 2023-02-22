@@ -80,7 +80,11 @@ class ApiCacheTest extends ApiTestCase
         $response->assertHeader('cache-control', 'no-cache, private');
     }
 
-    public function test_it_handles_max_age()
+    /**
+     * @preserveGlobalState disabled
+     * @runInSeparateProcess
+     */
+    public function test_it_supports_max_age()
     {
         $request = $this->createGetEntriesRequest();
 
@@ -88,7 +92,7 @@ class ApiCacheTest extends ApiTestCase
          * The request should miss and
          * return an accurate entry count.
          */
-        $request->headers->set('Cache-Control', 'max-age=600');
+        $request->headers->set('Cache-Control', 'public, max-age=600');
 
         $response = (new ApiCache)->handle($request, function () {
             return $this->call('GET', URL::route('streams.api.entries.list', [
@@ -126,7 +130,7 @@ class ApiCacheTest extends ApiTestCase
          * The request should miss again and
          * return an accurate entry count.
          */
-        $request->headers->set('Cache-Control', 'max-age=0');
+        $request->headers->set('Cache-Control', 'public, max-age=0');
 
         $response = (new ApiCache)->handle($request, function () {
             return $this->call('GET', URL::route('streams.api.entries.list', [
@@ -137,6 +141,10 @@ class ApiCacheTest extends ApiTestCase
         $this->assertSame(Streams::entries('films')->count(), count($response['data']));
     }
 
+    /**
+     * @preserveGlobalState disabled
+     * @runInSeparateProcess
+     */
     public function test_it_handles_if_none_match()
     {
         $request = $this->createGetEntriesRequest();

@@ -7,7 +7,6 @@ use Streams\Api\ApiServiceProvider;
 
 abstract class ApiTestCase extends TestCase
 {
-
     protected function getPackageProviders($app)
     {
         return [ApiServiceProvider::class];
