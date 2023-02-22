@@ -4,6 +4,7 @@ namespace Streams\Api\Http\Controller\Streams;
 
 use Illuminate\Http\JsonResponse;
 use Illuminate\Routing\Controller;
+use Illuminate\Support\Facades\Config;
 use Streams\Api\Http\Controller\Entries\CreateEntry;
 
 class CreateStream extends Controller
@@ -12,6 +13,6 @@ class CreateStream extends Controller
     {
         $createEntry = new CreateEntry;
 
-        return $createEntry('core.streams');
+        return $createEntry(Config::get('streams.core.streams_id'));
     }
 }

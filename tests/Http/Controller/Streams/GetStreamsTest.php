@@ -4,6 +4,7 @@ namespace Streams\Api\Tests\Http\Controller\Streams;
 
 use Streams\Api\Tests\ApiTestCase;
 use Illuminate\Support\Facades\URL;
+use Illuminate\Support\Facades\Config;
 use Streams\Core\Support\Facades\Streams;
 
 class GetStreamsTest extends ApiTestCase
@@ -25,7 +26,7 @@ class GetStreamsTest extends ApiTestCase
     {
         $response = $this->get(URL::route('streams.api.streams.list'));
 
-        $this->assertEquals(Streams::entries('core.streams')->count(), count($response['data']));
+        $this->assertEquals(Streams::entries(Config::get('streams.core.streams_id'))->count(), count($response['data']));
     }
 
     public function test_it_returns_constrained_stream_entries()
@@ -35,7 +36,7 @@ class GetStreamsTest extends ApiTestCase
             'constraint[id]' => 'like',
         ]));
 
-        $entries = Streams::entries('core.streams')->where('id', 'like', 'p%')->count();
+        $entries = Streams::entries(Config::get('streams.core.streams_id'))->where('id', 'like', 'p%')->count();
 
         $this->assertEquals($entries, count($response['data']));
     }

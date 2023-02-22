@@ -5,6 +5,7 @@ namespace Streams\Api\Tests\Http\Controller\Entries;
 use Streams\Core\Entry\Entry;
 use Streams\Api\Tests\ApiTestCase;
 use Illuminate\Support\Facades\URL;
+use Illuminate\Support\Facades\Config;
 use Streams\Core\Support\Facades\Streams;
 
 class UpdateStreamTest extends ApiTestCase
@@ -27,7 +28,7 @@ class UpdateStreamTest extends ApiTestCase
 
         $this->assertTrue(isset($response['data']));
 
-        $entry = Streams::repository('core.streams')->find('films');
+        $entry = Streams::repository(Config::get('streams.core.streams_id'))->find('films');
 
         $this->assertEquals('Test Name', $entry->name);
     }
@@ -51,7 +52,7 @@ class UpdateStreamTest extends ApiTestCase
 
         $this->assertInstanceOf(
             Entry::class,
-            Streams::repository('core.streams')->find('sources')
+            Streams::repository(Config::get('streams.core.streams_id'))->find('sources')
         );
     }
 

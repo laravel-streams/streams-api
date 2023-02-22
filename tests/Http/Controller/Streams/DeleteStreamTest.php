@@ -4,6 +4,7 @@ namespace Streams\Api\Tests\Http\Controller\Streams;
 
 use Streams\Api\Tests\ApiTestCase;
 use Illuminate\Support\Facades\URL;
+use Illuminate\Support\Facades\Config;
 use Streams\Core\Support\Facades\Streams;
 
 class DeleteStreamTest extends ApiTestCase
@@ -17,7 +18,7 @@ class DeleteStreamTest extends ApiTestCase
 
         $response->assertNoContent(204);
 
-        $this->assertNull(Streams::repository('core.streams')->find('films'));
+        $this->assertNull(Streams::repository(Config::get('streams.core.streams_id'))->find('films'));
     }
 
     public function test_it_returns_404_not_found()

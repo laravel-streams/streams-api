@@ -102,7 +102,7 @@ curl --location --request POST '/api/streams/{stream}' \
             "id": "examples",
             "name": "Examples"
         },
-        "stream": "core.streams"
+        "stream": "streams"
     },
     "data": {
         "id": "examples",
@@ -138,7 +138,7 @@ curl --location --request GET 'http://127.0.0.1:8000/api/streams/{stream}'
         "parameters": {
             "stream": "examples"
         },
-        "stream": "core.streams"
+        "stream": "streams"
     },
     "data": {
         "id": "examples",
@@ -181,7 +181,7 @@ curl --location --request PATCH '/api/streams/{stream}' \
         "parameters": {
             "stream": "examples"
         },
-        "stream": "core.streams"
+        "stream": "streams"
     },
     "data": {
         "id": "examples",
@@ -225,7 +225,7 @@ curl --location --request PUT '/api/streams/{stream}' \
         "parameters": {
             "stream": "examples"
         },
-        "stream": "core.streams"
+        "stream": "streams"
     },
     "data": {
         "description": "Example stream data.",

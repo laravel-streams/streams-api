@@ -4,6 +4,7 @@ namespace Streams\Api\Tests\Http\Controller\Streams;
 
 use Streams\Api\Tests\ApiTestCase;
 use Illuminate\Support\Facades\URL;
+use Illuminate\Support\Facades\Config;
 use Streams\Core\Support\Facades\Streams;
 
 class PatchStreamTest extends ApiTestCase
@@ -28,7 +29,7 @@ class PatchStreamTest extends ApiTestCase
 
         $this->assertEquals(
             'Star Wars movies.',
-            Streams::repository('core.streams')->find('films')->description
+            Streams::repository(Config::get('streams.core.streams_id'))->find('films')->description
         );
     }
 
@@ -51,7 +52,7 @@ class PatchStreamTest extends ApiTestCase
 
         $this->assertEquals(
             'Star Wars data sources.',
-            Streams::repository('core.streams')->find('sources')->description
+            Streams::repository(Config::get('streams.core.streams_id'))->find('sources')->description
         );
     }
 }

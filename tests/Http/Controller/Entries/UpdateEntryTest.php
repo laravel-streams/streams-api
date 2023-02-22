@@ -2,6 +2,7 @@
 
 namespace Streams\Api\Tests\Http\Controller\Entries;
 
+use Illuminate\Support\Facades\Log;
 use Streams\Api\Tests\ApiTestCase;
 use Illuminate\Support\Facades\URL;
 use Streams\Core\Support\Facades\Streams;

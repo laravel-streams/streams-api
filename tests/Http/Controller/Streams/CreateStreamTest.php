@@ -5,6 +5,7 @@ namespace Streams\Api\Tests\Http\Controller\Stream;
 use Streams\Core\Entry\Entry;
 use Streams\Api\Tests\ApiTestCase;
 use Illuminate\Support\Facades\URL;
+use Illuminate\Support\Facades\Config;
 use Streams\Core\Support\Facades\Streams;
 
 class CreateStreamTest extends ApiTestCase
@@ -27,7 +28,7 @@ class CreateStreamTest extends ApiTestCase
 
         $this->assertInstanceOf(
             Entry::class,
-            Streams::repository('core.streams')->find('sources')
+            Streams::repository(Config::get('streams.core.streams_id'))->find('sources')
         );
     }
 
@@ -48,7 +49,7 @@ class CreateStreamTest extends ApiTestCase
 
         $this->assertNull($response['data']);
 
-        $this->assertNull(Streams::repository('core.streams')->find('sources'));
+        $this->assertNull(Streams::repository(Config::get('streams.core.streams_id'))->find('sources'));
     }
 
     protected function streamData()

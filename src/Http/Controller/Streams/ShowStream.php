@@ -4,6 +4,7 @@ namespace Streams\Api\Http\Controller\Streams;
 
 use Illuminate\Http\JsonResponse;
 use Illuminate\Routing\Controller;
+use Illuminate\Support\Facades\Config;
 use Streams\Api\Http\Controller\Entries\ShowEntry;
 
 class ShowStream extends Controller
@@ -12,6 +13,6 @@ class ShowStream extends Controller
     {
         $showEntry = new ShowEntry;
 
-        return $showEntry('core.streams', $stream);
+        return $showEntry(Config::get('streams.core.streams_id'), $stream);
     }
 }
