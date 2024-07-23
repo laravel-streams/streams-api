@@ -2,7 +2,6 @@
 
 namespace Streams\Api;
 
-use Carbon\Carbon;
 use Illuminate\Support\Arr;
 use Streams\Core\Field\Field;
 use Streams\Core\Stream\Stream;
@@ -13,6 +12,7 @@ use Illuminate\Support\Facades\Response;
 use Streams\Core\Support\Facades\Streams;
 use Streams\Core\Support\Traits\Prototype;
 use Illuminate\Contracts\Support\Arrayable;
+use Illuminate\Contracts\Pagination\Paginator;
 
 class ApiResponse implements Arrayable
 {
@@ -20,7 +20,7 @@ class ApiResponse implements Arrayable
         Prototype::__construct as private constructPrototype;
     }
 
-    public Stream $stream;
+    public ?Stream $stream = null;
 
     #[Field([
         'type' => 'integer',
@@ -115,7 +115,7 @@ class ApiResponse implements Arrayable
 
         $status = $status ?: Arr::get($attributes, 'status');
         $headers = $headers ?: Arr::get($attributes, 'headers');
-        
+
         Arr::set($attributes, 'data', Arr::get($attributes, 'data'));
 
         Arr::pull($attributes, 'status');
@@ -197,6 +197,20 @@ class ApiResponse implements Arrayable
     public function removeMeta(string $name): self
     {
         unset($this->__prototype['attributes']['meta'][$name]);
+
+        return $this;
+    }
+
+    public function addPaginationMeta(Paginator $paginator): self
+    {
+        $this->addMeta('total', $paginator->total());
+        $this->addMeta('per_page', $paginator->perPage());
+        $this->addMeta('last_page', $paginator->lastPage());
+        $this->addMeta('current_page', $paginator->currentPage());
+
+        $this->addLink('first_page', $paginator->url(1));
+        $this->addLink('next_page', $paginator->nextPageUrl());
+        $this->addLink('previous_page', $paginator->previousPageUrl());
 
         return $this;
     }

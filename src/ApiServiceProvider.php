@@ -2,11 +2,11 @@
 
 namespace Streams\Api;
 
+use Streams\Api\Support\Facades\API;
+use Streams\Core\Support\Integrator;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\ServiceProvider;
-use Streams\Core\StreamsServiceProvider;
-use Streams\Core\Support\Facades\Assets;
 use Streams\Api\Http\Controller\Entries\ShowEntry;
 use Streams\Api\Http\Controller\Entries\GetEntries;
 use Streams\Api\Http\Controller\Entries\PatchEntry;
@@ -23,19 +23,6 @@ use Streams\Api\Http\Controller\Streams\UpdateStream;
 
 class ApiServiceProvider extends ServiceProvider
 {
-    public function register()
-    {
-        $this->app->register(StreamsServiceProvider::class);
-
-        $this->registerConfig();
-
-        if (!Config::get('streams.api.enabled')) {
-            return;
-        }
-
-        $this->registerRoutes();
-    }
-
     public function boot()
     {
         if ($this->app->runningInConsole()) {
@@ -45,13 +32,50 @@ class ApiServiceProvider extends ServiceProvider
             ]);
         }
 
-        if (!Config::get('streams.api.enabled')) {
-            return;
-        }
+        $this->app->alias(\Streams\Api\ApiManager::class, 'api');
 
-        Assets::addPath('api', 'vendor/streams/api');
+        Integrator::aliases([
+            'API' => \Streams\Api\Support\Facades\API::class,
+        ]);
 
-        Assets::register('api::js/index.js');
+
+
+
+        $this->app->booted(function () {
+
+            Route::name('streams.api.')
+                ->group(function () {
+
+                    foreach (API::getInterfaces() as $interface) {
+
+                        $id = $interface->getId();
+                        $path = $interface->getPath();
+
+                        foreach ([null] as $domain) {
+
+                            if ($routes = $interface->getRoutes()) {
+                                $routes($interface);
+                            }
+
+                            Route::domain($domain)
+                                ->middleware($interface->getMiddleware())
+                                ->name($id . '.')
+                                ->prefix($path)
+                                ->group(function () use ($interface) {
+
+                                    foreach ($interface->getEndpoints() as $route => $endpoint) {
+                                        // $endpoint::routes($interface);
+                                        Route::any($route, $endpoint);
+                                    }
+
+                                    // foreach ($interface->getResources() as $resource) {
+                                    //     $resource::routes($interface);
+                                    // }
+                                });
+                        }
+                    }
+                });
+        });
     }
 
     protected function registerConfig(): void
