@@ -155,7 +155,7 @@ class ApiResponse implements Arrayable
         }
     }
 
-    public function addError(array $error): self
+    public function addError(string $error): self
     {
         $this->__prototype['attributes']['errors'][] = $error;
 
