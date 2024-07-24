@@ -68,9 +68,28 @@ class ApiServiceProvider extends ServiceProvider
                                         Route::any($route, $endpoint);
                                     }
 
-                                    // foreach ($interface->getResources() as $resource) {
-                                    //     $resource::routes($interface);
-                                    // }
+                                    foreach ($interface->getResources() as $resource) {
+                                        // $resource::routes($interface);
+                                        $slug = $resource::getSlug();
+
+                                        Route::name(
+                                            (string) str($slug)
+                                                ->replace('/', '.')
+                                                ->append('.'),
+                                        )
+                                            ->prefix($slug)
+                                            // ->middleware(static::getRouteMiddleware($panel) ?: ['web'])
+                                            // ->withoutMiddleware(static::getWithoutRouteMiddleware($panel))
+                                            ->group(function () use ($resource) {
+                                                foreach ($resource::getEndpoints() as $route => $endpoint) {
+                                                    Route::any($route, $endpoint);
+                                                }
+                                            });
+                                        foreach ($resource::getEndpoints() as $route => $endpoint) {
+                                            // $endpoint::routes($interface);
+                                            Route::any($route, $endpoint);
+                                        }
+                                    }
                                 });
                         }
                     }

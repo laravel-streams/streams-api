@@ -99,7 +99,7 @@ class ApiResponse implements Arrayable
 
             $this->addMeta('stream', $this->stream->id);
 
-            $this->addStreamLinks($this->stream);
+            // $this->addStreamLinks($this->stream);
         }
     }
 

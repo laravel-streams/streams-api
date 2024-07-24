@@ -57,31 +57,4 @@ class ApiResource
     {
         return static::$withoutMiddleware;
     }
-
-
-    /**
-     * Endpoints for this resource.
-     *
-     * @var array
-     */
-    protected array $endpoints = [];
-
-    public function endpoints(array $endpoints): static
-    {
-        $this->endpoints = [
-            ...$this->endpoints,
-            ...$endpoints,
-        ];
-        
-        foreach ($endpoints as $endpoint) {
-            // $this->queueLivewireComponent($endpoint);
-        }
-
-        return $this;
-    }
-
-    public function getEndpoints(): array
-    {
-        return array_unique($this->endpoints);
-    }
 }
