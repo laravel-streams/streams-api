@@ -8,16 +8,23 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Routing\Controller;
 use Streams\Core\Criteria\Criteria;
 use Illuminate\Support\Facades\Request;
+use Streams\Core\Support\Traits\FiresCallbacks;
 
 class GetEntries extends Controller
 {
+    use FiresCallbacks;
+
     public function __invoke(string $stream): JsonResponse
     {
         $response = new ApiResponse($stream);
 
         $criteria = $response->stream->entries();
 
+        $this->fire('apply', compact('criteria'));
+
         $this->applyFilters($criteria);
+
+        $this->fire('applied', compact('criteria'));
 
         $results = $criteria->paginate([
             'per_page' => Request::get('per_page', 100),
