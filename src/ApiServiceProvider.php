@@ -6,6 +6,7 @@ use Streams\Api\Support\Facades\API;
 use Streams\Core\Support\Integrator;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
+
 class ApiServiceProvider extends ServiceProvider
 {
     public function boot()
@@ -22,8 +23,6 @@ class ApiServiceProvider extends ServiceProvider
         Integrator::aliases([
             'API' => \Streams\Api\Support\Facades\API::class,
         ]);
-
-
 
 
         $this->app->booted(function () {
@@ -70,6 +69,7 @@ class ApiServiceProvider extends ServiceProvider
                                                     Route::any($route, $endpoint);
                                                 }
                                             });
+
                                         foreach ($resource::getEndpoints() as $route => $endpoint) {
                                             // $endpoint::routes($interface);
                                             Route::any($route, $endpoint);

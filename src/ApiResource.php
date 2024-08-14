@@ -6,7 +6,6 @@ use Illuminate\Support\Facades\Route;
 
 class ApiResource
 {
-    
     protected static ?string $slug = null;
 
     protected static string | array $middleware = [];

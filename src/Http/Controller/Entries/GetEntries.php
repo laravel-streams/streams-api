@@ -14,6 +14,9 @@ class GetEntries extends Controller
 {
     use FiresCallbacks;
 
+    protected static ?string $stream = null;
+    protected static ?string $resource = null;
+
     public function __invoke(string $stream): JsonResponse
     {
         $response = new ApiResponse($stream);
