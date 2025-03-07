@@ -113,6 +113,9 @@ class ApiResponse implements Arrayable
 
         $attributes = $this->toArray();
 
+        // @todo Remove stream?
+        Arr::pull($attributes, 'stream');
+
         $status = $status ?: Arr::get($attributes, 'status');
         $headers = $headers ?: Arr::get($attributes, 'headers');
 

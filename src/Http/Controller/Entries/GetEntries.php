@@ -25,7 +25,7 @@ class GetEntries extends Controller
 
         $this->fire('apply', compact('criteria'));
 
-        $this->applyFilters($criteria);
+        $this->applyFilters($criteria, $response->stream->fields->keys()->all());
 
         $this->fire('applied', compact('criteria'));
 
@@ -39,12 +39,16 @@ class GetEntries extends Controller
         return $response->make($results->all());
     }
 
-    protected function applyFilters(Criteria $criteria)
+    protected function applyFilters(Criteria $criteria, array $filters = []): void
     {
-        $constraints = Request::query('constraint', []);
-
-        foreach (Request::query('where', []) as $field => $value) {
-            $criteria->where($field, Arr::get($constraints, $field, '='), $value);
+        foreach ($filters as $field) {
+            foreach ((array) Request::query($field) as $operator => $value) {
+                if (is_numeric($operator)) {
+                    $criteria->where($field, $operator);
+                } else {
+                    $criteria->where($field, $operator, $value);
+                }
+            }
         }
 
         foreach (Request::query('order_by', []) as $field => $direction) {
