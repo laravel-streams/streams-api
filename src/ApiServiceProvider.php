@@ -9,7 +9,7 @@ use Illuminate\Support\ServiceProvider;
 
 class ApiServiceProvider extends ServiceProvider
 {
-    public function boot()
+    public function register()
     {
         if ($this->app->runningInConsole()) {
             $this->commands([
@@ -23,8 +23,10 @@ class ApiServiceProvider extends ServiceProvider
         Integrator::aliases([
             'API' => \Streams\Api\Support\Facades\API::class,
         ]);
-
-
+    }
+    
+    public function boot()
+    {
         $this->app->booted(function () {
 
             Route::name('streams.api.')
