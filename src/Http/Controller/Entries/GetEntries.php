@@ -17,8 +17,10 @@ class GetEntries extends Controller
     protected static ?string $stream = null;
     protected static ?string $resource = null;
 
-    public function __invoke(string $stream): JsonResponse
+    public function __invoke(): JsonResponse
     {
+        $stream = static::$stream;
+
         $response = new ApiResponse($stream);
 
         $criteria = $response->stream->entries();

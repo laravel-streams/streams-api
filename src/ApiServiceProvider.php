@@ -42,7 +42,7 @@ class ApiServiceProvider extends ServiceProvider
                             Route::domain($domain)
                                 ->middleware($interface->getMiddleware())
                                 ->name($id . '.')
-                                ->prefix($path)
+                                ->prefix($path ?: $id)
                                 ->group(function () use ($interface) {
 
                                     if ($routes = $interface->getRoutes()) {
@@ -67,12 +67,14 @@ class ApiServiceProvider extends ServiceProvider
                                             // ->middleware(static::getRouteMiddleware($panel) ?: ['web'])
                                             // ->withoutMiddleware(static::getWithoutRouteMiddleware($panel))
                                             ->group(function () use ($resource) {
-                                                foreach ($resource::getEndpoints() as $route => $endpoint) {
+                                                // foreach ($resource::getEndpoints() as $route => $endpoint) {
+                                                foreach ($resource::getPages() as $route => $endpoint) {
                                                     Route::any($route, $endpoint);
                                                 }
                                             });
 
-                                        foreach ($resource::getEndpoints() as $route => $endpoint) {
+                                        // foreach ($resource::getEndpoints() as $route => $endpoint) {
+                                        foreach ($resource::getPages() as $route => $endpoint) {
                                             // $endpoint::routes($interface);
                                             Route::any($route, $endpoint);
                                         }

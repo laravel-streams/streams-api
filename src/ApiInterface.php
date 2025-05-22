@@ -111,7 +111,7 @@ class ApiInterface
         }
     }
 
-    static public function make(?string $id = null): static
+    static public function make(?string $id = null): self
     {
         $instance = app(static::class, [
             'id' => $id,
