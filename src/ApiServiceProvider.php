@@ -24,7 +24,7 @@ class ApiServiceProvider extends ServiceProvider
             'API' => \Streams\Api\Support\Facades\API::class,
         ]);
     }
-    
+
     public function boot()
     {
         $this->app->booted(function () {
@@ -49,35 +49,19 @@ class ApiServiceProvider extends ServiceProvider
                                         $routes($interface);
                                     }
 
+                                    /**
+                                     * Register generic interface endpoints.
+                                     */
                                     foreach ($interface->getEndpoints() as $route => $endpoint) {
-                                        // $endpoint::routes($interface);
+                                        // @todo: $endpoint::routes($interface);
                                         Route::any($route, $endpoint);
                                     }
 
+                                    /**
+                                     * Register API resources.
+                                     */
                                     foreach ($interface->getResources() as $resource) {
-                                        // $resource::routes($interface);
-                                        $slug = $resource::getSlug();
-
-                                        Route::name(
-                                            (string) str($slug)
-                                                ->replace('/', '.')
-                                                ->append('.'),
-                                        )
-                                            ->prefix($slug)
-                                            // ->middleware(static::getRouteMiddleware($panel) ?: ['web'])
-                                            // ->withoutMiddleware(static::getWithoutRouteMiddleware($panel))
-                                            ->group(function () use ($resource) {
-                                                // foreach ($resource::getEndpoints() as $route => $endpoint) {
-                                                foreach ($resource::getPages() as $route => $endpoint) {
-                                                    Route::any($route, $endpoint);
-                                                }
-                                            });
-
-                                        // foreach ($resource::getEndpoints() as $route => $endpoint) {
-                                        foreach ($resource::getPages() as $route => $endpoint) {
-                                            // $endpoint::routes($interface);
-                                            Route::any($route, $endpoint);
-                                        }
+                                        $resource::routes($interface);
                                     }
                                 });
                         }
