@@ -16,7 +16,7 @@ class CreateStreamTest extends ApiTestCase
     public function test_it_returns_standard_response_structure()
     {
         $this->markTestSkipped('Stream creation with unique IDs still triggers validation conflicts');
-        
+
         $stream = $this->streamData();
 
         // First, try to delete the stream if it already exists

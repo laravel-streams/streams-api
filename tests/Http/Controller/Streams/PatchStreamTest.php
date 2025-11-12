@@ -12,7 +12,7 @@ class PatchStreamTest extends ApiTestCase
     public function test_it_returns_standard_response_structure()
     {
         $this->markTestSkipped('Stream patching triggers validation conflicts on test fixture streams');
-        
+
         $response = $this->json('PATCH', URL::route('streams.api.streams.patch', [
             'stream' => 'films',
         ]), [

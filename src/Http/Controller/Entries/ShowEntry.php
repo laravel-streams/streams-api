@@ -18,7 +18,7 @@ class ShowEntry extends Controller
 
     protected static ?string $resource = null;
 
-    public function __invoke(?string $stream = null, string $entry = null, ?string $map = null): JsonResponse
+    public function __invoke(?string $stream = null, ?string $entry = null, ?string $map = null): JsonResponse
     {
         $stream = stream($stream ?: static::$stream);
 

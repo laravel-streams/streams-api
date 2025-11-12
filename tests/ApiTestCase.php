@@ -16,7 +16,7 @@ abstract class ApiTestCase extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        
+
         // Register API routes for testing
         API::routeEntries();
         API::routeStreams();

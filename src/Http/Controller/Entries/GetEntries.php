@@ -45,7 +45,7 @@ class GetEntries extends Controller
     {
         // Handle where[] parameters
         $constraints = Request::query('constraint', []);
-        
+
         foreach (Request::query('where', []) as $field => $value) {
             if (isset($constraints[$field])) {
                 // Use constraint operator if provided

@@ -23,51 +23,53 @@ class ApiServiceProvider extends ServiceProvider
         Integrator::aliases([
             'API' => \Streams\Api\Support\Facades\API::class,
         ]);
+
+        $this->registerConfig();
     }
 
     public function boot()
     {
-        $this->app->booted(function () {
+        // $this->app->booted(function () {
 
-            Route::name('streams.api.')
-                ->group(function () {
+        //     Route::name('streams.api.')
+        //         ->group(function () {
 
-                    foreach (API::getInterfaces() as $interface) {
+        //             foreach (API::getInterfaces() as $interface) {
 
-                        $id = $interface->getId();
-                        $path = $interface->getPath();
+        //                 $id = $interface->getId();
+        //                 $path = $interface->getPath();
 
-                        foreach ([null] as $domain) {
+        //                 foreach ([null] as $domain) {
 
-                            Route::domain($domain)
-                                ->middleware($interface->getMiddleware())
-                                ->name($id.'.')
-                                ->prefix($path ?: $id)
-                                ->group(function () use ($interface) {
+        //                     Route::domain($domain)
+        //                         ->middleware($interface->getMiddleware())
+        //                         ->name($id.'.')
+        //                         ->prefix($path ?: $id)
+        //                         ->group(function () use ($interface) {
 
-                                    if ($routes = $interface->getRoutes()) {
-                                        $routes($interface);
-                                    }
+        //                             if ($routes = $interface->getRoutes()) {
+        //                                 $routes($interface);
+        //                             }
 
-                                    /**
-                                     * Register generic interface endpoints.
-                                     */
-                                    foreach ($interface->getEndpoints() as $route => $endpoint) {
-                                        // @todo: $endpoint::routes($interface);
-                                        Route::any($route, $endpoint);
-                                    }
+        //                             /**
+        //                              * Register generic interface endpoints.
+        //                              */
+        //                             foreach ($interface->getEndpoints() as $route => $endpoint) {
+        //                                 // @todo: $endpoint::routes($interface);
+        //                                 Route::any($route, $endpoint);
+        //                             }
 
-                                    /**
-                                     * Register API resources.
-                                     */
-                                    foreach ($interface->getResources() as $resource) {
-                                        $resource::routes($interface);
-                                    }
-                                });
-                        }
-                    }
-                });
-        });
+        //                             /**
+        //                              * Register API resources.
+        //                              */
+        //                             foreach ($interface->getResources() as $resource) {
+        //                                 $resource::routes($interface);
+        //                             }
+        //                         });
+        //                 }
+        //             }
+        //         });
+        // });
     }
 
     protected function registerConfig(): void
