@@ -17,9 +17,9 @@ class GetEntries extends Controller
 
     protected static ?string $resource = null;
 
-    public function __invoke(): JsonResponse
+    public function __invoke(?string $stream = null): JsonResponse
     {
-        $stream = static::$stream;
+        $stream = stream($stream ?: static::$stream);
 
         $response = new ApiResponse($stream);
 
@@ -43,13 +43,19 @@ class GetEntries extends Controller
 
     protected function applyFilters(Criteria $criteria, array $filters = []): void
     {
-        foreach ($filters as $field) {
-            foreach ((array) Request::query($field) as $operator => $value) {
-                if (is_numeric($operator)) {
-                    $criteria->where($field, $operator);
-                } else {
-                    $criteria->where($field, $operator, $value);
+        // Handle where[] parameters
+        $constraints = Request::query('constraint', []);
+        
+        foreach (Request::query('where', []) as $field => $value) {
+            if (isset($constraints[$field])) {
+                // Use constraint operator if provided
+                $criteria->where($field, $constraints[$field], $value);
+            } elseif (is_array($value)) {
+                foreach ($value as $operator => $operand) {
+                    $criteria->where($field, $operator, $operand);
                 }
+            } else {
+                $criteria->where($field, $value);
             }
         }
 

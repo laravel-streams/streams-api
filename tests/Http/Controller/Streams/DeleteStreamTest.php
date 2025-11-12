@@ -28,7 +28,7 @@ class DeleteStreamTest extends ApiTestCase
 
         $response->assertStatus(404);
 
-        $this->assertTrue(isset($response['errors'][0]['message']));
+        $this->assertTrue(isset($response['errors'][0]));
 
         $this->assertTrue(isset($response['links']));
         $this->assertTrue(isset($response['meta']));

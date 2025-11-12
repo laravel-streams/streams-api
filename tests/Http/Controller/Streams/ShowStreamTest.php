@@ -9,8 +9,6 @@ class ShowStreamTest extends ApiTestCase
 {
     public function test_it_returns_standard_response_structure()
     {
-        $this->markTestSkipped('Stream show tests unreliable in test environment due to stream conflicts');
-
         $response = $this->get(URL::route('streams.api.streams.show', [
             'stream' => 'people',
         ]));
@@ -25,8 +23,6 @@ class ShowStreamTest extends ApiTestCase
 
     public function test_it_returns_404_if_not_found()
     {
-        $this->markTestSkipped('Stream show tests unreliable in test environment due to stream conflicts');
-
         $response = $this->get(URL::route('streams.api.streams.show', [
             'stream' => 'lost',
         ]));
@@ -41,8 +37,6 @@ class ShowStreamTest extends ApiTestCase
 
     public function test_it_returns_a_stream_entry()
     {
-        $this->markTestSkipped('Stream show tests unreliable in test environment due to stream conflicts');
-
         $response = $this->get(URL::route('streams.api.streams.show', [
             'stream' => 'people',
         ]));

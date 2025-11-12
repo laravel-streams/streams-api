@@ -69,12 +69,7 @@ class CreateEntry extends Controller
 
             foreach ($messages->messages() as $field => $messages) {
                 foreach ($messages as $message) {
-                    $response->addError([
-                        'message' => $message,
-                        'meta' => [
-                            'field' => $field,
-                        ],
-                    ]);
+                    $response->addError($message);
                 }
             }
         }

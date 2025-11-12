@@ -18,9 +18,11 @@ class ShowEntry extends Controller
 
     protected static ?string $resource = null;
 
-    public function __invoke(string $entry, ?string $map = null): JsonResponse
+    public function __invoke(?string $stream = null, string $entry = null, ?string $map = null): JsonResponse
     {
-        $response = new ApiResponse(static::$stream);
+        $stream = stream($stream ?: static::$stream);
+
+        $response = new ApiResponse($stream);
 
         $criteria = $response->stream->entries();
 

@@ -56,7 +56,7 @@ class CreateEntryTest extends ApiTestCase
 
         $response->assertStatus(409);
 
-        $this->assertTrue(isset($response['errors'][0]['message']));
+        $this->assertTrue(isset($response['errors'][0]));
 
         $this->assertTrue(isset($response['links']));
         $this->assertTrue(isset($response['meta']));
@@ -66,7 +66,7 @@ class CreateEntryTest extends ApiTestCase
         $this->assertEquals(7, Streams::entries('films')->count());
     }
 
-    protected function filmData()
+    protected function filmData(): array
     {
         return [
             'episode_id' => 8,

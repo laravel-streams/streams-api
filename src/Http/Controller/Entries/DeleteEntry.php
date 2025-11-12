@@ -16,9 +16,7 @@ class DeleteEntry extends Controller
 
         if (! $entry = Streams::repository($stream)->find($entry)) {
 
-            $response->addError([
-                'message' => 'Entry not found.',
-            ]);
+            $response->addError('Entry not found.');
 
             return $response->make(null, 404);
         }

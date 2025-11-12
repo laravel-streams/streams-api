@@ -51,7 +51,7 @@ class ApiResponseTest extends ApiTestCase
             ->addHeader('Powered-By', 'Streams')
             ->addHeader('Author', 'Ryan')
             ->removeHeader('Author')
-            ->addError(['Error Example'])
+            ->addError('Error Example')
             ->addLink('docs', 'https://example.com')
             ->addLink('login', 'https://example.com/login')
             ->removeLink('login', 'https://example.com/login')
