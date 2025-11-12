@@ -2,46 +2,55 @@
 
 namespace Streams\Api\Http\Controller\Entries;
 
+use Illuminate\Support\Arr;
 use Streams\Api\ApiResponse;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Routing\Controller;
-use Illuminate\Support\Arr;
 use Streams\Core\Criteria\Criteria;
 use Illuminate\Support\Facades\Request;
+use Streams\Core\Support\Traits\FiresCallbacks;
 
 class GetEntries extends Controller
 {
-    public function __invoke(string $stream): JsonResponse
+    use FiresCallbacks;
+
+    protected static ?string $stream = null;
+    protected static ?string $resource = null;
+
+    public function __invoke(): JsonResponse
     {
+        $stream = static::$stream;
+
         $response = new ApiResponse($stream);
 
         $criteria = $response->stream->entries();
 
-        $this->applyFilters($criteria);
+        $this->fire('apply', compact('criteria'));
+
+        $this->applyFilters($criteria, $response->stream->fields->keys()->all());
+
+        $this->fire('applied', compact('criteria'));
 
         $results = $criteria->paginate([
             'per_page' => Request::get('per_page', 100),
             'page' => Request::get('page', 1),
         ]);
 
-        $response->addMeta('total', $results->total());
-        $response->addMeta('per_page', $results->perPage());
-        $response->addMeta('last_page', $results->lastPage());
-        $response->addMeta('current_page', $results->currentPage());
-
-        $response->addLink('first_page', $results->url(1));
-        $response->addLink('next_page', $results->nextPageUrl());
-        $response->addLink('previous_page', $results->previousPageUrl());
+        $response->addPaginationMeta($results);
 
         return $response->make($results->all());
     }
 
-    protected function applyFilters(Criteria $criteria)
+    protected function applyFilters(Criteria $criteria, array $filters = []): void
     {
-        $constraints = Request::query('constraint', []);
-
-        foreach (Request::query('where', []) as $field => $value) {
-            $criteria->where($field, Arr::get($constraints, $field, '='), $value);
+        foreach ($filters as $field) {
+            foreach ((array) Request::query($field) as $operator => $value) {
+                if (is_numeric($operator)) {
+                    $criteria->where($field, $operator);
+                } else {
+                    $criteria->where($field, $operator, $value);
+                }
+            }
         }
 
         foreach (Request::query('order_by', []) as $field => $direction) {

@@ -2,41 +2,14 @@
 
 namespace Streams\Api;
 
+use Streams\Api\Support\Facades\API;
+use Streams\Core\Support\Integrator;
 use Illuminate\Support\Facades\Route;
-use Illuminate\Support\Facades\Config;
 use Illuminate\Support\ServiceProvider;
-use Streams\Core\StreamsServiceProvider;
-use Streams\Core\Support\Facades\Assets;
-use Streams\Api\Http\Controller\Entries\ShowEntry;
-use Streams\Api\Http\Controller\Entries\GetEntries;
-use Streams\Api\Http\Controller\Entries\PatchEntry;
-use Streams\Api\Http\Controller\Streams\GetStreams;
-use Streams\Api\Http\Controller\Streams\ShowStream;
-use Streams\Api\Http\Controller\Entries\CreateEntry;
-use Streams\Api\Http\Controller\Entries\DeleteEntry;
-use Streams\Api\Http\Controller\Entries\UpdateEntry;
-use Streams\Api\Http\Controller\Streams\PatchStream;
-use Streams\Api\Http\Controller\Entries\QueryEntries;
-use Streams\Api\Http\Controller\Streams\CreateStream;
-use Streams\Api\Http\Controller\Streams\DeleteStream;
-use Streams\Api\Http\Controller\Streams\UpdateStream;
 
 class ApiServiceProvider extends ServiceProvider
 {
     public function register()
-    {
-        $this->app->register(StreamsServiceProvider::class);
-
-        $this->registerConfig();
-
-        if (!Config::get('streams.api.enabled')) {
-            return;
-        }
-
-        $this->registerRoutes();
-    }
-
-    public function boot()
     {
         if ($this->app->runningInConsole()) {
             $this->commands([
@@ -45,13 +18,56 @@ class ApiServiceProvider extends ServiceProvider
             ]);
         }
 
-        if (!Config::get('streams.api.enabled')) {
-            return;
-        }
+        $this->app->alias(\Streams\Api\ApiManager::class, 'api');
 
-        Assets::addPath('api', 'vendor/streams/api');
+        Integrator::aliases([
+            'API' => \Streams\Api\Support\Facades\API::class,
+        ]);
+    }
 
-        Assets::register('api::js/index.js');
+    public function boot()
+    {
+        $this->app->booted(function () {
+
+            Route::name('streams.api.')
+                ->group(function () {
+
+                    foreach (API::getInterfaces() as $interface) {
+
+                        $id = $interface->getId();
+                        $path = $interface->getPath();
+
+                        foreach ([null] as $domain) {
+
+                            Route::domain($domain)
+                                ->middleware($interface->getMiddleware())
+                                ->name($id . '.')
+                                ->prefix($path ?: $id)
+                                ->group(function () use ($interface) {
+
+                                    if ($routes = $interface->getRoutes()) {
+                                        $routes($interface);
+                                    }
+
+                                    /**
+                                     * Register generic interface endpoints.
+                                     */
+                                    foreach ($interface->getEndpoints() as $route => $endpoint) {
+                                        // @todo: $endpoint::routes($interface);
+                                        Route::any($route, $endpoint);
+                                    }
+
+                                    /**
+                                     * Register API resources.
+                                     */
+                                    foreach ($interface->getResources() as $resource) {
+                                        $resource::routes($interface);
+                                    }
+                                });
+                        }
+                    }
+                });
+        });
     }
 
     protected function registerConfig(): void
@@ -61,85 +77,5 @@ class ApiServiceProvider extends ServiceProvider
         $this->publishes([
             __DIR__ . '/../resources/config/api.php' => config_path('streams/api.php'),
         ], 'config');
-    }
-
-    protected function registerRoutes(): void
-    {
-        Route::prefix(Config::get('streams.api.prefix', 'api'))
-            ->middleware(Config::get('streams.api.middleware', 'api'))
-            ->group(function () {
-
-                /*
-                 * Route Streams API endpoints.
-                 */
-                Route::get('streams', [
-                    'uses' => GetStreams::class,
-                    'as'   => 'streams.api.streams.list',
-                ]);
-                Route::post('streams', [
-                    'uses' => CreateStream::class,
-                    'as'   => 'streams.api.streams.create',
-                ]);
-                Route::get('streams/{stream}', [
-                    'uses' => ShowStream::class,
-                    'as'   => 'streams.api.streams.show',
-                ]);
-                Route::put('streams/{stream}', [
-                    'uses' => UpdateStream::class,
-                    'as'   => 'streams.api.streams.update',
-                ]);
-                Route::patch('streams/{stream}', [
-                    'uses' => PatchStream::class,
-                    'as'   => 'streams.api.streams.patch',
-                ]);
-                Route::delete('streams/{stream}', [
-                    'uses' => DeleteStream::class,
-                    'as'   => 'streams.api.streams.delete',
-                ]);
-
-                /*
-                 * Route entries API endpoints.
-                 */
-                Route::get('streams/{stream}/entries', [
-                    'uses'  => GetEntries::class,
-                    'as'    => 'streams.api.entries.list',
-                ]);
-                Route::post('streams/{stream}/entries', [
-                    'uses' => CreateEntry::class,
-                    'as'   => 'streams.api.entries.create',
-                ]);
-                Route::get('streams/{stream}/entries/{entry}', [
-                    'uses'  => ShowEntry::class,
-                    'as'    => 'streams.api.entries.show',
-                    'where' => [
-                        'entry' => '(.*)',
-                    ],
-                ]);
-                Route::put('streams/{stream}/entries/{entry}', [
-                    'uses' => UpdateEntry::class,
-                    'as'   => 'streams.api.entries.update',
-                    'where' => [
-                        'entry' => '(.*)',
-                    ],
-                ]);
-                Route::patch('streams/{stream}/entries/{entry}', [
-                    'uses' => PatchEntry::class,
-                    'as'   => 'streams.api.entries.patch',
-                    'where' => [
-                        'entry' => '(.*)',
-                    ],
-                ]);
-                Route::delete('streams/{stream}/entries/{entry}', [
-                    'uses' => DeleteEntry::class,
-                    'as'   => 'streams.api.entries.delete',
-                    'where' => [
-                        'entry' => '(.*)',
-                    ],
-                ]);
-                Route::post('streams/{stream}/query', [
-                    'uses'  => QueryEntries::class,
-                    'as'    => 'streams.api.entries.query',
-                ]);
-            });
     }
 }

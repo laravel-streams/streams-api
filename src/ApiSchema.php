@@ -52,7 +52,7 @@ class ApiSchema
             ->paths(...static::paths())
             ->servers(
                 Server::create()
-                    ->url(url(config('streams.api.prefix')))
+                    ->url(url()->to(config('streams.api.prefix')))
             )
             ->components(
                 Components::create()

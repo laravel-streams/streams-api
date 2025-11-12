@@ -8,14 +8,24 @@ use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\URL;
 use Streams\Core\Support\Facades\Streams;
 use Streams\Core\Entry\Contract\EntryInterface;
+use Streams\Core\Support\Traits\FiresCallbacks;
 
 class ShowEntry extends Controller
 {
-    public function __invoke(string $stream, string $entry, string $map = null): JsonResponse
-    {
-        $response = new ApiResponse($stream);
+    use FiresCallbacks;
 
-        if (!$instance = $response->stream->repository()->find($entry)) {
+    protected static ?string $stream = null;
+    protected static ?string $resource = null;
+    
+    public function __invoke(string $entry, ?string $map = null): JsonResponse
+    {
+        $response = new ApiResponse(static::$stream);
+
+        $criteria = $response->stream->entries();
+
+        $this->fire('apply', compact('criteria'));
+
+        if (!$instance = $criteria->find($entry)) {
             return $response->make(null, 404);
         }
 
