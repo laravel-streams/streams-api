@@ -54,7 +54,7 @@ That's it! Your API is now available at `/api`.
 - [OpenAPI](https://streams.dev/docs/api/openapi) - Generate Swagger documentation
 - [Testing](https://streams.dev/docs/api/testing) - Test your API
 
-**Note**: `/docs/api/introduction` corresponds to `docs/00-introduction.md` in this repository.
+**Note**: Documentation URLs like `/docs/api/introduction` correspond to `docs/introduction.md` in this repository.
 
 ## Default Endpoints
 
@@ -217,3 +217,15 @@ The Streams API is open-source software licensed under the [MIT license](LICENSE
 - 💬 [Discussions](https://github.com/laravel-streams/streams-api/discussions)
 - 🐛 [Issues](https://github.com/laravel-streams/streams-api/issues)
 - 🌐 [Website](https://streams.dev)
+
+## Roadmap
+
+- [ ] Gates based on Core/Laravel Gates for authorization
+- [ ] API versioning helpers
+- [ ] Rate limiting per endpoint
+- [ ] API key authentication
+- [ ] Webhook support
+- [ ] GraphQL support
+- [ ] Real-time subscriptions
+- [ ] Batch operations
+- [ ] API analytics/metrics
