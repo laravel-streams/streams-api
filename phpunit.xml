@@ -5,7 +5,7 @@
          colors="true"
          testdox="true"
          processIsolation="true"
-         stopOnFailure="false">
+         stopOnFailure="true">
 
     <coverage>
         <include>

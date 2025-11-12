@@ -48,9 +48,9 @@ class ApiCacheTest extends ApiTestCase
             return 'OK';
         });
 
-        $this->setUpApplicationRoutes();
+        $this->setUpApplicationRoutes($this->app);
 
-        $request = $this->createTestRequest();
+        $request = $this->createCustomTestRequest();
 
         $response = (new ApiCache)->handle($request, function () use ($request) {
             return $this->get('api/test');
@@ -211,7 +211,7 @@ class ApiCacheTest extends ApiTestCase
         return $request;
     }
 
-    protected function createTestRequest()
+    protected function createCustomTestRequest()
     {
         $request = Request::create('api/test', 'GET');
 
