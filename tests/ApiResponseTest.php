@@ -2,13 +2,21 @@
 
 namespace Streams\Api\Tests;
 
+use Illuminate\Support\Arr;
 use Streams\Api\ApiResponse;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\URL;
+use Streams\Api\Support\Facades\API;
 
 class ApiResponseTest extends ApiTestCase
 {
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        API::routeEntries();
+    }
+
     public function test_it_makes_json_responses()
     {
         $response = new ApiResponse('films');
@@ -23,6 +31,10 @@ class ApiResponseTest extends ApiTestCase
             'limit' => 3,
             'where[director]' => 'George Lucas',
         ]));
+
+        if ($response->status() !== 200) {
+            dump($response->getContent());
+        }
 
         $response->assertStatus(200);
 
@@ -48,7 +60,7 @@ class ApiResponseTest extends ApiTestCase
             ->removeMeta('baz')
             ->setData(['Testing'])
             ->make();
-        
+
         $content = json_decode($response->content(), true);
 
         $this->assertEquals(404, $response->getStatusCode());

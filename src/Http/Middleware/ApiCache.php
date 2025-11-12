@@ -11,7 +11,7 @@ class ApiCache
 {
     public function handle(Request $request, \Closure $next)
     {
-        if (!$request->isMethodCacheable()) {
+        if (! $request->isMethodCacheable()) {
             return $next($request);
         }
 
@@ -19,7 +19,7 @@ class ApiCache
             return $next($request);
         }
 
-        if (!$stream = $this->resolveStream($request)) {
+        if (! $stream = $this->resolveStream($request)) {
             return $next($request);
         }
 
@@ -31,9 +31,9 @@ class ApiCache
 
         $fingerprint = md5(
             $request->url()
-                . $request->method()
-                . $request->getContent()
-                . json_encode($request->all())
+                .$request->method()
+                .$request->getContent()
+                .json_encode($request->all())
         );
 
         if ($maxAge = $request->headers->getCacheControlDirective('max-age')) {
@@ -48,7 +48,7 @@ class ApiCache
 
         $response = $next($request);
 
-        $checksum = '"' . md5($response->getContent()) . '"';
+        $checksum = '"'.md5($response->getContent()).'"';
 
         $etag = $request->header('If-None-Match');
 

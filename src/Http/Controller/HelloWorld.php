@@ -9,7 +9,7 @@ class HelloWorld extends Controller
 {
     public function __invoke()
     {
-        $response = new ApiResponse();
+        $response = new ApiResponse;
 
         $response->addLink('gv.groups', url('/api/testing/gv-groups'));
 

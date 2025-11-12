@@ -8,7 +8,6 @@ use Streams\Core\Support\Facades\Streams;
 
 class ShowEntryTest extends ApiTestCase
 {
-
     public function test_it_returns_standard_response_structure()
     {
         $response = $this->get(URL::route('streams.api.entries.show', [

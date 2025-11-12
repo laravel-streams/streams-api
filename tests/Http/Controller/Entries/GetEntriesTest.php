@@ -8,7 +8,6 @@ use Streams\Core\Support\Facades\Streams;
 
 class GetEntriesTest extends ApiTestCase
 {
-
     public function test_it_returns_standard_response_structure()
     {
         $response = $this->get(URL::route('streams.api.entries.list', [
@@ -42,7 +41,6 @@ class GetEntriesTest extends ApiTestCase
         $entries = Streams::entries('films')->where('director', 'George Lucas')->count();
 
         $this->assertEquals($entries, count($response['data']));
-
 
         $response = $this->get(URL::route('streams.api.entries.list', [
             'stream' => 'films',

@@ -16,7 +16,7 @@ class CreateStreamTest extends ApiTestCase
     public function test_it_returns_standard_response_structure()
     {
         $this->markTestSkipped('Stream creation tests unreliable in test environment due to stream conflicts');
-        
+
         $stream = $this->streamData();
 
         // First, try to delete the stream if it already exists
@@ -65,7 +65,7 @@ class CreateStreamTest extends ApiTestCase
     protected function streamData()
     {
         return [
-            'id' => 'test_sources_' . uniqid(),
+            'id' => 'test_sources_'.uniqid(),
             'name' => 'Star Wars data sources.',
             'fields' => [
                 [
@@ -77,7 +77,7 @@ class CreateStreamTest extends ApiTestCase
                     'type' => 'url',
                     'required' => true,
                     'unique' => true,
-                ]
+                ],
             ],
         ];
     }

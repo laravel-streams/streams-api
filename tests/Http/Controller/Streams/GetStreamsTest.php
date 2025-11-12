@@ -9,7 +9,6 @@ use Streams\Core\Support\Facades\Streams;
 
 class GetStreamsTest extends ApiTestCase
 {
-
     public function test_it_returns_standard_response_structure()
     {
         $response = $this->get(URL::route('streams.api.streams.list'));

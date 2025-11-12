@@ -9,7 +9,6 @@ use Streams\Core\Support\Facades\Streams;
 
 class QueryEntriesTest extends ApiTestCase
 {
-
     public function test_it_returns_standard_response_structure()
     {
         $response = $this->post(URL::route('streams.api.entries.query', [
@@ -38,7 +37,7 @@ class QueryEntriesTest extends ApiTestCase
         $response = $this->call('POST', URL::route('streams.api.entries.query', [
             'stream' => 'films',
         ]), [], [], [], [], json_encode([
-            'parameters' => [['where' => ['director', 'George Lucas']]]
+            'parameters' => [['where' => ['director', 'George Lucas']]],
         ]));
 
         $entries = Streams::entries('films')->where('director', 'George Lucas')->count();
@@ -63,12 +62,13 @@ class QueryEntriesTest extends ApiTestCase
 
     /**
      * @runInSeparateProcess
+     *
      * @preserveGlobalState disabled
      */
     public function test_it_supports_custom_methods()
     {
         $this->markTestSkipped('Custom criteria methods not loading in test environment');
-        
+
         Streams::overload('films', [
             'config' => [
                 'criteria' => QueryEntriesTestCriteria::class,
@@ -78,7 +78,7 @@ class QueryEntriesTest extends ApiTestCase
         $response = $this->call('POST', URL::route('streams.api.entries.query', [
             'stream' => 'films',
         ]), [], [], [], [], json_encode([
-            'parameters' => [['jedi' => []]]
+            'parameters' => [['jedi' => []]],
         ]));
 
         $entries = Streams::entries('films')->where('title', 'LIKE', '%Jedi%')->count();
@@ -91,7 +91,7 @@ class QueryEntriesTest extends ApiTestCase
         $response = $this->call('POST', URL::route('streams.api.entries.query', [
             'stream' => 'films',
         ]), [], [], [], [], json_encode([
-            'parameters' => [['delete' => []]]
+            'parameters' => [['delete' => []]],
         ]));
 
         $response->assertStatus(500);

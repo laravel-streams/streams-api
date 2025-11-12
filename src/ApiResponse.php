@@ -25,7 +25,7 @@ class ApiResponse implements Arrayable
     #[Field([
         'type' => 'integer',
         'rules' => [
-            'in:200,201,204,400,404,409'
+            'in:200,201,204,400,404,409',
         ],
         'config' => [
             'default' => 200,
@@ -103,7 +103,7 @@ class ApiResponse implements Arrayable
         }
     }
 
-    public function make(mixed $data = null, int $status = null, array $headers = []): JsonResponse
+    public function make(mixed $data = null, ?int $status = null, array $headers = []): JsonResponse
     {
         $this->data = $data ?: $this->data;
 
@@ -154,7 +154,7 @@ class ApiResponse implements Arrayable
 
             $date = $data->lastModified()->setTimezone(new \DateTimeZone('UTC'));
 
-            $this->addHeader('Last-Modified', $date->format('D, d M Y H:i:s') . ' GMT');
+            $this->addHeader('Last-Modified', $date->format('D, d M Y H:i:s').' GMT');
         }
     }
 
@@ -185,7 +185,7 @@ class ApiResponse implements Arrayable
 
         $this->addLink('streams', URL::route('streams.api.streams.list'));
         $this->addLink('stream', URL::route('streams.api.streams.show', $parameters));
-        $this->addLink('entries', URL::route('streams.api.entries.list',  $parameters));
+        $this->addLink('entries', URL::route('streams.api.entries.list', $parameters));
 
         return $this;
     }

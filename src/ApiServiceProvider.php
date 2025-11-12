@@ -41,7 +41,7 @@ class ApiServiceProvider extends ServiceProvider
 
                             Route::domain($domain)
                                 ->middleware($interface->getMiddleware())
-                                ->name($id . '.')
+                                ->name($id.'.')
                                 ->prefix($path ?: $id)
                                 ->group(function () use ($interface) {
 
@@ -72,10 +72,10 @@ class ApiServiceProvider extends ServiceProvider
 
     protected function registerConfig(): void
     {
-        $this->mergeConfigFrom(__DIR__ . '/../resources/config/api.php', 'streams.api');
+        $this->mergeConfigFrom(__DIR__.'/../resources/config/api.php', 'streams.api');
 
         $this->publishes([
-            __DIR__ . '/../resources/config/api.php' => config_path('streams/api.php'),
+            __DIR__.'/../resources/config/api.php' => config_path('streams/api.php'),
         ], 'config');
     }
 }

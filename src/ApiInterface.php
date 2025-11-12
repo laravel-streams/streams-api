@@ -4,11 +4,8 @@ namespace Streams\Api;
 
 class ApiInterface
 {
-
     /**
      * Middleware to include.
-     *
-     * @var array
      */
     protected array $middleware = [];
 
@@ -30,11 +27,8 @@ class ApiInterface
         ];
     }
 
-    
     /**
      * Resources are entry interfaces.
-     *
-     * @var array
      */
     protected array $resources = [];
 
@@ -53,7 +47,6 @@ class ApiInterface
         return array_unique($this->resources);
     }
 
-
     /**
      * Endpoints
      */
@@ -65,7 +58,7 @@ class ApiInterface
             ...$this->endpoints,
             ...$endpoints,
         ];
-        
+
         foreach ($endpoints as $endpoint) {
             // $this->queueLivewireComponent($endpoint);
         }
@@ -78,13 +71,12 @@ class ApiInterface
         return array_unique($this->endpoints);
     }
 
-
     /**
      * Helps us identify the API interface.
      */
-    protected string | \Closure | null $id = null;
+    protected string|\Closure|null $id = null;
 
-    public function id(string | \Closure | null $id): static
+    public function id(string|\Closure|null $id): static
     {
         $this->id = $id;
 
@@ -97,12 +89,8 @@ class ApiInterface
         // return $this->evaluate($this->id);
     }
 
-
-
     /**
      * Boot cycle stuff.
-     *
-     * @param string|null $id
      */
     public function __construct(?string $id = null)
     {
@@ -111,7 +99,7 @@ class ApiInterface
         }
     }
 
-    static public function make(?string $id = null): self
+    public static function make(?string $id = null): self
     {
         $instance = app(static::class, [
             'id' => $id,
@@ -124,8 +112,8 @@ class ApiInterface
 
     public function register(): void
     {
-        //$this->registerLivewireComponents();
-        //$this->registerLivewirePersistentMiddleware();
+        // $this->registerLivewireComponents();
+        // $this->registerLivewirePersistentMiddleware();
     }
 
     public function boot(): void
@@ -133,15 +121,12 @@ class ApiInterface
         // Boot
     }
 
-
     /**
      * Routing stuff
-     *
-     * @var string
      */
     protected string $path = '';
 
-    protected \Closure | null $routes = null;
+    protected ?\Closure $routes = null;
 
     public function path(string $path): static
     {

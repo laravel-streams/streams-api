@@ -18,7 +18,7 @@ class PatchEntry extends Controller
 
         $payload->set($response->stream->config('key_name', 'id'), $entry);
 
-        if (!$instance = $response->stream->repository()->find($entry)) {
+        if (! $instance = $response->stream->repository()->find($entry)) {
 
             $createEntry = new CreateEntry($payload);
 
@@ -40,7 +40,7 @@ class PatchEntry extends Controller
             $response->setData($instance);
         }
 
-        if (!$valid) {
+        if (! $valid) {
 
             $messages = $validator->messages();
 

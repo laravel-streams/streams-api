@@ -8,7 +8,6 @@ use Streams\Core\Support\Facades\Streams;
 
 class DeleteEntryTest extends ApiTestCase
 {
-
     public function test_it_returns_an_empty_response()
     {
         $response = $this->delete(URL::route('streams.api.entries.delete', [
@@ -34,7 +33,7 @@ class DeleteEntryTest extends ApiTestCase
 
         $this->assertTrue(isset($response['links']));
         $this->assertTrue(isset($response['meta']));
-        
+
         $this->assertNull($response['data']);
 
         $this->assertEquals(7, Streams::entries('films')->count());

@@ -15,8 +15,9 @@ class ShowEntry extends Controller
     use FiresCallbacks;
 
     protected static ?string $stream = null;
+
     protected static ?string $resource = null;
-    
+
     public function __invoke(string $entry, ?string $map = null): JsonResponse
     {
         $response = new ApiResponse(static::$stream);
@@ -25,7 +26,7 @@ class ShowEntry extends Controller
 
         $this->fire('apply', compact('criteria'));
 
-        if (!$instance = $criteria->find($entry)) {
+        if (! $instance = $criteria->find($entry)) {
             return $response->make(null, 404);
         }
 
@@ -40,7 +41,7 @@ class ShowEntry extends Controller
 
             if ($field->type == 'relationship') {
 
-                if (!$value = $instance->getAttribute($field->handle)) {
+                if (! $value = $instance->getAttribute($field->handle)) {
                     continue;
                 }
 

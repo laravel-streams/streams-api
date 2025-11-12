@@ -52,7 +52,7 @@ class ApiCacheTest extends ApiTestCase
 
         $request = $this->createCustomTestRequest();
 
-        $response = (new ApiCache)->handle($request, function () use ($request) {
+        $response = (new ApiCache)->handle($request, function () {
             return $this->get('api/test');
         });
 
@@ -65,8 +65,8 @@ class ApiCacheTest extends ApiTestCase
             'config' => [
                 'cache' => [
                     'enabled' => false,
-                ]
-            ]
+                ],
+            ],
         ]);
 
         $request = $this->createGetEntriesRequest();
@@ -82,6 +82,7 @@ class ApiCacheTest extends ApiTestCase
 
     /**
      * @preserveGlobalState disabled
+     *
      * @runInSeparateProcess
      */
     public function test_it_supports_max_age()
@@ -115,7 +116,7 @@ class ApiCacheTest extends ApiTestCase
         file_put_contents($file, json_encode($json, JSON_PRETTY_PRINT));
 
         /**
-         * The request should hit cache and return 
+         * The request should hit cache and return
          * the previous count of data despite above.
          */
         $response = (new ApiCache)->handle($request, function () {
@@ -143,6 +144,7 @@ class ApiCacheTest extends ApiTestCase
 
     /**
      * @preserveGlobalState disabled
+     *
      * @runInSeparateProcess
      */
     public function test_it_handles_if_none_match()
@@ -159,7 +161,7 @@ class ApiCacheTest extends ApiTestCase
             ]));
         });
 
-        $response->assertHeader('Etag', '"' . md5($response->getContent()) . '"');
+        $response->assertHeader('Etag', '"'.md5($response->getContent()).'"');
 
         $this->assertSame(Streams::entries('films')->count(), count($response['data']));
 

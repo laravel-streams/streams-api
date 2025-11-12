@@ -8,13 +8,12 @@ use Streams\Core\Support\Facades\Streams;
 
 class CreateEntryTest extends ApiTestCase
 {
-
     public function test_it_returns_standard_response_structure()
     {
         $response = $this->json('POST', URL::route('streams.api.entries.create', [
             'stream' => 'films',
         ]), $this->filmData());
-        
+
         $response->assertStatus(201);
 
         $this->assertTrue(isset($response['errors']));

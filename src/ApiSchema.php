@@ -97,7 +97,7 @@ class ApiSchema
         $get = Operation::get()
             ->tags($tag)
             ->summary('List multiple entries.')
-            ->operationId($stream->id . '.list')
+            ->operationId($stream->id.'.list')
             ->responses(
                 Response::create()
                     ->statusCode(200)
@@ -108,23 +108,23 @@ class ApiSchema
         $post = Operation::post()
             ->tags($tag)
             ->summary('Create a new entry.')
-            ->operationId($stream->id . '.create')
+            ->operationId($stream->id.'.create')
             ->parameters(
                 Parameter::create('body')->in('body')->name('body')->content(
                     MediaType::json()->schema($stream->schema()->object())
                 )
-                //)->example($stream->factory()->create()->toJson())
+                // )->example($stream->factory()->create()->toJson())
             )
             ->responses(
                 Response::create()
                     ->statusCode(200)
                     ->description('Entry created successfully.')
                     ->content(static::postEntriesResponse200($stream))
-                //->links()
+                // ->links()
             );
 
         return PathItem::create()
-            ->route('/streams/' . $stream->id . '/entries')
+            ->route('/streams/'.$stream->id.'/entries')
             ->operations($get, $post);
     }
 
@@ -138,7 +138,7 @@ class ApiSchema
         $get = Operation::get()
             ->tags($tag)
             ->summary('Show an entry.')
-            ->operationId($stream->id . '.show')
+            ->operationId($stream->id.'.show')
             ->responses(
                 Response::create()
                     ->statusCode(200)
@@ -149,7 +149,7 @@ class ApiSchema
         $put = Operation::put()
             ->tags($tag)
             ->summary('Update an entry.')
-            ->operationId($stream->id . '.update')
+            ->operationId($stream->id.'.update')
             ->responses(
                 Response::create()
                     ->statusCode(200)
@@ -160,7 +160,7 @@ class ApiSchema
         $patch = Operation::patch()
             ->tags($tag)
             ->summary('Patch an entry.')
-            ->operationId($stream->id . '.patch')
+            ->operationId($stream->id.'.patch')
             ->responses(
                 Response::create()
                     ->statusCode(200)
@@ -171,7 +171,7 @@ class ApiSchema
         $delete = Operation::delete()
             ->tags($tag)
             ->summary('Delete an entry.')
-            ->operationId($stream->id . '.delete')
+            ->operationId($stream->id.'.delete')
             ->responses(
                 Response::create()
                     ->statusCode(204)
@@ -179,7 +179,7 @@ class ApiSchema
             );
 
         return PathItem::create()
-            ->route('/streams/' . $stream->id . '/entries/{id}')
+            ->route('/streams/'.$stream->id.'/entries/{id}')
             ->parameters(
                 Parameter::path('id')
                     ->name('id')
@@ -209,7 +209,7 @@ class ApiSchema
                     Schema::string('self'),
                 ),
                 Schema::array('data')->items(
-                    Schema::ref('#/components/schemas/' . $stream->id)
+                    Schema::ref('#/components/schemas/'.$stream->id)
                 )
             )
         );
@@ -221,7 +221,7 @@ class ApiSchema
             Schema::object('streams.api.entries.list')->properties(
                 Schema::object('meta')->properties(
                     Schema::string('stream'),
-                    Schema::ref('#/components/schemas/' . $stream->id, 'payload'),
+                    Schema::ref('#/components/schemas/'.$stream->id, 'payload'),
                 ),
                 Schema::object('links')->properties(
                     Schema::string('location')
@@ -239,7 +239,7 @@ class ApiSchema
                     )
                 ),
                 Schema::array('data')->items(
-                    Schema::ref('#/components/schemas/' . $stream->id)
+                    Schema::ref('#/components/schemas/'.$stream->id)
                 )
             )
         );
@@ -258,7 +258,7 @@ class ApiSchema
                     Schema::string('stream'),
                     Schema::string('entries'),
                 ),
-                Schema::ref('#/components/schemas/' . $stream->id, 'data')
+                Schema::ref('#/components/schemas/'.$stream->id, 'data')
             )
         );
     }
@@ -270,7 +270,7 @@ class ApiSchema
                 Schema::object('meta')->properties(
                     Schema::string('stream'),
                     Schema::string('entry'),
-                    Schema::ref('#/components/schemas/' . $stream->id, 'payload'),
+                    Schema::ref('#/components/schemas/'.$stream->id, 'payload'),
                 ),
                 Schema::object('links')->properties(
                     Schema::string('entries'),
@@ -286,7 +286,7 @@ class ApiSchema
                     )
                 ),
                 Schema::array('data')->items(
-                    Schema::ref('#/components/schemas/' . $stream->id)
+                    Schema::ref('#/components/schemas/'.$stream->id)
                 )
             )
         );
@@ -299,7 +299,7 @@ class ApiSchema
                 Schema::object('meta')->properties(
                     Schema::string('stream'),
                     Schema::string('entry'),
-                    Schema::ref('#/components/schemas/' . $stream->id, 'payload'),
+                    Schema::ref('#/components/schemas/'.$stream->id, 'payload'),
                 ),
                 Schema::object('links')->properties(
                     Schema::string('entries'),
@@ -315,7 +315,7 @@ class ApiSchema
                     )
                 ),
                 Schema::array('data')->items(
-                    Schema::ref('#/components/schemas/' . $stream->id)
+                    Schema::ref('#/components/schemas/'.$stream->id)
                 )
             )
         );

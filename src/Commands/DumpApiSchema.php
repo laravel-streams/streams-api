@@ -8,7 +8,6 @@ use Symfony\Component\Yaml\Yaml;
 
 class DumpApiSchema extends Command
 {
-
     protected $signature = 'api:schema {path?}';
 
     public function handle()
@@ -16,9 +15,9 @@ class DumpApiSchema extends Command
         $yaml = Yaml::dump(ApiSchema::create()->toArray(), 100);
 
         $path = base_path($this->argument('path') ?: 'api.yaml');
-        
+
         file_put_contents($path, $yaml);
 
-        $this->info('Generated YAML: ' . $path);
+        $this->info('Generated YAML: '.$path);
     }
 }

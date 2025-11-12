@@ -2,7 +2,6 @@
 
 namespace Streams\Api\Http\Controller\Entries;
 
-use Illuminate\Support\Arr;
 use Streams\Api\ApiResponse;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Routing\Controller;
@@ -15,6 +14,7 @@ class GetEntries extends Controller
     use FiresCallbacks;
 
     protected static ?string $stream = null;
+
     protected static ?string $resource = null;
 
     public function __invoke(): JsonResponse

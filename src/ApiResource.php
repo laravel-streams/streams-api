@@ -9,9 +9,9 @@ class ApiResource
 {
     protected static ?string $slug = null;
 
-    protected static string | array $middleware = [];
+    protected static string|array $middleware = [];
 
-    protected static string | array $withoutMiddleware = [];
+    protected static string|array $withoutMiddleware = [];
 
     public static function routes(ApiInterface $interface): void
     {
@@ -71,12 +71,12 @@ class ApiResource
             ->slug();
     }
 
-    public static function getRouteMiddleware(ApiInterface $interface): string | array
+    public static function getRouteMiddleware(ApiInterface $interface): string|array
     {
         return static::$middleware;
     }
 
-    public static function getWithoutRouteMiddleware(ApiInterface $interface): string | array
+    public static function getWithoutRouteMiddleware(ApiInterface $interface): string|array
     {
         return static::$withoutMiddleware;
     }

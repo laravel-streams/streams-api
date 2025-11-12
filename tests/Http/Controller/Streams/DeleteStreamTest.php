@@ -9,7 +9,6 @@ use Streams\Core\Support\Facades\Streams;
 
 class DeleteStreamTest extends ApiTestCase
 {
-
     public function test_it_returns_an_empty_response()
     {
         $response = $this->delete(URL::route('streams.api.streams.delete', [

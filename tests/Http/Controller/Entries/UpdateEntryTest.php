@@ -8,9 +8,9 @@ use Streams\Core\Support\Facades\Streams;
 
 class UpdateEntryTest extends ApiTestCase
 {
-
     /**
      * @preserveGlobalState disabled
+     *
      * @runInSeparateProcess
      */
     public function test_it_returns_standard_response_structure()
@@ -39,6 +39,7 @@ class UpdateEntryTest extends ApiTestCase
 
     /**
      * @preserveGlobalState disabled
+     *
      * @runInSeparateProcess
      */
     public function test_it_returns_409_if_conflict()
@@ -64,6 +65,7 @@ class UpdateEntryTest extends ApiTestCase
 
     /**
      * @preserveGlobalState disabled
+     *
      * @runInSeparateProcess
      */
     public function test_it_creates_entries_if_not_found()

@@ -2,7 +2,6 @@
 
 namespace Streams\Api\Tests;
 
-use Streams\Api\Tests\ApiTestCase;
 use Illuminate\Support\Facades\Config;
 
 class ApiServiceProviderTest extends ApiTestCase
@@ -14,16 +13,16 @@ class ApiServiceProviderTest extends ApiTestCase
         $name = 'STREAMS_API_ENABLED';
         $value = false;
 
-        if (false === getenv($name)) {
+        if (getenv($name) === false) {
             putenv("{$name}={$value}");
         }
 
-        if (!isset($_ENV[$name])) {
+        if (! isset($_ENV[$name])) {
             $_ENV[$name] = $value;
         }
 
         Config::set('streams.api.enabled', false);
-        
+
         $this->refreshApplication();
 
         $response = $this->get('/api/streams/films/entries');
