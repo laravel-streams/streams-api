@@ -49,10 +49,11 @@ class ShowEntry extends Controller
 
                 $stream = Streams::make($field->config('related'));
 
-                $response->addLink($field->handle, URL::route('streams.api.entries.show', [
-                    'stream' => $stream->id,
-                    'entry' => $value,
-                ]));
+                // @todo need to handle this routing better.
+                // $response->addLink($field->handle, URL::route('streams.api.v1.groups.show', [
+                //     'stream' => $stream->id,
+                //     'entry' => $value,
+                // ]));
             }
         }
     }
