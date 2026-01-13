@@ -2,11 +2,27 @@
 
 namespace Streams\Api;
 
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Route;
 
 class ApiManager
 {
     protected array $interfaces = [];
+
+    protected array $booted = [];
+
+    protected ?string $current = null;
+
+    public function bootCurrentInterface(): void
+    {
+        if (isset($this->booted[$this->current])) {
+            return;
+        }
+
+        $this->currentInterface()?->boot();
+
+        $this->booted[$this->current] = true;
+    }
 
     public function interface(ApiInterface $interface): void
     {
@@ -18,6 +34,21 @@ class ApiManager
     public function getInterfaces()
     {
         return $this->interfaces;
+    }
+
+    public function getInterface(?string $id = null): ?ApiInterface
+    {
+        return $this->interfaces[$id] ?? null;
+    }
+
+    public function setCurrentInterface(ApiInterface $interface): void
+    {
+        $this->current = $interface->getId();
+    }
+
+    public function currentInterface(): ?ApiInterface
+    {
+        return $this->interfaces[$this->current] ?? null;
     }
 
     public function routeStreams()

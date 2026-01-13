@@ -20,7 +20,7 @@ class ShowEntry extends Controller
 
     public function __invoke(?string $stream = null, ?string $entry = null, ?string $map = null): JsonResponse
     {
-        $stream = stream($stream ?: static::$stream);
+        $stream = stream(static::$stream ?: $stream);
 
         $response = new ApiResponse($stream);
 

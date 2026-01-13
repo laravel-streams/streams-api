@@ -39,12 +39,22 @@ class ApiResource
                 ->append('.'),
         )
             ->prefix($slug)
-            // ->middleware(static::getRouteMiddleware($panel) ?: ['web'])
-            // ->withoutMiddleware(static::getWithoutRouteMiddleware($panel))
+            ->middleware(static::getRouteMiddleware($interface) ?: [])
+            ->withoutMiddleware(static::getWithoutRouteMiddleware($interface))
             ->group(function () {
                 foreach (static::getEndpoints() as $route => $endpoint) {
-                    // foreach ($resource::getPages() as $route => $endpoint) {
-                    Route::any($route, $endpoint);
+                    if (is_array($endpoint)) {
+                        // Handle ['endpoint', ['withoutMiddleware' => [...]]]
+                        $handler = $endpoint[0];
+                        $options = $endpoint[1] ?? [];
+                        $routeDefinition = Route::any($route, $handler);
+                        
+                        if (isset($options['withoutMiddleware'])) {
+                            $routeDefinition->withoutMiddleware($options['withoutMiddleware']);
+                        }
+                    } else {
+                        Route::any($route, $endpoint);
+                    }
                 }
             });
 
