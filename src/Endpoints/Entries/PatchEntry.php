@@ -1,14 +1,14 @@
 <?php
 
-namespace Streams\Api\Http\Controller\Entries;
+namespace Streams\Api\Endpoints\Entries;
 
 use Streams\Api\ApiResponse;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\Request;
+use Streams\Api\Builders\Endpoints\ApiEndpoint;
 use Streams\Core\Support\Facades\Streams;
 
-class UpdateEntry extends Controller
+class PatchEntry extends ApiEndpoint
 {
     public function __invoke(string $stream, string $entry): JsonResponse
     {
@@ -19,27 +19,26 @@ class UpdateEntry extends Controller
         $payload->set($response->stream->config('key_name', 'id'), $entry);
 
         if (! $instance = $response->stream->repository()->find($entry)) {
-
             $createEntry = new CreateEntry($payload);
 
             return $createEntry($stream);
         }
 
-        $instance->setAttributes($payload->all());
+        foreach ($payload->all() as $field => $value) {
+            $instance->{$field} = $value;
+        }
 
         $validator = Streams::make($stream)->validator($instance, false);
 
         $valid = $validator->passes();
 
         if ($valid) {
-
             $instance->save();
 
             $response->setData($instance);
         }
 
         if (! $valid) {
-
             $messages = $validator->messages();
 
             $response->setStatus(409);
@@ -52,5 +51,22 @@ class UpdateEntry extends Controller
         }
 
         return $response->make();
+    }
+
+    protected function getDefaultUri(): ?string
+    {
+        return 'streams/{stream}/entries/{entry}';
+    }
+
+    protected function getDefaultMethods(): string|array
+    {
+        return 'patch';
+    }
+
+    protected function getDefaultWhere(): array
+    {
+        return [
+            'entry' => '(.*)',
+        ];
     }
 }

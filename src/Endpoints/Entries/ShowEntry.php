@@ -1,26 +1,19 @@
 <?php
 
-namespace Streams\Api\Http\Controller\Entries;
+namespace Streams\Api\Endpoints\Entries;
 
 use Streams\Api\ApiResponse;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\URL;
+use Streams\Api\Builders\Endpoints\ApiEndpoint;
 use Streams\Core\Support\Facades\Streams;
 use Streams\Core\Entry\Contract\EntryInterface;
-use Streams\Core\Support\Traits\FiresCallbacks;
 
-class ShowEntry extends Controller
+class ShowEntry extends ApiEndpoint
 {
-    use FiresCallbacks;
-
-    protected static ?string $stream = null;
-
-    protected static ?string $resource = null;
-
     public function __invoke(?string $stream = null, ?string $entry = null, ?string $map = null): JsonResponse
     {
-        $stream = stream($stream ?: static::$stream);
+        $stream = $this->resolveStream($stream);
 
         $response = new ApiResponse($stream);
 
@@ -37,23 +30,38 @@ class ShowEntry extends Controller
         return $response->make($instance);
     }
 
-    public function addRelationshipLinks(ApiResponse $response, EntryInterface $instance)
+    public function addRelationshipLinks(ApiResponse $response, EntryInterface $instance): void
     {
         foreach ($instance->stream()->fields as $field) {
-
             if ($field->type == 'relationship') {
-
                 if (! $value = $instance->getAttribute($field->handle)) {
                     continue;
                 }
 
-                $stream = Streams::make($field->config('related'));
+                $related = Streams::make($field->config('related'));
 
                 $response->addLink($field->handle, URL::route('streams.api.entries.show', [
-                    'stream' => $stream->id,
+                    'stream' => $related->id,
                     'entry' => $value,
                 ]));
             }
         }
+    }
+
+    protected function getDefaultUri(): ?string
+    {
+        return 'streams/{stream}/entries/{entry}';
+    }
+
+    protected function getDefaultMethods(): string|array
+    {
+        return 'get';
+    }
+
+    protected function getDefaultWhere(): array
+    {
+        return [
+            'entry' => '(.*)',
+        ];
     }
 }

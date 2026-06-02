@@ -78,29 +78,55 @@ The API is registered via `ApiServiceProvider`. It automatically:
 
 - Registers console commands (`api:schema`, `api:documentation`)
 - Sets up the API manager and facade
-- Configures route registration
+- Loads [`resources/routes/api.php`](../resources/routes/api.php) with the default interface, streams, and entries resources
 
-## Enabling Default Routes
+## API Gate Middleware
 
-To use the default API endpoints, call the route registration methods in your `RouteServiceProvider` or `AppServiceProvider`:
+Routes are always registered. Whether requests are served is controlled by `EnsureApiIsEnabled` (extend in your app like `VerifyCsrfToken`):
 
 ```php
+'gate_middleware' => \App\Http\Middleware\EnsureApiIsEnabled::class,
+'gate_status' => 404,
+'gate_except' => [],
+```
+
+## Registering Routes
+
+No CRUD routes are registered automatically. Register an interface with explicit resources and/or endpoints:
+
+```php
+use Streams\Api\ApiInterface;
+use Streams\Api\Resources\EntriesResource;
+use Streams\Api\Resources\StreamsResource;
 use Streams\Api\Support\Facades\API;
 
-public function boot()
-{
-    API::routeEntries();  // Registers entry endpoints
-    API::routeStreams();   // Registers stream management endpoints
-}
+API::interface(
+    ApiInterface::make('api')
+        ->path(config('streams.api.prefix'))
+        ->resources([
+            StreamsResource::class,
+            EntriesResource::class,
+        ])
+);
+```
+
+Helpers for the default interface (`STREAMS_API_DEFAULT_INTERFACE`, default `api`):
+
+```php
+API::routeCrud();      // streams + entries resources
+API::routeEntries();   // EntriesResource only
+API::routeStreams();   // StreamsResource only
 ```
 
 ## Environment Variables Reference
 
 | Variable | Default | Description |
 |----------|---------|-------------|
-| `STREAMS_API_ENABLED` | `false` | Enable/disable the API |
+| `STREAMS_API_ENABLED` | `false` | Enable/disable the API (gate middleware) |
 | `STREAMS_API_PREFIX` | `api` | Base URL prefix |
 | `STREAMS_API_MIDDLEWARE` | `api` | Middleware group(s) |
+| `STREAMS_API_DEFAULT_INTERFACE` | `api` | Default interface identifier |
+| `STREAMS_API_GATE_STATUS` | `404` | HTTP status when API is disabled |
 
 ## Next Steps
 

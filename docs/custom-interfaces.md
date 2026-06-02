@@ -16,26 +16,22 @@ Use the `ApiInterface` class to define custom API interfaces:
 
 ```php
 use Streams\Api\ApiInterface;
+use Streams\Api\Resources\EntriesResource;
+use Streams\Api\Resources\StreamsResource;
 use Streams\Api\Support\Facades\API;
 
-$api = new ApiInterface('v1');
-$api->path('api/v1');
-$api->middleware(['auth:sanctum', 'throttle:60,1']);
+$api = ApiInterface::make('v1')
+    ->path('api/v1')
+    ->middleware(['auth:sanctum', 'throttle:60,1'])
+    ->resources([
+        StreamsResource::class,
+        EntriesResource::class,
+    ]);
 
 API::interface($api);
 ```
 
-Then register routes in your service provider:
-
-```php
-use Streams\Api\Support\Facades\API;
-
-public function boot()
-{
-    API::routeEntries();
-    API::routeStreams();
-}
-```
+Routes are only registered for interfaces you pass to `API::interface()`. Nothing is mounted automatically at boot.
 
 ## Interface Configuration
 
@@ -189,10 +185,6 @@ class ApiServiceProvider extends ServiceProvider
         });
         
         API::interface($admin);
-        
-        // Register default routes for all interfaces
-        API::routeEntries();
-        API::routeStreams();
     }
 }
 ```

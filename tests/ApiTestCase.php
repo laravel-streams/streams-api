@@ -17,8 +17,11 @@ abstract class ApiTestCase extends TestCase
     {
         parent::setUp();
 
-        // Register API routes for testing
-        API::routeEntries();
-        API::routeStreams();
+        config([
+            'streams.api.enabled' => true,
+        ]);
+
+        // Register default API interface with explicit CRUD resources for testing
+        API::routeCrud();
     }
 }

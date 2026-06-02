@@ -1,16 +1,16 @@
 <?php
 
-namespace Streams\Api\Http\Controller\Entries;
+namespace Streams\Api\Endpoints\Entries;
 
 use Streams\Api\ApiResponse;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Routing\Controller;
+use Streams\Api\Builders\Endpoints\ApiEndpoint;
 use Streams\Core\Criteria\Criteria;
 use Illuminate\Support\Facades\Request;
 
-class QueryEntries extends Controller
+class QueryEntries extends ApiEndpoint
 {
-    protected $protected = [
+    protected array $protected = [
         'delete',
         'truncate',
     ];
@@ -37,11 +37,10 @@ class QueryEntries extends Controller
         return $response->make();
     }
 
-    protected function performPayload(Criteria $criteria, $payload)
+    protected function performPayload(Criteria $criteria, $payload): void
     {
         foreach ($payload as $parameter) {
             foreach ($parameter as $method => $arguments) {
-
                 if (in_array($method, $this->protected)) {
                     throw new \Exception("Method [$method] not allowed.");
                 }
@@ -49,5 +48,15 @@ class QueryEntries extends Controller
                 $criteria->{$method}(...$arguments);
             }
         }
+    }
+
+    protected function getDefaultUri(): ?string
+    {
+        return 'streams/{stream}/query';
+    }
+
+    protected function getDefaultMethods(): string|array
+    {
+        return 'post';
     }
 }

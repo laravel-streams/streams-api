@@ -1,25 +1,18 @@
 <?php
 
-namespace Streams\Api\Http\Controller\Entries;
+namespace Streams\Api\Endpoints\Entries;
 
 use Streams\Api\ApiResponse;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Routing\Controller;
+use Streams\Api\Builders\Endpoints\ApiEndpoint;
 use Streams\Core\Criteria\Criteria;
 use Illuminate\Support\Facades\Request;
-use Streams\Core\Support\Traits\FiresCallbacks;
 
-class GetEntries extends Controller
+class ListEntries extends ApiEndpoint
 {
-    use FiresCallbacks;
-
-    protected static ?string $stream = null;
-
-    protected static ?string $resource = null;
-
     public function __invoke(?string $stream = null): JsonResponse
     {
-        $stream = stream($stream ?: static::$stream);
+        $stream = $this->resolveStream($stream);
 
         $response = new ApiResponse($stream);
 
@@ -43,12 +36,10 @@ class GetEntries extends Controller
 
     protected function applyFilters(Criteria $criteria, array $filters = []): void
     {
-        // Handle where[] parameters
         $constraints = Request::query('constraint', []);
 
         foreach (Request::query('where', []) as $field => $value) {
             if (isset($constraints[$field])) {
-                // Use constraint operator if provided
                 $criteria->where($field, $constraints[$field], $value);
             } elseif (is_array($value)) {
                 foreach ($value as $operator => $operand) {
@@ -66,5 +57,15 @@ class GetEntries extends Controller
         if ($limit = Request::query('limit')) {
             $criteria->limit($limit, Request::query('skip', 0));
         }
+    }
+
+    protected function getDefaultUri(): ?string
+    {
+        return 'streams/{stream}/entries';
+    }
+
+    protected function getDefaultMethods(): string|array
+    {
+        return 'get';
     }
 }

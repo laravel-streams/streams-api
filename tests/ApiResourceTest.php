@@ -48,7 +48,7 @@ class ApiResourceTest extends ApiTestCase
         // Mock the API facade to return our interface
         $baseName = $resource::getRouteBaseName('admin');
 
-        $this->assertEquals('streams.ui.admin.posts', $baseName);
+        $this->assertEquals('streams.api.admin.posts', $baseName);
     }
 
     public function test_get_route_base_name_replaces_slashes_with_dots()
@@ -60,7 +60,7 @@ class ApiResourceTest extends ApiTestCase
 
         $baseName = $resource::getRouteBaseName('admin');
 
-        $this->assertEquals('streams.ui.admin.admin.posts', $baseName);
+        $this->assertEquals('streams.api.admin.admin.posts', $baseName);
     }
 
     public function test_get_route_middleware_returns_empty_array_by_default()
@@ -96,7 +96,7 @@ class ApiResourceTest extends ApiTestCase
         $interface = new ApiInterface;
         $middleware = $resource::getRouteMiddleware($interface);
 
-        $this->assertEquals('auth', $middleware);
+        $this->assertEquals(['auth'], $middleware);
     }
 
     public function test_get_without_route_middleware_returns_empty_array_by_default()
@@ -132,7 +132,7 @@ class ApiResourceTest extends ApiTestCase
         $interface = new ApiInterface;
         $withoutMiddleware = $resource::getWithoutRouteMiddleware($interface);
 
-        $this->assertEquals('throttle', $withoutMiddleware);
+        $this->assertEquals(['throttle'], $withoutMiddleware);
     }
 
     public function test_get_endpoints_returns_empty_array_by_default()

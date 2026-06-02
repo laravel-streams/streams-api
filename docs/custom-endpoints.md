@@ -104,6 +104,49 @@ $api->routes(function ($interface) {
 });
 ```
 
+## Endpoint Builders
+
+Built-in CRUD uses **endpoint builders** (mirroring streams-ui panel pages). Extend `ApiEndpoint`, override `setUp()` for defaults, and register routes via `EndpointRouter`:
+
+```php
+namespace App\Api\Endpoints;
+
+use Streams\Api\ApiResponse;
+use Streams\Api\Builders\Endpoints\ApiEndpoint;
+use Streams\Core\Support\Facades\Streams;
+
+class FeaturedPosts extends ApiEndpoint
+{
+    protected function setUp(): void
+    {
+        $this->routeMiddleware('auth:sanctum');
+    }
+
+    public function __invoke(): \Illuminate\Http\JsonResponse
+    {
+        $posts = Streams::entries('posts')
+            ->where('featured', true)
+            ->limit(10)
+            ->get();
+
+        return ApiResponse::make($posts);
+    }
+}
+```
+
+Register on a resource with `getEndpoints()`:
+
+```php
+use App\Api\Endpoints\FeaturedPosts;
+
+public static function getEndpoints(): array
+{
+    return [
+        'featured' => FeaturedPosts::route('featured', 'get'),
+    ];
+}
+```
+
 ## API Resources
 
 For organized, reusable endpoint groups, create API resources:
@@ -112,91 +155,22 @@ For organized, reusable endpoint groups, create API resources:
 namespace App\Api\Resources;
 
 use Streams\Api\ApiResource;
-use Streams\Api\ApiInterface;
 use Streams\Api\ApiResponse;
-use Illuminate\Support\Facades\Route;
+use App\Api\Endpoints\FeaturedPosts;
+use App\Api\Endpoints\TrendingPosts;
 
 class PostsResource extends ApiResource
 {
     protected static ?string $slug = 'posts';
-    
-    protected static ?string $routeMiddleware = 'auth:sanctum';
-    
-    public static function routes(ApiInterface $interface): void
+
+    protected static string|array $middleware = ['auth:sanctum'];
+
+    public static function getEndpoints(): array
     {
-        Route::get('featured', [static::class, 'featured'])
-            ->name('featured');
-            
-        Route::get('trending', [static::class, 'trending'])
-            ->name('trending');
-            
-        Route::get('{post}/related', [static::class, 'related'])
-            ->name('related');
-            
-        Route::post('{post}/publish', [static::class, 'publish'])
-            ->name('publish');
-    }
-    
-    public function featured()
-    {
-        $posts = Streams::entries('posts')
-            ->where('featured', true)
-            ->where('status', 'published')
-            ->orderBy('featured_at', 'desc')
-            ->limit(10)
-            ->get();
-            
-        return ApiResponse::make($posts);
-    }
-    
-    public function trending()
-    {
-        $posts = Streams::entries('posts')
-            ->where('status', 'published')
-            ->where('created_at', '>=', now()->subDays(7))
-            ->orderBy('views', 'desc')
-            ->limit(10)
-            ->get();
-            
-        return ApiResponse::make($posts);
-    }
-    
-    public function related(string $post)
-    {
-        $entry = Streams::entries('posts')->find($post);
-        
-        if (!$entry) {
-            return ApiResponse::make()
-                ->setStatusCode(404)
-                ->addError('Post not found');
-        }
-        
-        $related = Streams::entries('posts')
-            ->where('category', $entry->category)
-            ->where('id', '!=', $post)
-            ->where('status', 'published')
-            ->limit(5)
-            ->get();
-            
-        return ApiResponse::make($related);
-    }
-    
-    public function publish(string $post)
-    {
-        $entry = Streams::entries('posts')->find($post);
-        
-        if (!$entry) {
-            return ApiResponse::make()
-                ->setStatusCode(404)
-                ->addError('Post not found');
-        }
-        
-        $entry->status = 'published';
-        $entry->published_at = now();
-        $entry->save();
-        
-        return ApiResponse::make($entry)
-            ->setStatusCode(200);
+        return [
+            'featured' => FeaturedPosts::route('featured', 'get'),
+            'trending' => TrendingPosts::route('trending', 'get'),
+        ];
     }
 }
 ```
@@ -204,14 +178,18 @@ class PostsResource extends ApiResource
 Register the resource:
 
 ```php
+use Streams\Api\ApiInterface;
+use Streams\Api\Support\Facades\API;
+
+$api = ApiInterface::make('v1')->path('api/v1');
 $api->resources([PostsResource::class]);
+
+API::interface($api);
 ```
 
-Routes created:
-- `GET /api/v1/posts/featured`
-- `GET /api/v1/posts/trending`
-- `GET /api/v1/posts/{post}/related`
-- `POST /api/v1/posts/{post}/publish`
+Routes created (with interface `v1`):
+- `GET /api/v1/posts/featured` → `streams.api.v1.posts.featured`
+- `GET /api/v1/posts/trending` → `streams.api.v1.posts.trending`
 
 ## Working with Streams Data
 

@@ -2,8 +2,10 @@
 
 namespace Streams\Api;
 
-use Streams\Api\Support\Facades\API;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Route;
+use Streams\Api\Builders\Endpoints\EndpointRouter;
+use Streams\Api\Support\Facades\API;
 
 class ApiResource
 {
@@ -15,53 +17,70 @@ class ApiResource
 
     public static function routes(ApiInterface $interface): void
     {
-        // $slug = static::getSlug();
-
-        // Route::name(
-        //     (string) str($slug)
-        //         ->replace('/', '.')
-        //         ->append('.'),
-        // )
-        //     ->prefix($slug)
-        //     ->middleware(static::getRouteMiddleware($interface) ?: ['web'])
-        //     ->withoutMiddleware(static::getWithoutRouteMiddleware($interface))
-        //     ->group(function () use ($interface) {
-        //         foreach (static::getEndpoints() as $name => $endpoint) {
-        //             // $endpoint->registerRoute($interface)?->name($name);
-        //         }
-        //     });
-
         $slug = static::getSlug();
 
-        Route::name(
-            (string) str($slug)
-                ->replace('/', '.')
-                ->append('.'),
-        )
-            ->prefix($slug)
-            // ->middleware(static::getRouteMiddleware($panel) ?: ['web'])
-            // ->withoutMiddleware(static::getWithoutRouteMiddleware($panel))
-            ->group(function () {
-                foreach (static::getEndpoints() as $route => $endpoint) {
-                    // foreach ($resource::getPages() as $route => $endpoint) {
-                    Route::any($route, $endpoint);
+        $group = Route::name(static::getRouteNamePrefix($interface));
+
+        if (static::usesRoutePrefix() && filled($slug)) {
+            $group = $group->prefix($slug);
+        }
+
+        $group
+            ->middleware(static::getRouteMiddleware($interface) ?: [])
+            ->withoutMiddleware(static::getWithoutRouteMiddleware($interface))
+            ->group(function () use ($interface) {
+                foreach (static::getEndpoints() as $name => $endpoint) {
+                    if ($endpoint instanceof EndpointRouter) {
+                        $endpoint->registerRoute($interface)?->name($name);
+                    } elseif (\is_string($endpoint) || \is_array($endpoint) || $endpoint instanceof \Closure) {
+                        Route::any($name, $endpoint);
+                    }
                 }
             });
-
-        // foreach (static::getEndpoints() as $route => $endpoint) {
-        //     // foreach ($resource::getPages() as $route => $endpoint) {
-        //     //     // $endpoint::routes($interface);
-        //     Route::any($route, $endpoint);
-        // }
     }
 
-    public static function getRouteBaseName(?string $interface = null): string
+    public static function usesRoutePrefix(): bool
     {
-        $interface ??= API::currentApiInterface()->getId();
+        return true;
+    }
+
+    protected static function getRouteNamePrefix(ApiInterface $interface): string
+    {
+        $slug = (string) str(static::getSlug())
+            ->replace('/', '.')
+            ->append('.');
+
+        $interfaceId = $interface->getId();
+        $defaultId = config('streams.api.default_interface', 'api');
+
+        if ($interfaceId && $interfaceId !== $defaultId) {
+            return "{$interfaceId}.{$slug}";
+        }
+
+        return $slug;
+    }
+
+    public static function getRouteBaseName(string|ApiInterface|null $interface = null): string
+    {
+        if (\is_string($interface)) {
+            $interfaceId = $interface;
+        } elseif ($interface instanceof ApiInterface) {
+            $interfaceId = $interface->getId();
+        } else {
+            $interfaceId = ($interface ?? API::currentApiInterface())?->getId();
+        }
+
+        $defaultId = config('streams.api.default_interface', 'api');
+
+        if ($interfaceId && $interfaceId !== $defaultId) {
+            return (string) str(static::getSlug())
+                ->replace('/', '.')
+                ->prepend("streams.api.{$interfaceId}.");
+        }
 
         return (string) str(static::getSlug())
             ->replace('/', '.')
-            ->prepend("streams.ui.{$interface}.");
+            ->prepend('streams.api.');
     }
 
     public static function getSlug(): string
@@ -73,12 +92,12 @@ class ApiResource
 
     public static function getRouteMiddleware(ApiInterface $interface): string|array
     {
-        return static::$middleware;
+        return Arr::wrap(static::$middleware);
     }
 
     public static function getWithoutRouteMiddleware(ApiInterface $interface): string|array
     {
-        return static::$withoutMiddleware;
+        return Arr::wrap(static::$withoutMiddleware);
     }
 
     public static function getEndpoints(): array

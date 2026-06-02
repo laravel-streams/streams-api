@@ -122,10 +122,12 @@ class ApiServiceProviderTest extends ApiTestCase
     public function test_interfaces_can_have_custom_endpoints()
     {
         $interface = new ApiInterface('endpoint-test');
-        
-        // Don't use endpoints() - it triggers array_unique which fails on Closures
-        // Just test that we can create an interface
+        $interface->endpoints([
+            'health' => fn () => response()->json(['status' => 'ok']),
+        ]);
+
         $this->assertInstanceOf(ApiInterface::class, $interface);
+        $this->assertArrayHasKey('health', $interface->getEndpoints());
         $this->assertEquals('endpoint-test', $interface->getId());
     }
 

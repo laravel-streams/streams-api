@@ -96,7 +96,7 @@ class ApiInterfaceTest extends ApiTestCase
         $this->assertContains('comments', $resources);
     }
 
-    public function test_resources_removes_duplicates()
+    public function test_resources_merges_without_stripping_duplicates()
     {
         $interface = new ApiInterface;
         $interface->resources(['posts']);
@@ -104,7 +104,8 @@ class ApiInterfaceTest extends ApiTestCase
 
         $resources = $interface->getResources();
 
-        $this->assertCount(2, $resources);
+        $this->assertCount(3, $resources);
+        $this->assertSame(['posts', 'posts', 'comments'], $resources);
     }
 
     public function test_resources_returns_instance_for_chaining()
@@ -140,7 +141,7 @@ class ApiInterfaceTest extends ApiTestCase
         $this->assertContains('api.users.show', $endpoints);
     }
 
-    public function test_endpoints_removes_duplicates()
+    public function test_endpoints_merges_without_stripping_duplicates()
     {
         $interface = new ApiInterface;
         $interface->endpoints(['api.users.index']);
@@ -148,7 +149,7 @@ class ApiInterfaceTest extends ApiTestCase
 
         $endpoints = $interface->getEndpoints();
 
-        $this->assertCount(2, $endpoints);
+        $this->assertCount(3, $endpoints);
     }
 
     public function test_endpoints_returns_instance_for_chaining()

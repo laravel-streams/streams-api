@@ -36,7 +36,40 @@ Enable the API in your `.env` file:
 STREAMS_API_ENABLED=true
 ```
 
-That's it! Your API is now available at `/api` with automatic endpoints for all your streams.
+Routes register automatically when the package boots. Access is controlled by extendable gate middleware (similar to Laravel's CSRF middleware). Create `app/Http/Middleware/EnsureApiIsEnabled.php` extending the package middleware to customize when the API is available:
+
+```php
+namespace App\Http\Middleware;
+
+use Streams\Api\Http\Middleware\EnsureApiIsEnabled as Middleware;
+
+class EnsureApiIsEnabled extends Middleware
+{
+    protected function shouldEnable(\Illuminate\Http\Request $request): bool
+    {
+        return parent::shouldEnable($request) && ! $request->header('X-Internal');
+    }
+}
+```
+
+Register your class in `config/streams/api.php` under `gate_middleware`.
+
+Register routes explicitly (built-in CRUD is opt-in via resources):
+
+```php
+use Streams\Api\ApiInterface;
+use Streams\Api\Resources\EntriesResource;
+use Streams\Api\Resources\StreamsResource;
+use Streams\Api\Support\Facades\API;
+
+API::interface(
+    ApiInterface::make('api')
+        ->path('api')
+        ->resources([StreamsResource::class, EntriesResource::class])
+);
+```
+
+Your API is then available at `/api/streams`, `/api/streams/{stream}/entries`, and so on.
 
 ## Default Endpoints
 

@@ -1,15 +1,15 @@
 <?php
 
-namespace Streams\Api\Http\Controller\Entries;
+namespace Streams\Api\Endpoints\Entries;
 
 use Streams\Api\ApiResponse;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Facades\Request;
+use Streams\Api\Builders\Endpoints\ApiEndpoint;
 use Symfony\Component\HttpFoundation\ParameterBag;
 
-class CreateEntry extends Controller
+class CreateEntry extends ApiEndpoint
 {
     protected ParameterBag $payload;
 
@@ -26,6 +26,8 @@ class CreateEntry extends Controller
         if (! isset($this->payload)) {
             $this->payload = new ParameterBag(Request::post());
         }
+
+        parent::__construct();
     }
 
     public function __invoke(string $stream): JsonResponse
@@ -41,7 +43,6 @@ class CreateEntry extends Controller
         $valid = $validator->passes();
 
         if ($valid) {
-
             $instance->save();
 
             $response->setStatus(201);
@@ -62,7 +63,6 @@ class CreateEntry extends Controller
         }
 
         if (! $valid) {
-
             $messages = $validator->messages();
 
             $response->setStatus(409);
@@ -75,5 +75,15 @@ class CreateEntry extends Controller
         }
 
         return $response->make();
+    }
+
+    protected function getDefaultUri(): ?string
+    {
+        return 'streams/{stream}/entries';
+    }
+
+    protected function getDefaultMethods(): string|array
+    {
+        return 'post';
     }
 }

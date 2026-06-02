@@ -27,19 +27,50 @@ Enable the API in your `.env`:
 STREAMS_API_ENABLED=true
 ```
 
-Register routes in your `AppServiceProvider`:
+Routes register automatically when the package boots. Enable access in `.env`:
+
+```env
+STREAMS_API_ENABLED=true
+```
+
+Extend the API gate middleware in your application (like Laravel's `VerifyCsrfToken`):
 
 ```php
-use Streams\Api\Support\Facades\API;
+// app/Http/Middleware/EnsureApiIsEnabled.php
+namespace App\Http\Middleware;
 
-public function boot()
+use Streams\Api\Http\Middleware\EnsureApiIsEnabled as Middleware;
+
+class EnsureApiIsEnabled extends Middleware
 {
-    API::routeEntries();  // Entry CRUD endpoints
-    API::routeStreams();   // Stream management endpoints
+    protected function shouldEnable(\Illuminate\Http\Request $request): bool
+    {
+        return parent::shouldEnable($request);
+    }
 }
 ```
 
-That's it! Your API is now available at `/api`.
+Point `gate_middleware` in `config/streams/api.php` to your class.
+
+Routes are registered only for interfaces you define. Opt into built-in stream/entry CRUD explicitly:
+
+```php
+use Streams\Api\ApiInterface;
+use Streams\Api\Resources\EntriesResource;
+use Streams\Api\Resources\StreamsResource;
+use Streams\Api\Support\Facades\API;
+
+API::interface(
+    ApiInterface::make('api')
+        ->path('api')
+        ->resources([StreamsResource::class, EntriesResource::class])
+);
+
+// Or use helpers on the default interface:
+API::routeCrud(); // both StreamsResource + EntriesResource
+API::routeEntries(); // entries only
+API::routeStreams(); // streams only
+```
 
 ## Documentation
 
@@ -113,27 +144,31 @@ Content-Type: application/json
 use Streams\Api\ApiInterface;
 use Streams\Api\Support\Facades\API;
 
-$api = new ApiInterface('v1');
-$api->path('api/v1');
-$api->middleware(['auth:sanctum', 'throttle:60,1']);
+$api = ApiInterface::make('v1')
+    ->path('api/v1')
+    ->middleware(['auth:sanctum', 'throttle:60,1']);
 
 API::interface($api);
-API::routeEntries();
 ```
 
-### Custom Endpoint
+### Custom Endpoint Builder
 
 ```php
+use Streams\Api\Builders\Endpoints\ApiEndpoint;
 use Streams\Api\ApiResponse;
 
-$api->endpoints([
-    'featured' => function () {
-        $posts = Streams::entries('posts')
-            ->where('featured', true)
-            ->get();
-            
-        return ApiResponse::make($posts);
+class FeaturedPosts extends ApiEndpoint
+{
+    public function __invoke()
+    {
+        return ApiResponse::make(
+            Streams::entries('posts')->where('featured', true)->get()
+        );
     }
+}
+
+$api->resources([
+    PostsResource::class, // getEndpoints() returns FeaturedPosts::route('featured', 'get')
 ]);
 ```
 
@@ -151,6 +186,8 @@ return [
     'enabled' => env('STREAMS_API_ENABLED', false),
     'prefix' => env('STREAMS_API_PREFIX', 'api'),
     'middleware' => env('STREAMS_API_MIDDLEWARE', 'api'),
+    'gate_middleware' => \App\Http\Middleware\EnsureApiIsEnabled::class,
+    'default_interface' => env('STREAMS_API_DEFAULT_INTERFACE', 'api'),
 ];
 ```
 
