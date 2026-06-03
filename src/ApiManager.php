@@ -18,6 +18,32 @@ class ApiManager
 
     protected ?string $current = null;
 
+    protected ?\Closure $tenant = null;
+
+    public function tenant(\Closure $tenant): void
+    {
+        $this->tenant = $tenant;
+    }
+
+    public function getTenant(): mixed
+    {
+        $key = 'streams.api.tenant';
+
+        if (app()->bound($key)) {
+            return app($key);
+        }
+
+        if (($interface = $this->currentApiInterface()) && $interface->hasTenant()) {
+            $tenant = $interface->getTenant();
+        } else {
+            $tenant = $this->tenant ? call_user_func($this->tenant) : null;
+        }
+
+        app()->instance($key, $tenant);
+
+        return $tenant;
+    }
+
     public function interface(ApiInterface $interface): void
     {
         $id = $interface->getId() ?? spl_object_hash($interface);
