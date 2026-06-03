@@ -361,7 +361,7 @@ public function create(Request $request)
     
     $exists = Streams::entries('posts')
         ->where('slug', $slug)
-        ->exists();
+        ->first() !== null;
     
     if ($exists) {
         return ApiResponse::make()
