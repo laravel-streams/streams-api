@@ -5,12 +5,15 @@ namespace Streams\Api\Endpoints\Entries;
 use Streams\Api\ApiResponse;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\URL;
-use Streams\Api\Builders\Endpoints\ApiEndpoint;
 use Streams\Core\Support\Facades\Streams;
+use Streams\Api\Builders\Endpoints\ApiEndpoint;
 use Streams\Core\Entry\Contract\EntryInterface;
+use Streams\Api\Endpoints\Entries\Concerns\AppliesEagerLoading;
 
 class ShowEntry extends ApiEndpoint
 {
+    use AppliesEagerLoading;
+
     public function __invoke(?string $stream = null, ?string $entry = null, ?string $map = null): JsonResponse
     {
         $stream = $this->resolveStream($stream);
@@ -20,6 +23,8 @@ class ShowEntry extends ApiEndpoint
         $criteria = $response->stream->entries();
 
         $this->fire('apply', compact('criteria'));
+
+        $this->applyEagerLoading($criteria, $response->stream);
 
         if (! $instance = $criteria->find($entry)) {
             return $response->make(null, 404);
@@ -40,7 +45,7 @@ class ShowEntry extends ApiEndpoint
 
                 $related = Streams::make($field->config('related'));
 
-                $response->addLink($field->handle, URL::route('streams.api.entries.show', [
+                $response->addLink($field->relationName(), URL::route('streams.api.entries.show', [
                     'stream' => $related->id,
                     'entry' => $value,
                 ]));

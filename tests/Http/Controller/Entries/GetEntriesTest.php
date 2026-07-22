@@ -78,4 +78,35 @@ class GetEntriesTest extends ApiTestCase
         $this->assertTrue(isset($response['meta']['last_page']));
         $this->assertTrue(isset($response['meta']['current_page']));
     }
+
+    public function test_it_eager_loads_requested_relationships()
+    {
+        $response = $this->get(URL::route('streams.api.entries.list', [
+            'stream' => 'people',
+            'with' => ['homeworld'],
+            'limit' => 1,
+        ]));
+
+        $response->assertStatus(200);
+
+        $person = array_values($response['data'])[0];
+
+        $this->assertIsArray($person['homeworld']);
+        $this->assertEquals('Tatooine', $person['homeworld']['name']);
+    }
+
+    public function test_it_ignores_unknown_with_relations()
+    {
+        $response = $this->get(URL::route('streams.api.entries.list', [
+            'stream' => 'people',
+            'with' => ['not_a_relation'],
+            'limit' => 1,
+        ]));
+
+        $response->assertStatus(200);
+
+        $person = array_values($response['data'])[0];
+
+        $this->assertTrue(is_scalar($person['homeworld']) || $person['homeworld'] === null);
+    }
 }

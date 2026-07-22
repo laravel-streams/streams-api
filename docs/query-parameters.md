@@ -113,7 +113,41 @@ Paginated responses include metadata:
 }
 ```
 
+## Sorting
+
+Use `order_by` to sort results:
+
+```http
+GET /api/streams/posts/entries?order_by[created_at]=desc
+GET /api/streams/posts/entries?order_by[title]=asc&order_by[id]=desc
+```
+
+## Eager Loading with `with`
+
+Load relationship fields inline using Criteria `with()`, matched by **relation name** — the relationship field's handle with a trailing `_id` stripped (or the handle itself when it has no `_id` suffix; see `RelationshipFieldType::relationName()`):
+
+```http
+GET /api/streams/people/entries?with[]=homeworld
+GET /api/streams/people/entries/1?with=homeworld
+GET /api/streams/people/entries?with=homeworld,species
+```
+
+Only stream fields with `type: relationship` are applied, matched by relation name. Unknown names are ignored.
+
+When loaded, the related entry is added under a **separate** key named for the relation (e.g. `homeworld`). The underlying `_id`-suffixed field (if the handle has one) always stays the scalar foreign key — eager loading never overwrites it.
+
+### Examples
+
+```http
+# List people with homeworld embedded
+GET /api/streams/people/entries?with[]=homeworld
+
+# Show one person with homeworld embedded
+GET /api/streams/people/entries/1?with[]=homeworld
+```
+
 ## Advanced Queries
+
 
 For complex queries, use the Query endpoint with JSON:
 

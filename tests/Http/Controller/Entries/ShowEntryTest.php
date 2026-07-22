@@ -67,4 +67,33 @@ class ShowEntryTest extends ApiTestCase
 
         $this->assertFalse(isset($response['links']['homeworld']));
     }
+
+    public function test_it_eager_loads_requested_relationships()
+    {
+        $response = $this->get(URL::route('streams.api.entries.show', [
+            'stream' => 'people',
+            'entry' => 1,
+            'with' => ['homeworld'],
+        ]));
+
+        $response->assertStatus(200);
+
+        $this->assertIsArray($response['data']['homeworld']);
+        $this->assertEquals('Tatooine', $response['data']['homeworld']['name']);
+        $this->assertTrue(isset($response['links']['homeworld']));
+    }
+
+    public function test_it_accepts_comma_separated_with_parameter()
+    {
+        $response = $this->get(URL::route('streams.api.entries.show', [
+            'stream' => 'people',
+            'entry' => 1,
+            'with' => 'homeworld',
+        ]));
+
+        $response->assertStatus(200);
+
+        $this->assertIsArray($response['data']['homeworld']);
+        $this->assertEquals('Tatooine', $response['data']['homeworld']['name']);
+    }
 }

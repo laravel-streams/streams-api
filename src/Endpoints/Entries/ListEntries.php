@@ -4,12 +4,15 @@ namespace Streams\Api\Endpoints\Entries;
 
 use Streams\Api\ApiResponse;
 use Illuminate\Http\JsonResponse;
-use Streams\Api\Builders\Endpoints\ApiEndpoint;
 use Streams\Core\Criteria\Criteria;
 use Illuminate\Support\Facades\Request;
+use Streams\Api\Builders\Endpoints\ApiEndpoint;
+use Streams\Api\Endpoints\Entries\Concerns\AppliesEagerLoading;
 
 class ListEntries extends ApiEndpoint
 {
+    use AppliesEagerLoading;
+
     public function __invoke(?string $stream = null): JsonResponse
     {
         $stream = $this->resolveStream($stream);
@@ -21,6 +24,7 @@ class ListEntries extends ApiEndpoint
         $this->fire('apply', compact('criteria'));
 
         $this->applyFilters($criteria, $response->stream->fields->keys()->all());
+        $this->applyEagerLoading($criteria, $response->stream);
 
         $this->fire('applied', compact('criteria'));
 
