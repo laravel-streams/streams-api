@@ -33,7 +33,7 @@ class ApiResource
                     if ($endpoint instanceof EndpointRouter) {
                         $endpoint->registerRoute($interface)?->name($name);
                     } elseif (\is_string($endpoint) || \is_array($endpoint) || $endpoint instanceof \Closure) {
-                        Route::any($name, $endpoint);
+                        Route::get($name, $endpoint);
                     }
                 }
             });

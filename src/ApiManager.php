@@ -207,7 +207,7 @@ class ApiManager
                         if ($endpoint instanceof EndpointRouter) {
                             $endpoint->registerRoute($interface);
                         } elseif (\is_string($route)) {
-                            Route::any($route, $endpoint);
+                            Route::get($route, $endpoint);
                         }
                     }
 
