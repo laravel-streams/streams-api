@@ -8,7 +8,18 @@ description: Generate Swagger/OpenAPI documentation for your API automatically.
 
 # OpenAPI Documentation
 
-The Streams API can automatically generate OpenAPI 3.0 (Swagger) documentation for your API endpoints.
+The Streams API can generate OpenAPI 3.0 (Swagger) documentation for your API endpoints.
+
+## Static Reference
+
+The package ships a hand-maintained OpenAPI 3.0.3 document for the built-in routes at
+`resources/openapi/openapi.yaml` (`vendor/streams/api/resources/openapi/openapi.yaml` in an app).
+It describes the 13 routes that `API::routeCrud()` registers, with generic `{stream}` and `{entry}`
+path parameters, the query parameters, and the response envelope. A test
+(`tests/OpenApiDocumentTest.php`) fails when a registered route and the document disagree.
+
+Use it when you want a reference that does not depend on your stream definitions. Use
+`api:schema` below when you want per-stream schemas.
 
 ## Generating Documentation
 
@@ -20,7 +31,7 @@ Create an OpenAPI YAML schema:
 php artisan api:schema
 ```
 
-This creates `openapi.yaml` in your project root.
+This creates `api.yaml` in your project root.
 
 Custom output path:
 
@@ -36,23 +47,15 @@ Create a complete Swagger UI documentation site:
 php artisan api:documentation
 ```
 
-This creates a `docs/api/` directory with:
-- Swagger UI HTML/CSS/JS files
-- Auto-generated `openapi.yaml` schema
-- Interactive API documentation
-
-Custom output directory:
-
-```bash
-php artisan api:documentation public/api-docs
-```
+This copies Swagger UI into `public/swagger/` and writes the generated schema to
+`public/swagger/api.yaml`. The command takes no arguments.
 
 ## Viewing Documentation
 
 After running `api:documentation`, visit:
 
 ```
-http://your-app.test/docs/api/index.html
+http://your-app.test/swagger/index.html
 ```
 
 You'll see an interactive Swagger UI where you can:
