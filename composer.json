@@ -3,6 +3,12 @@
     "description": "A RESTful API for Laravel Streams.",
     "type": "streams-addon",
     "license": "MIT",
+    "homepage": "https://streams.dev",
+    "support": {
+        "issues": "https://github.com/laravel-streams/streams-api/issues",
+        "source": "https://github.com/laravel-streams/streams-api",
+        "docs": "https://streams.dev/docs/api/introduction"
+    },
     "prefer-stable": true,
     "minimum-stability": "dev",
     "authors": [
@@ -12,6 +18,7 @@
         }
     ],
     "require": {
+        "php": "^8.2",
         "streams/core": "^2.0",
         "justinrainbow/json-schema": "^5.2"
     },
@@ -33,7 +40,6 @@
     "scripts": {},
     "extra": {
         "branch-alias": {
-            "dev-master": "1.x-dev",
             "dev-develop": "1.1.x-dev"
         },
         "laravel": {
