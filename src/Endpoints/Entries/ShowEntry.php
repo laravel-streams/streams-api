@@ -45,12 +45,38 @@ class ShowEntry extends ApiEndpoint
 
                 $related = Streams::make($field->config('related'));
 
+                /*
+                 * When the relation was eager loaded under a relation
+                 * name equal to the field handle, the attribute holds
+                 * the related entry instead of its key.
+                 */
+                if (! $value = $this->relatedKey($value, $related->config('key_name', 'id'))) {
+                    continue;
+                }
+
                 $response->addLink($field->relationName(), URL::route('streams.api.entries.show', [
                     'stream' => $related->id,
                     'entry' => $value,
                 ]));
             }
         }
+    }
+
+    protected function relatedKey(mixed $value, string $keyName): mixed
+    {
+        if ($value instanceof EntryInterface) {
+            return $value->getAttribute($keyName);
+        }
+
+        if ($value instanceof \Illuminate\Contracts\Support\Arrayable) {
+            $value = $value->toArray();
+        }
+
+        if (is_array($value)) {
+            return $value[$keyName] ?? null;
+        }
+
+        return is_scalar($value) ? $value : null;
     }
 
     protected function getDefaultUri(): ?string
