@@ -80,7 +80,10 @@ class ShowEntryTest extends ApiTestCase
 
         $this->assertIsArray($response['data']['homeworld']);
         $this->assertEquals('Tatooine', $response['data']['homeworld']['name']);
-        $this->assertTrue(isset($response['links']['homeworld']));
+        $this->assertEquals(URL::route('streams.api.entries.show', [
+            'stream' => 'planets',
+            'entry' => 1,
+        ]), $response['links']['homeworld']);
     }
 
     public function test_it_accepts_comma_separated_with_parameter()
