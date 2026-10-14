@@ -1,306 +1,53 @@
 ---
-id: openapi
-sort_order: 7
-status: published
-title: OpenAPI Documentation
-description: Generate Swagger/OpenAPI documentation for your API automatically.
+title: OpenAPI
+nav_title: OpenAPI
+description: 'The generic OpenAPI reference, plus api:schema and api:documentation for your own app.'
+section: packages
+package: api
+order: 180
+tags: [api, openapi]
+status: ready
 ---
 
-# OpenAPI Documentation
+OpenAPI is generated output. The per-endpoint schemas in `streams/api` are the source of truth for the API contract: change those schemas and regenerate, never edit the YAML as the source.
 
-The Streams API can automatically generate OpenAPI 3.0 (Swagger) documentation for your API endpoints.
+## Reference spec
 
-## Generating Documentation
+The `streams/api` package ships an OpenAPI 3 description of its built-in endpoints in `resources/openapi/openapi.yaml`, and this site serves a copy at [/docs/api/openapi.yaml](/docs/api/openapi.yaml). It covers every route on `StreamsResource` and `EntriesResource` (the paths `API::routeCrud()` registers), the query parameters, and the response envelope. The package's own tests check that every registered route is documented and nothing else. Entry bodies are generic there because they depend on your streams.
 
-### Generate Schema
+In your own app the file is at `vendor/streams/api/resources/openapi/openapi.yaml`. The copy on this site is re-synced from the package with `php scripts/sync-openapi.php`; its header comment names the branch and commit it came from.
 
-Create an OpenAPI YAML schema:
+## Your app's spec
+
+Generate an OpenAPI document with per-stream schemas from your application's stream definitions.
+
+`api:schema` builds a tag, a component schema, and the `/streams/{id}/entries` and `/streams/{id}/entries/{entry}` paths for every stream. It does not include the stream-definition endpoints, the query endpoint, or custom endpoints, and its `info` block (contact, license) is placeholder text you should edit before publishing.
+
+## Dump schema
 
 ```bash
 php artisan api:schema
 ```
 
-This creates `openapi.yaml` in your project root.
+Writes OpenAPI YAML via `ApiSchema::create()`. Default output: `api.yaml` at project root.
 
-Custom output path:
+Custom path:
 
 ```bash
 php artisan api:schema storage/api/openapi.yaml
 ```
 
-### Generate Swagger UI
-
-Create a complete Swagger UI documentation site:
+## Swagger UI
 
 ```bash
 php artisan api:documentation
 ```
 
-This creates a `docs/api/` directory with:
-- Swagger UI HTML/CSS/JS files
-- Auto-generated `openapi.yaml` schema
-- Interactive API documentation
+Copies Swagger UI to `public/swagger/` and runs `api:schema public/swagger/api.yaml`.
 
-Custom output directory:
+View at: `http://your-app.test/swagger/index.html`
 
-```bash
-php artisan api:documentation public/api-docs
-```
+## Related
 
-## Viewing Documentation
-
-After running `api:documentation`, visit:
-
-```
-http://your-app.test/docs/api/index.html
-```
-
-You'll see an interactive Swagger UI where you can:
-- Browse all endpoints
-- View request/response schemas
-- Test endpoints directly in the browser
-- See authentication requirements
-
-## Schema Structure
-
-The generated OpenAPI schema includes:
-
-### API Information
-
-```yaml
-openapi: 3.0.2
-info:
-  title: Streams API
-  version: 1.0.0
-  description: RESTful API for Streams platform
-```
-
-### Servers
-
-```yaml
-servers:
-  - url: http://your-app.test/api
-    description: Development server
-```
-
-### Paths
-
-All registered routes with:
-- HTTP methods
-- Parameters
-- Request bodies
-- Response schemas
-- Authentication requirements
-
-### Components
-
-Reusable schemas for:
-- Entry models
-- Stream definitions
-- Error responses
-- Pagination metadata
-
-## Customizing Documentation
-
-### Adding Descriptions
-
-Use PHPDoc comments on your controllers:
-
-```php
-/**
- * Get featured posts
- *
- * Returns a list of posts marked as featured, sorted by featured date.
- *
- * @return \Illuminate\Http\JsonResponse
- */
-public function featured()
-{
-    $posts = Streams::entries('posts')
-        ->where('featured', true)
-        ->orderBy('featured_at', 'desc')
-        ->limit(10)
-        ->get();
-        
-    return ApiResponse::make($posts);
-}
-```
-
-### Adding Examples
-
-Document expected responses:
-
-```php
-/**
- * Create a new post
- *
- * @param Request $request
- * @return \Illuminate\Http\JsonResponse
- *
- * @example
- * Request:
- * {
- *   "title": "My New Post",
- *   "content": "Post content here...",
- *   "status": "draft"
- * }
- *
- * Response:
- * {
- *   "data": {
- *     "id": "post-123",
- *     "title": "My New Post",
- *     "status": "draft",
- *     "created_at": "2024-01-15T10:30:00Z"
- *   }
- * }
- */
-public function create(Request $request)
-{
-    // Implementation
-}
-```
-
-## Publishing to External Services
-
-### Export for API Gateway
-
-The generated OpenAPI schema works with:
-- AWS API Gateway
-- Azure API Management
-- Kong
-- Apigee
-
-Simply import the `openapi.yaml` file.
-
-### Share with Frontend Team
-
-The Swagger UI provides a shareable interface for frontend developers to:
-- Understand available endpoints
-- See request/response formats
-- Test API calls
-- Copy example code
-
-## Versioning Documentation
-
-Generate documentation for specific API versions:
-
-```bash
-# V1 API
-php artisan api:schema storage/api/v1/openapi.yaml
-php artisan api:documentation public/api-docs/v1
-
-# V2 API
-php artisan api:schema storage/api/v2/openapi.yaml
-php artisan api:documentation public/api-docs/v2
-```
-
-## CI/CD Integration
-
-Add to your deployment pipeline:
-
-```yaml
-# .github/workflows/deploy.yml
-- name: Generate API Documentation
-  run: |
-    php artisan api:schema
-    php artisan api:documentation
-    
-- name: Deploy Documentation
-  run: |
-    aws s3 sync docs/api/ s3://your-bucket/api-docs/
-```
-
-## Schema Validation
-
-The generated schema follows OpenAPI 3.0.2 specification and can be validated with tools like:
-- Swagger Editor
-- Spectral
-- OpenAPI Generator
-
-## Example Schema
-
-```yaml
-openapi: 3.0.2
-info:
-  title: Streams API
-  version: 1.0.0
-
-servers:
-  - url: http://localhost/api
-    description: Development
-
-paths:
-  /streams:
-    get:
-      summary: List all streams
-      responses:
-        '200':
-          description: Successful response
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  data:
-                    type: array
-                    items:
-                      $ref: '#/components/schemas/Stream'
-                      
-  /streams/{stream}/entries:
-    get:
-      summary: List entries
-      parameters:
-        - name: stream
-          in: path
-          required: true
-          schema:
-            type: string
-        - name: page
-          in: query
-          schema:
-            type: integer
-        - name: per_page
-          in: query
-          schema:
-            type: integer
-      responses:
-        '200':
-          description: Successful response
-
-components:
-  schemas:
-    Stream:
-      type: object
-      properties:
-        id:
-          type: string
-        name:
-          type: string
-        description:
-          type: string
-          
-    Entry:
-      type: object
-      properties:
-        id:
-          type: string
-        created_at:
-          type: string
-          format: date-time
-```
-
-## Best Practices
-
-1. **Regenerate regularly** - Keep docs in sync with code changes
-2. **Add descriptions** - Use PHPDoc comments
-3. **Include examples** - Show expected input/output
-4. **Version your docs** - Maintain docs for each API version
-5. **Automate generation** - Add to CI/CD pipeline
-6. **Test endpoints** - Use Swagger UI to verify endpoints work
-
-## Next Steps
-
-- [Testing](testing) - Test your API endpoints
-- [Deployment](deployment) - Deploy your API
-- [Security](security) - Secure your API
+- [Routes](/docs/api/routes)
+- [Examples](/docs/api/examples)

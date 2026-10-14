@@ -1,109 +1,65 @@
 ---
-id: introduction
-sort_order: 1
-status: published
-title: Introduction to Streams API
-description: Overview of the Streams API and platform goals.
+title: 'API: Introduction'
+nav_title: Introduction
+description: A criteria-scoped REST API for streams and entries. You opt in to routes and own authentication.
+section: packages
+package: api
+order: 10
+tags: [api, introduction]
+status: ready
 ---
 
-# Introduction
+Streams API (`streams/api`) turns your stream definitions into a REST API. It builds JSON responses for stream definitions and entries from the same [criteria](/docs/core/criteria) you use in PHP, so an endpoint returns exactly what `Streams::entries('posts')->where(...)->get()` would.
 
-The Streams API package provides a powerful, flexible RESTful API for managing streams and their entries in your Laravel application. Built on top of the Streams platform, it offers automatic CRUD endpoints, flexible query capabilities, and extensive customization options.
+## What it is
 
-## Key Features
+- **Resources and endpoints.** `StreamsResource` (list, show, create, update, patch, delete) and `EntriesResource` (list, show, create, update, patch, delete, query).
+- **Interfaces.** An `ApiInterface` groups resources under a path, domain, and middleware stack. You can register several (for example `v1` and `admin`).
+- **A consistent envelope.** Every response has `data`, `meta`, `links`, and `errors` keys. See [Responses](/docs/api/responses).
+- **Self-describing.** Responses carry a `self` link and `meta` (the query, payload, route parameters, and stream handle), and `GET /api/streams` returns the stream definitions themselves, which is what lets the [JavaScript client](/docs/client/introduction) discover the API.
+- **Optional HTTP caching** through the `ApiCache` middleware (ETags and `Cache-Control`). See [Caching](/docs/api/caching).
+- **Schema commands.** `php artisan api:schema` and `php artisan api:documentation` for OpenAPI output. See [OpenAPI](/docs/api/openapi).
 
-- **Automatic REST Endpoints**: Instantly get full CRUD operations for all your streams
-- **Query API**: Advanced filtering, pagination, and custom query methods
-- **Customizable Interfaces**: Create multiple API interfaces with different configurations
-- **Custom Endpoints**: Add your own endpoints alongside the generated ones
-- **Middleware Support**: Apply authentication, rate limiting, and other middleware at the interface or route level
-- **OpenAPI/Swagger Documentation**: Auto-generate API documentation
-- **Response Formatting**: Standardized JSON responses with flexible modifiers
-- **Caching**: Built-in HTTP caching with ETag support
-- [Native JS Client](https://github.com/laravel-streams/api-client)
+## Why it exists
 
-## Quick Start
+Streams already knows the shape of your data: fields, types, validation rules, and relationships live in `streams/*.json`. Writing CRUD controllers by hand repeats that knowledge and drifts from it. The API reads the stream definition at request time, so adding a field to a stream adds it to the API with no controller changes.
 
-Install the package via Composer:
+## What it does not do
+
+- **It does not authenticate anyone.** The package has no users, tokens, or policies. Your application owns the middleware. See [Authentication](/docs/api/authentication).
+- **It does not mount routes on its own.** Nothing is routed until you register an interface.
+- **It is not JSON:API.** Request bodies are flat field maps. See [Requests](/docs/api/requests).
+
+## How to use it
 
 ```bash
 composer require streams/api:1.0.x-dev
 ```
 
-Enable the API in your `.env` file:
-
 ```env
 STREAMS_API_ENABLED=true
 ```
 
-Routes register automatically when the package boots. Access is controlled by extendable gate middleware (similar to Laravel's CSRF middleware). Create `app/Http/Middleware/EnsureApiIsEnabled.php` extending the package middleware to customize when the API is available:
-
 ```php
-namespace App\Http\Middleware;
+// app/Providers/AppServiceProvider.php
+use Streams\Api\Support\Facades\API;
 
-use Streams\Api\Http\Middleware\EnsureApiIsEnabled as Middleware;
-
-class EnsureApiIsEnabled extends Middleware
+public function boot(): void
 {
-    protected function shouldEnable(\Illuminate\Http\Request $request): bool
-    {
-        return parent::shouldEnable($request) && ! $request->header('X-Internal');
-    }
+    API::routeCrud(); // streams + entries under /api
 }
 ```
 
-Register your class in `config/streams/api.php` under `gate_middleware`.
+`GET /api/streams/posts/entries` now lists entries. Protect it before you deploy: see [Authentication](/docs/api/authentication).
 
-Register routes explicitly (built-in CRUD is opt-in via resources):
+## How to extend it
 
-```php
-use Streams\Api\ApiInterface;
-use Streams\Api\Resources\EntriesResource;
-use Streams\Api\Resources\StreamsResource;
-use Streams\Api\Support\Facades\API;
+- Register more interfaces with their own paths and middleware: [Custom interfaces](/docs/api/custom-interfaces).
+- Add endpoints and resources: [Custom endpoints](/docs/api/custom-endpoints).
+- Resolve a tenant per request: [Tenancy](/docs/api/tenancy).
 
-API::interface(
-    ApiInterface::make('api')
-        ->path('api')
-        ->resources([StreamsResource::class, EntriesResource::class])
-);
-```
+## Related
 
-Your API is then available at `/api/streams`, `/api/streams/{stream}/entries`, and so on.
-
-## Default Endpoints
-
-Once enabled, the API provides these endpoints out of the box:
-
-### Streams Management
-```
-GET    /api/streams              # List all streams
-POST   /api/streams              # Create a stream
-GET    /api/streams/{stream}     # Get a stream
-PUT    /api/streams/{stream}     # Update a stream (replace)
-PATCH  /api/streams/{stream}     # Update a stream (merge)
-DELETE /api/streams/{stream}     # Delete a stream
-```
-
-### Entry Management
-```
-GET    /api/streams/{stream}/entries           # List entries
-POST   /api/streams/{stream}/entries           # Create an entry
-GET    /api/streams/{stream}/entries/{entry}   # Get an entry
-PUT    /api/streams/{stream}/entries/{entry}   # Update an entry (replace)
-PATCH  /api/streams/{stream}/entries/{entry}   # Update an entry (merge)
-DELETE /api/streams/{stream}/entries/{entry}   # Delete an entry
-```
-
-### Query Endpoint
-```
-POST   /api/streams/{stream}/query   # Advanced query with custom methods
-```
-
-## What's Next?
-
-- [Configuration](configuration) - Learn about API configuration options
-- [Query Parameters](query-parameters) - Master filtering and pagination
-- [Custom Interfaces](custom-interfaces) - Create multiple API configurations
-- [Custom Endpoints](custom-endpoints) - Add your own API routes
-- [Responses](responses) - Work with API responses and formatting
+- [Installation](/docs/api/installation)
+- [Routes](/docs/api/routes)
+- [Responses](/docs/api/responses)

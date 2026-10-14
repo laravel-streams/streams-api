@@ -1,163 +1,80 @@
 ---
-id: custom-endpoints
-sort_order: 5
-status: published
-title: Custom Endpoints
-description: Add custom API endpoints with full control over routing and logic.
+title: Custom endpoints
+nav_title: Custom endpoints
+description: Add endpoints to an interface, write ApiEndpoint classes, and group them in resources.
+section: packages
+package: api
+order: 140
+tags: [api, custom, endpoints]
+status: ready
 ---
 
-# Custom Endpoints
+Custom endpoints live on an [interface](/docs/api/custom-interfaces), so they share its path, middleware, and gate.
 
-While the Streams API provides automatic CRUD endpoints, you'll often need custom logic. Here's how to add your own endpoints.
+## Quick endpoints
 
-## Quick Custom Endpoints
-
-The simplest way is using the `endpoints()` method:
+String keys passed to `endpoints()` are registered as GET routes inside the interface group:
 
 ```php
 use Streams\Api\ApiInterface;
+use Streams\Api\Support\Facades\API;
 
-$api = new ApiInterface('v1');
-$api->endpoints([
-    'health' => function () {
-        return response()->json([
-            'status' => 'healthy',
-            'timestamp' => now(),
-        ]);
-    },
-]);
+API::interface(
+    ApiInterface::make('api')
+        ->path('api')
+        ->endpoints([
+            'health' => fn () => response()->json(['status' => 'ok']),
+            'stats' => \App\Http\Controllers\StatsController::class,
+        ])
+);
+// GET /api/health, GET /api/stats
 ```
 
-Access at: `GET /api/v1/health`
+## Endpoint classes
 
-## Using Controllers
-
-For more complex logic, use controllers:
+Extend `Streams\Api\Builders\Endpoints\ApiEndpoint`, implement `__invoke()`, and return `ApiResponse::make()`. The static `route()` method returns an `EndpointRouter` you can pass to `endpoints()` or a resource:
 
 ```php
-$api->endpoints([
-    'stats' => StatsController::class,
-    'export' => [ExportController::class, 'export'],
-]);
-```
+namespace App\Api;
 
-### Stats Controller Example
-
-```php
-namespace App\Http\Controllers\Api;
-
-use Streams\Api\ApiResponse;
-use Streams\Core\Support\Facades\Streams;
-
-class StatsController
-{
-    public function __invoke()
-    {
-        $stats = [
-            'total_posts' => Streams::entries('posts')->count(),
-            'published_posts' => Streams::entries('posts')
-                ->where('status', 'published')
-                ->count(),
-            'total_users' => Streams::entries('users')->count(),
-            'disk_usage' => $this->getDiskUsage(),
-        ];
-        
-        return ApiResponse::make($stats);
-    }
-    
-    private function getDiskUsage()
-    {
-        return [
-            'used' => disk_free_space('/'),
-            'total' => disk_total_space('/'),
-        ];
-    }
-}
-```
-
-## Routes Closure
-
-For complete routing control, use the `routes()` method:
-
-```php
-use Illuminate\Support\Facades\Route;
-
-$api->routes(function ($interface) {
-    // Simple GET route
-    Route::get('health', function () {
-        return response()->json(['status' => 'ok']);
-    })->name('health');
-    
-    // POST route with controller
-    Route::post('export', [ExportController::class, 'export'])
-        ->name('export');
-    
-    // Route with parameters
-    Route::get('posts/{post}/related', [PostController::class, 'related'])
-        ->name('posts.related');
-    
-    // Grouped routes
-    Route::prefix('admin')->middleware('admin')->group(function () {
-        Route::get('dashboard', [AdminController::class, 'dashboard']);
-        Route::post('cache/clear', [AdminController::class, 'clearCache']);
-    });
-});
-```
-
-## Endpoint Builders
-
-Built-in CRUD uses **endpoint builders** (mirroring streams-ui panel pages). Extend `ApiEndpoint`, override `setUp()` for defaults, and register routes via `EndpointRouter`:
-
-```php
-namespace App\Api\Endpoints;
-
+use Illuminate\Http\JsonResponse;
 use Streams\Api\ApiResponse;
 use Streams\Api\Builders\Endpoints\ApiEndpoint;
-use Streams\Core\Support\Facades\Streams;
 
 class FeaturedPosts extends ApiEndpoint
 {
-    protected function setUp(): void
+    public function __invoke(): JsonResponse
     {
-        $this->routeMiddleware('auth:sanctum');
-    }
+        $response = new ApiResponse('posts');
+        $criteria = $response->stream->entries();
 
-    public function __invoke(): \Illuminate\Http\JsonResponse
-    {
-        $posts = Streams::entries('posts')
-            ->where('featured', true)
-            ->limit(10)
-            ->get();
+        $this->fire('apply', compact('criteria'));
 
-        return ApiResponse::make($posts);
+        return $response->make(
+            $criteria->where('featured', true)->limit(10)->get()
+        );
     }
 }
 ```
 
-Register on a resource with `getEndpoints()`:
-
 ```php
-use App\Api\Endpoints\FeaturedPosts;
-
-public static function getEndpoints(): array
-{
-    return [
-        'featured' => FeaturedPosts::route('featured', 'get'),
-    ];
-}
+->endpoints([
+    FeaturedPosts::route('posts/featured', 'get', 'posts.featured'),
+])
 ```
 
-## API Resources
+`route(string $path, string|array $methods = 'get', ?string $routeName = null, array $where = [])` registers the route when the interface mounts. Endpoint instances also accept `routeMiddleware()` and `withoutRouteMiddleware()`.
 
-For organized, reusable endpoint groups, create API resources:
+Firing `apply` keeps your endpoint compatible with listeners such as [tenant scoping](/docs/api/tenancy).
+
+## Resources
+
+Group related endpoints in an `ApiResource`. Endpoint names are appended to the resource's route name prefix:
 
 ```php
-namespace App\Api\Resources;
+namespace App\Api;
 
 use Streams\Api\ApiResource;
-use Streams\Api\ApiResponse;
-use App\Api\Endpoints\FeaturedPosts;
-use App\Api\Endpoints\TrendingPosts;
 
 class PostsResource extends ApiResource
 {
@@ -169,215 +86,47 @@ class PostsResource extends ApiResource
     {
         return [
             'featured' => FeaturedPosts::route('featured', 'get'),
-            'trending' => TrendingPosts::route('trending', 'get'),
         ];
     }
 }
 ```
 
-Register the resource:
+With `usesRoutePrefix()` returning `true` (the default), routes are prefixed with the slug: `GET /api/posts/featured`, named `streams.api.posts.featured`. `EntriesResource` and `StreamsResource` return `false` because their paths already start with `streams/`.
+
+## Override a built-in endpoint
+
+Subclass a built-in endpoint and point a resource subclass at it:
 
 ```php
-use Streams\Api\ApiInterface;
-use Streams\Api\Support\Facades\API;
+use Streams\Api\Endpoints\Entries\CreateEntry;
+use Streams\Api\Resources\EntriesResource;
 
-$api = ApiInterface::make('v1')->path('api/v1');
-$api->resources([PostsResource::class]);
-
-API::interface($api);
-```
-
-Routes created (with interface `v1`):
-- `GET /api/v1/posts/featured` → `streams.api.v1.posts.featured`
-- `GET /api/v1/posts/trending` → `streams.api.v1.posts.trending`
-
-## Working with Streams Data
-
-### Querying Entries
-
-```php
-use Streams\Core\Support\Facades\Streams;
-
-// Get all entries
-$entries = Streams::entries('posts')->get();
-
-// With filtering
-$published = Streams::entries('posts')
-    ->where('status', 'published')
-    ->orderBy('created_at', 'desc')
-    ->get();
-
-// Single entry
-$entry = Streams::entries('posts')->find($id);
-
-// Create entry
-$entry = Streams::entries('posts')->create([
-    'title' => 'New Post',
-    'content' => 'Content here...',
-]);
-
-// Update entry
-$entry->title = 'Updated Title';
-$entry->save();
-
-// Delete entry
-$entry->delete();
-```
-
-### Handling Relationships
-
-```php
-public function getPostWithComments(string $post)
+class AuditedCreateEntry extends CreateEntry
 {
-    $entry = Streams::entries('posts')->find($post);
-    
-    if (!$entry) {
-        return ApiResponse::make()
-            ->setStatusCode(404)
-            ->addError('Post not found');
+    public function __invoke(string $stream): \Illuminate\Http\JsonResponse
+    {
+        $response = parent::__invoke($stream);
+
+        \Illuminate\Support\Facades\Log::info("API created an entry in {$stream}");
+
+        return $response;
     }
-    
-    // Get related comments
-    $comments = Streams::entries('comments')
-        ->where('post_id', $post)
-        ->where('approved', true)
-        ->orderBy('created_at', 'desc')
-        ->get();
-    
-    return ApiResponse::make([
-        'post' => $entry,
-        'comments' => $comments,
-    ]);
 }
-```
 
-## Request Validation
-
-Use Laravel's validation:
-
-```php
-use Illuminate\Http\Request;
-
-public function create(Request $request)
+class AppEntriesResource extends EntriesResource
 {
-    $validated = $request->validate([
-        'title' => 'required|string|max:255',
-        'content' => 'required|string',
-        'status' => 'in:draft,published',
-        'category' => 'required|exists:categories,id',
-    ]);
-    
-    $entry = Streams::entries('posts')->create($validated);
-    
-    return ApiResponse::make($entry)
-        ->setStatusCode(201);
-}
-```
-
-With custom error handling:
-
-```php
-try {
-    $validated = $request->validate([...]);
-} catch (\Illuminate\Validation\ValidationException $e) {
-    $response = ApiResponse::make();
-    
-    foreach ($e->errors() as $field => $errors) {
-        foreach ($errors as $error) {
-            $response->addError($error);
-        }
+    public static function getEndpoints(): array
+    {
+        return [
+            ...parent::getEndpoints(),
+            'create' => AuditedCreateEntry::route('streams/{stream}/entries', 'post'),
+        ];
     }
-    
-    return $response->setStatusCode(422);
 }
 ```
 
-## Route Naming
+## Related
 
-Routes are automatically named with the pattern:
-```
-streams.api.{interface_id}.{resource_slug}.{route_name}
-```
-
-Examples:
-- `streams.api.v1.posts.featured`
-- `streams.api.v1.posts.related`
-- `streams.api.admin.stats`
-
-Generate URLs:
-
-```php
-route('streams.api.v1.posts.featured')
-// /api/v1/posts/featured
-
-route('streams.api.v1.posts.related', ['post' => 'my-post'])
-// /api/v1/posts/my-post/related
-```
-
-## Middleware on Custom Endpoints
-
-### Interface-Level Middleware
-
-Applies to all routes:
-
-```php
-$api->middleware(['auth:sanctum', 'throttle:60,1']);
-```
-
-### Resource-Level Middleware
-
-Applies to all resource routes:
-
-```php
-protected static ?string $routeMiddleware = 'auth:sanctum';
-
-// Or multiple
-protected static ?string $routeMiddleware = ['auth:sanctum', 'verified'];
-```
-
-### Route-Level Middleware
-
-Applies to specific routes:
-
-```php
-Route::post('admin/clear-cache', [AdminController::class, 'clearCache'])
-    ->middleware(['auth:sanctum', 'admin']);
-```
-
-## Complete Example: Blog API
-
-```php
-use Streams\Api\ApiInterface;
-use App\Api\Resources\PostsResource;
-use App\Api\Resources\CommentsResource;
-
-$blog = new ApiInterface('blog');
-$blog->path('api/blog');
-$blog->middleware(['api', 'throttle:100,1']);
-
-// Custom endpoints
-$blog->endpoints([
-    'search' => [SearchController::class, 'search'],
-    'tags/popular' => [TagController::class, 'popular'],
-]);
-
-// Resources with organized endpoints
-$blog->resources([
-    PostsResource::class,
-    CommentsResource::class,
-]);
-
-// Custom routes
-$blog->routes(function ($interface) {
-    Route::get('sitemap', [SitemapController::class, 'index']);
-    Route::post('newsletter/subscribe', [NewsletterController::class, 'subscribe']);
-});
-
-API::interface($blog);
-```
-
-## Next Steps
-
-- [Responses](responses) - Format API responses
-- [Middleware](middleware) - Add authentication and authorization
-- [Testing](testing) - Test your custom endpoints
+- [Custom interfaces](/docs/api/custom-interfaces)
+- [Responses](/docs/api/responses)
+- [Routes](/docs/api/routes)

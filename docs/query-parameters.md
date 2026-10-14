@@ -1,234 +1,43 @@
 ---
-id: query-parameters
-sort_order: 3
-status: published
-title: Query Parameters
-description: Filter, paginate, and constrain API responses with query parameters.
+title: Query parameters
+nav_title: Query parameters
+description: where, constraint, order_by, limit, skip, and per_page on GET entries.
+section: packages
+package: api
+order: 70
+tags: [api, query, parameters]
+status: ready
 ---
 
-# Query Parameters
+`GET /api/streams/{stream}/entries` accepts query parameters implemented in `Streams\Api\Endpoints\Entries\ListEntries::applyFilters()` (the pre-1.0 `GetEntries` controller was replaced by this endpoint class).
 
-The Streams API supports powerful query parameters for filtering, pagination, and sorting.
+## Parameters
 
-## Filtering with `where`
+| Parameter | Example | Purpose |
+|-----------|---------|---------|
+| `where[field]` | `where[director]=Lucas` | Equality filter |
+| `constraint[field]` | `constraint[director]=like` | Operator: `like`, `>`, `>=`, `<`, `<=`, `!=`, `<>`, `in`, `between` |
+| `order_by[field]` | `order_by[title]=ASC` | Sort direction |
+| `limit` | `limit=10` | Max results (with `skip`) |
+| `skip` | `skip=20` | Offset (default `0`) |
+| `per_page` | `per_page=20` | Page size (default **100** in code) |
+| `page` | `page=2` | Page number (default `1`) |
+| `with` | `with=author,tags` or `with[]=author` | Eager-load relationship fields (a trailing `_id` is stripped from the handle) |
 
-Use the `where` parameter to filter results:
+## Example
 
-```http
-GET /api/streams/posts/entries?where[status]=published
-GET /api/streams/posts/entries?where[author]=john&where[status]=published
+```bash
+curl -s "http://localhost/api/streams/films/entries\
+?where[director]=George%20Lucas\
+&constraint[director]=like\
+&order_by[title]=ASC\
+&per_page=20&page=1"
 ```
 
-### Basic Equality
+Array values on `where` fields support operator/operand pairs for advanced filters.
 
-```http
-?where[field]=value
-```
+## Related
 
-Matches entries where `field` equals `value`.
-
-### Using Operators
-
-For advanced filtering, use the `constraint` parameter with operators:
-
-```http
-GET /api/streams/posts/entries?where[title]=Laravel&constraint[title]=like
-```
-
-**Available operators**:
-- `like` - Partial match with wildcards
-- `>`, `>=`, `<`, `<=` - Numeric comparisons
-- `!=`, `<>` - Not equal
-- `in` - Match any value in array
-- `between` - Range between two values
-
-### Examples
-
-```http
-# Posts with "Laravel" in the title
-?where[title]=%Laravel%&constraint[title]=like
-
-# Posts with more than 100 views
-?where[views]=100&constraint[views]=>
-
-# Posts from specific authors
-?where[author]=john,jane,bob&constraint[author]=in
-```
-
-## Pagination
-
-### Per Page
-
-Control the number of results per page:
-
-```http
-GET /api/streams/posts/entries?per_page=20
-```
-
-Default: `15` (Laravel default)
-
-### Page Number
-
-Navigate through pages:
-
-```http
-GET /api/streams/posts/entries?page=2&per_page=20
-```
-
-### Limit
-
-Set a maximum number of results (overrides pagination):
-
-```http
-GET /api/streams/posts/entries?limit=100
-```
-
-## Response Format
-
-Paginated responses include metadata:
-
-```json
-{
-    "data": [
-        {
-            "id": "post-1",
-            "title": "Getting Started with Streams",
-            "status": "published"
-        }
-    ],
-    "links": {
-        "first": "/api/streams/posts/entries?page=1",
-        "last": "/api/streams/posts/entries?page=5",
-        "prev": null,
-        "next": "/api/streams/posts/entries?page=2"
-    },
-    "meta": {
-        "current_page": 1,
-        "from": 1,
-        "last_page": 5,
-        "per_page": 15,
-        "to": 15,
-        "total": 73
-    }
-}
-```
-
-## Sorting
-
-Use `order_by` to sort results:
-
-```http
-GET /api/streams/posts/entries?order_by[created_at]=desc
-GET /api/streams/posts/entries?order_by[title]=asc&order_by[id]=desc
-```
-
-## Eager Loading with `with`
-
-Load relationship fields inline using Criteria `with()`, matched by **relation name** — the relationship field's handle with a trailing `_id` stripped (or the handle itself when it has no `_id` suffix; see `RelationshipFieldType::relationName()`):
-
-```http
-GET /api/streams/people/entries?with[]=homeworld
-GET /api/streams/people/entries/1?with=homeworld
-GET /api/streams/people/entries?with=homeworld,species
-```
-
-Only stream fields with `type: relationship` are applied, matched by relation name. Unknown names are ignored.
-
-When loaded, the related entry is added under a **separate** key named for the relation (e.g. `homeworld`). The underlying `_id`-suffixed field (if the handle has one) always stays the scalar foreign key — eager loading never overwrites it.
-
-### Examples
-
-```http
-# List people with homeworld embedded
-GET /api/streams/people/entries?with[]=homeworld
-
-# Show one person with homeworld embedded
-GET /api/streams/people/entries/1?with[]=homeworld
-```
-
-## Advanced Queries
-
-
-For complex queries, use the Query endpoint with JSON:
-
-```http
-POST /api/streams/posts/query
-Content-Type: application/json
-
-{
-    "parameters": [
-        {"where": ["status", "published"]},
-        {"where": ["views", ">", 100]},
-        {"orderBy": ["created_at", "desc"]},
-        {"limit": [20]}
-    ]
-}
-```
-
-### Custom Query Methods
-
-You can call any query builder method:
-
-```json
-{
-    "parameters": [
-        {"whereBetween": ["created_at", ["2024-01-01", "2024-12-31"]]},
-        {"whereIn": ["category", ["tech", "tutorial"]]},
-        {"whereNotNull": ["featured_image"]},
-        {"latest": []},
-        {"take": [10]}
-    ]
-}
-```
-
-## Combining Parameters
-
-All parameters can be combined:
-
-```http
-GET /api/streams/posts/entries?where[status]=published&where[category]=tech&per_page=10&page=1
-```
-
-## Examples
-
-### Get Published Posts
-
-```http
-GET /api/streams/posts/entries?where[status]=published
-```
-
-### Search by Title
-
-```http
-GET /api/streams/posts/entries?where[title]=%Laravel%&constraint[title]=like
-```
-
-### Recent Posts with Pagination
-
-```http
-GET /api/streams/posts/entries?per_page=20&page=1
-```
-
-### Complex Query
-
-```http
-POST /api/streams/posts/query
-Content-Type: application/json
-
-{
-    "parameters": [
-        {"where": ["status", "published"]},
-        {"where": ["views", ">", 100]},
-        {"whereIn": ["category", ["tech", "tutorial", "guide"]]},
-        {"whereBetween": ["created_at", ["2024-01-01", "2024-12-31"]]},
-        {"orderBy": ["views", "desc"]},
-        {"limit": [50]}
-    ]
-}
-```
-
-## Next Steps
-
-- [Custom Interfaces](custom-interfaces) - Create specialized API interfaces
-- [Custom Endpoints](custom-endpoints) - Add custom query logic
-- [Responses](responses) - Understand response formatting
+- [Query endpoint](/docs/api/query-endpoint)
+- [Pagination](/docs/api/pagination)
+- [Core criteria](/docs/core/criteria)
