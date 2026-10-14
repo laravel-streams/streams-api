@@ -45,7 +45,11 @@ class ShowEntry extends ApiEndpoint
 
                 $related = Streams::make($field->config('related'));
 
-                $response->addLink($field->relationName(), URL::route('streams.api.entries.show', [
+                if ($value instanceof EntryInterface) {
+                    $value = $value->getAttribute($related->config('key_name', 'id'));
+                }
+
+                $response->addLink($field->handle, URL::route('streams.api.entries.show', [
                     'stream' => $related->id,
                     'entry' => $value,
                 ]));

@@ -2,9 +2,9 @@
 
 namespace Streams\Api\Endpoints\Entries\Concerns;
 
-use Illuminate\Support\Facades\Request;
-use Streams\Core\Criteria\Criteria;
 use Streams\Core\Stream\Stream;
+use Streams\Core\Criteria\Criteria;
+use Illuminate\Support\Facades\Request;
 
 trait AppliesEagerLoading
 {
@@ -16,9 +16,8 @@ trait AppliesEagerLoading
      * - with=homeworld,species
      * - with=homeworld
      *
-     * Values are matched against relationship field *relation names*
-     * (field handle with a trailing `_id` stripped, or the handle itself
-     * when there is no `_id` suffix — see RelationshipFieldType::relationName()).
+     * Values are matched against relationship field handles, as expected
+     * by Criteria::with().
      */
     protected function applyEagerLoading(Criteria $criteria, Stream $stream): void
     {
@@ -55,7 +54,10 @@ trait AppliesEagerLoading
             return [];
         }
 
-        $allowed = $stream->fields->relationships()->keys()->all();
+        $allowed = $stream->fields
+            ->filter(static fn ($field): bool => $field->type === 'relationship')
+            ->keys()
+            ->all();
 
         return array_values(array_intersect($requested, $allowed));
     }
