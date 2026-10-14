@@ -92,4 +92,53 @@ class OpenApiDocumentTest extends ApiTestCase
             $this->assertEqualsCanonicalizing($matches[1], $parameters, $path);
         }
     }
+
+    public function test_reference_spec_describes_query_parameters_and_the_live_paginated_envelope(): void
+    {
+        $document = $this->document();
+        $expected = [
+            '/streams' => ['per_page', 'page', 'where', 'constraint', 'order_by', 'limit', 'skip'],
+            '/streams/{stream}/entries' => ['per_page', 'page', 'where', 'constraint', 'order_by', 'limit', 'skip', 'with'],
+            '/streams/{stream}/entries/{entry}' => ['with'],
+        ];
+
+        foreach ($expected as $path => $names) {
+            $parameters = array_map(
+                fn ($reference) => $document['components']['parameters'][basename($reference['$ref'])],
+                $document['paths'][$path]['get']['parameters'],
+            );
+
+            $this->assertEqualsCanonicalizing($names, array_column($parameters, 'name'), $path);
+
+            foreach ($parameters as $parameter) {
+                $this->assertSame('query', $parameter['in']);
+            }
+        }
+
+        $this->assertSame(100, $document['components']['parameters']['PerPage']['schema']['default']);
+        $this->assertSame(1, $document['components']['parameters']['Page']['schema']['default']);
+
+        $response = $this->getJson(route('streams.api.streams.list', ['per_page' => 2, 'page' => 1]));
+        $response->assertOk();
+        $response->assertJsonPath('meta.per_page', 2);
+        $response->assertJsonPath('meta.current_page', 1);
+
+        foreach ($document['components']['schemas']['Envelope']['properties'] as $name => $schema) {
+            $this->assertArrayHasKey($name, $response->json());
+        }
+
+        foreach ($document['components']['schemas']['PaginationMeta']['properties'] as $name => $schema) {
+            $this->assertSame('integer', $schema['type']);
+            $this->assertIsInt($response->json('meta.'.$name));
+        }
+
+        $this->assertSame(
+            '#/components/responses/List',
+            $document['paths']['/streams']['get']['responses'][200]['$ref'],
+        );
+        $this->assertSame(
+            '#/components/schemas/PaginationMeta',
+            $document['components']['responses']['List']['content']['application/json']['schema']['allOf'][1]['properties']['meta']['$ref'],
+        );
+    }
 }
