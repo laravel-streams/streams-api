@@ -31,7 +31,14 @@ abstract class ApiEndpoint extends Builder
 
     protected function resolveStream(?string $stream = null): mixed
     {
-        return stream($stream ?: $this->streamHandle ?: static::$stream);
+        $handle = $stream ?: $this->streamHandle ?: static::$stream;
+        $allowed = config('streams.api.streams');
+
+        if (is_array($allowed) && ! in_array($handle, $allowed, true)) {
+            abort((int) config('streams.api.gate_status', 404));
+        }
+
+        return stream($handle);
     }
 
     public static function route(

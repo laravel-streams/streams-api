@@ -33,6 +33,18 @@ return [
     'middleware' => env('STREAMS_API_MIDDLEWARE', 'api'),
 
     /*
+     * Stream handles this API may serve. Null keeps the historical
+     * behavior (every registered stream). An array is an allowlist;
+     * anything else returns the gate status (404 by default).
+     */
+    'streams' => env('STREAMS_API_STREAMS') === null
+        ? null
+        : array_values(array_filter(array_map(
+            'trim',
+            explode(',', (string) env('STREAMS_API_STREAMS'))
+        ))),
+
+    /*
      * Middleware that gates API access (extend in your application).
      */
     'gate_middleware' => \Streams\Api\Http\Middleware\EnsureApiIsEnabled::class,
