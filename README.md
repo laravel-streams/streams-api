@@ -82,7 +82,7 @@ API::routeStreams(); // streams only
 - [Custom Interfaces](https://streams.dev/docs/api/custom-interfaces) - Multiple API configurations
 - [Custom Endpoints](https://streams.dev/docs/api/custom-endpoints) - Add your own routes
 - [Responses](https://streams.dev/docs/api/responses) - Format API responses
-- [OpenAPI](https://streams.dev/docs/api/openapi) - Generate Swagger documentation
+- [OpenAPI](https://streams.dev/docs/api/openapi) - Generate Swagger documentation. A static reference for the built-in routes ships at [`resources/openapi/openapi.yaml`](resources/openapi/openapi.yaml).
 - [Testing](https://streams.dev/docs/api/testing) - Test your API
 
 **Note**: Documentation URLs like `/docs/api/introduction` correspond to `docs/introduction.md` in this repository.
@@ -240,9 +240,9 @@ $api->middleware(['auth:sanctum']);
 
 ## Requirements
 
-- PHP 8.1+
-- Laravel 10.0+
-- Streams Core 1.0+
+- PHP 8.2+
+- Laravel 10, 11, or 12
+- Streams Core 2.0+
 
 ## License
 
